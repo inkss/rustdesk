@@ -1,0 +1,84 @@
+name: Sync Upstream Release
+
+on:
+  schedule:
+    - cron: '23 3 * * *'  # 每天 UTC 03:23
+  workflow_dispatch:
+
+jobs:
+  check-and-sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream remote & fetch
+        run: |
+          git remote add upstream https://github.com/rustdesk/rustdesk.git
+          git fetch upstream --tags
+
+      - name: Check for new release
+        id: check
+        run: |
+          # 获取上游最新版本 tag（纯数字格式，如 1.4.7）
+          LATEST=$(git tag -l '[0-9]*' --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          # 获取本地已同步的最新版本（v 前缀格式，如 v1.4.7）
+          LOCAL_LATEST=$(git tag -l 'v[0-9]*' | sed 's/^v//' | sort -V | tail -1)
+          echo "upstream=$LATEST" >> $GITHUB_OUTPUT
+          echo "local=$LOCAL_LATEST" >> $GITHUB_OUTPUT
+          if [ -z "$LOCAL_LATEST" ] || [ "$LATEST" != "$LOCAL_LATEST" ]; then
+            echo "new_release=true" >> $GITHUB_OUTPUT
+            echo "📦 New release found: $LATEST (local: ${LOCAL_LATEST:-none})"
+          else
+            echo "✅ Already up to date: $LATEST"
+          fi
+
+      - name: Merge upstream release
+        if: steps.check.outputs.new_release == 'true'
+        id: merge
+        run: |
+          VERSION=${{ steps.check.outputs.upstream }}
+          git fetch upstream tag $VERSION --no-tags
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 尝试合并
+          if git merge $VERSION --no-edit -m "Merge upstream release $VERSION"; then
+            # 合并成功，创建 v 前缀 tag 并推送
+            git tag "v$VERSION"
+            git push origin HEAD
+            git push origin "v$VERSION"
+            echo "✅ Merged and tagged v$VERSION"
+            echo "merged=true" >> $GITHUB_OUTPUT
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          else
+            # 合并冲突，创建 PR 让用户手动解决
+            git merge --abort
+            BRANCH="upstream-merge-$VERSION"
+            git checkout -b $BRANCH
+            git merge $VERSION --no-edit || true
+            git push origin $BRANCH
+            gh pr create \
+              --title "🔀 Merge upstream release $VERSION" \
+              --body "自动合并上游版本 $VERSION 时出现冲突，请手动解决后合并。" \
+              --base custom-build
+            echo "⚠️ Conflicts detected, PR created for v$VERSION"
+            echo "merged=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger build
+        if: steps.merge.outputs.merged == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build.yml',
+              ref: 'custom-build'
+            });
+            console.log('✅ Triggered build.yml for v${{ steps.merge.outputs.version }}');
