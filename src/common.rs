@@ -122,6 +122,13 @@ impl Drop for SimpleCallOnReturn {
 }
 
 pub fn global_init() -> bool {
+    // 编译时内置自定义服务器配置
+    // PROD_RENDEZVOUS_SERVER 优先级低于用户配置，用户可在设置中覆盖
+    if let Some(server) = option_env!("RENDEZVOUS_SERVER") {
+        if !server.is_empty() {
+            *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = server.to_owned();
+        }
+    }
     #[cfg(target_os = "linux")]
     {
         if !crate::platform::linux::is_x11() {
@@ -1824,6 +1831,11 @@ pub async fn get_key(sync: bool) -> String {
         options.remove("key").unwrap_or_default()
     };
     if key.is_empty() {
+        if let Some(builtin_key) = option_env!("RS_PUB_KEY") {
+            if !builtin_key.is_empty() {
+                return builtin_key.to_owned();
+            }
+        }
         key = config::RS_PUB_KEY.to_owned();
     }
     key
