@@ -11,6 +11,9 @@ on:
         description: '版本号（留空使用代码默认版本）'
         required: false
 
+permissions:
+  contents: write
+
 jobs:
   build:
     uses: ./.github/workflows/flutter-build.yml
