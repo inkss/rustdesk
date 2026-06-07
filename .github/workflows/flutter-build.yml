@@ -60,19 +60,20 @@ jobs:
         id: config
         run: |
           if [ -f .build-config.yml ]; then
-            eval $(python3 -c "
-            import yaml
-            with open('.build-config.yml') as f:
-                cfg = yaml.safe_load(f)
-            p = cfg.get('platforms', {})
-            for k,v in p.items():
-                print(f'echo \"{k}={str(v).lower()}\" >> \$GITHUB_OUTPUT')
-            ")
+            python3 -c "
+          import yaml, os
+          out = os.environ['GITHUB_OUTPUT']
+          with open('.build-config.yml') as f:
+              cfg = yaml.safe_load(f)
+          p = cfg.get('platforms', {})
+          with open(out, 'a') as f:
+              for k, v in p.items():
+                  f.write(f'{k}={str(v).lower()}\n')
+          "
           else
-            echo "No .build-config.yml found, building all platforms"
-            for p in windows linux android; do
-              echo "$p=true" >> $GITHUB_OUTPUT
-            done
+            echo "windows=true" >> $GITHUB_OUTPUT
+            echo "linux=true" >> $GITHUB_OUTPUT
+            echo "android=true" >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
 
