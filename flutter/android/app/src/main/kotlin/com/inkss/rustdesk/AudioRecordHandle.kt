@@ -1,4 +1,4 @@
-package com.carriez.flutter_hbb
+package com.inkss.rustdesk
 
 import ffi.FFI
 

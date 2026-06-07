@@ -38,6 +38,23 @@
 - Android: `rustdesk-*-android-arm64.apk` / `rustdesk-*-android-armv7.apk`
 - iOS: `rustdesk-*-ios`
 
+## 编译平台配置
+
+默认只编译 Windows、Android、Linux 三个常用平台。编辑 `.build-config.yml` 可开启更多平台：
+
+```yaml
+platforms:
+  windows: true        # Windows x86_64
+  windows_sciter: false # Windows Sciter 版
+  macos: false          # macOS x86_64 + aarch64
+  linux: true           # Linux x86_64 + aarch64
+  linux_sciter: false   # Linux Sciter 版
+  android: true         # Android aarch64
+  ios: false            # iOS
+  appimage: false       # Linux AppImage
+  flatpak: false        # Linux Flatpak
+```
+
 ## 工作流说明
 
 | 工作流 | 触发方式 | 功能 |
