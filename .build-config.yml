@@ -4,11 +4,5 @@
 
 platforms:
   windows: true        # Windows x86_64 (MSI + EXE 安装包)
-  windows_sciter: false # Windows x86_64 Sciter 版 (32位兼容)
-  macos: false          # macOS x86_64 + aarch64 (DMG)
-  linux: false          # Linux x86_64 + aarch64 (DEB + RPM)
-  linux_sciter: false   # Linux Sciter 版
-  android: true         # Android aarch64 (APK)
-  ios: false            # iOS (需要 Apple 开发者账号)
-  appimage: false       # Linux AppImage
-  flatpak: false        # Linux Flatpak
+  linux: true          # Linux x86_64 + aarch64 (DEB + RPM)
+  android: true        # Android aarch64 (APK)
