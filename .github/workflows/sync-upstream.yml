@@ -40,14 +40,16 @@ jobs:
       - name: Merge upstream release
         if: steps.check.outputs.new_release == 'true'
         id: merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=${{ steps.check.outputs.upstream }}
-          git fetch upstream tag $VERSION --no-tags
+          git fetch upstream "tag $VERSION"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # 尝试合并
-          if git merge $VERSION --no-edit -m "Merge upstream release $VERSION"; then
+          if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
             # 合并成功，创建 v 前缀 tag 并推送
             git tag "v$VERSION"
             git push origin HEAD
@@ -59,9 +61,9 @@ jobs:
             # 合并冲突，创建 PR 让用户手动解决
             git merge --abort
             BRANCH="upstream-merge-$VERSION"
-            git checkout -b $BRANCH
-            git merge $VERSION --no-edit || true
-            git push origin $BRANCH
+            git checkout -b "$BRANCH"
+            git merge "$VERSION" --no-edit || true
+            git push origin "$BRANCH"
             gh pr create \
               --title "🔀 Merge upstream release $VERSION" \
               --body "自动合并上游版本 $VERSION 时出现冲突，请手动解决后合并。" \
