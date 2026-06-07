@@ -133,3 +133,4 @@ platforms:
 | 2026-06-07 | 新增 `.build-config.yml` 平台编译配置，默认精简为 Windows/Android/Linux |
 | 2026-06-07 | Release 描述优化，包含版本号和上游版本信息 |
 | 2026-06-07 | 移除 `build-rustdesk-web`，修复 `publish_unsigned` 平台跳过时的依赖问题 |
+| 2026-06-07 | 精简编译平台：移除 windows-sciter/macos/ios/linux-sciter/appimage/flatpak/publish_unsigned，只保留 windows/linux/android |
