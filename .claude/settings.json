@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "Agent(*)",
+      "Monitor(*)",
+      "Skill(*)",
+      "CronCreate(*)",
+      "CronDelete(*)",
+      "CronList(*)",
+      "ScheduleWakeup(*)",
+      "TodoWrite(*)",
+      "PushNotification(*)"
+    ],
+    "deny": []
+  },
+  "auto_authorize": true,
+  "workspace": "/home/szyink/project/rustdesk"
+}
