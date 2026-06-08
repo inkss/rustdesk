@@ -19,8 +19,8 @@ jobs:
 
       - name: Add upstream remote & fetch
         run: |
-          git remote add upstream https://github.com/rustdesk/rustdesk.git
-          git fetch upstream --tags
+          git remote add upstream https://github.com/rustdesk/rustdesk.git 2>/dev/null || true
+          git fetch upstream --tags --force
 
       - name: Check if merge needed
         id: check
