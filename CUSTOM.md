@@ -35,7 +35,7 @@
 
 ### 2. Android 包名修改
 
-将 `com.carriez.flutter_hbb` 改为 `com.inkss.rustdesk`，使自定义版可与原版 RustDesk 共存安装。
+将 `com.carriez.flutter_hbb` 改为 `com.rustdesk.app`，使自定义版可与原版 RustDesk 共存安装。
 
 | 文件 | 改动 |
 |---|---|
@@ -130,7 +130,7 @@ platforms:
 | 日期 | 改动 |
 |---|---|
 | 2026-06-07 | 初始版本：基于 v1.4.7 创建，实现编译时注入、自动同步、全平台编译 |
-| 2026-06-07 | Android 包名改为 `com.inkss.rustdesk`，启用 v1+v2+v3 签名 |
+| 2026-06-07 | Android 包名改为 `com.rustdesk.app`，启用 v1+v2+v3 签名 |
 | 2026-06-07 | 新增 `.build-config.yml` 平台编译配置，默认精简为 Windows/Android/Linux |
 | 2026-06-07 | Release 描述优化，包含版本号和上游版本信息 |
 | 2026-06-07 | 移除 `build-rustdesk-web`，修复 `publish_unsigned` 平台跳过时的依赖问题 |

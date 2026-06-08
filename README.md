@@ -10,7 +10,7 @@
 - ✅ 支持全平台编译（Windows / macOS / Linux / Android / iOS）
 - ✅ 自动同步上游新版本并触发编译
 - ✅ 用户可通过客户端设置覆盖内置值
-- ✅ Android 包名 `com.inkss.rustdesk`，可与原版 RustDesk 共存
+- ✅ Android 包名 `com.rustdesk.app`，可与原版 RustDesk 共存
 
 ## 快速开始
 
