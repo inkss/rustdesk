@@ -6,6 +6,9 @@ on:
       upload-artifact:
         type: boolean
         default: true
+      publish-release:
+        type: boolean
+        default: true
       upload-tag:
         type: string
         default: "nightly"
@@ -44,6 +47,7 @@ env:
   #signing keys env variable checks
   ANDROID_SIGNING_KEY: "${{ secrets.ANDROID_SIGNING_KEY }}"
   UPLOAD_ARTIFACT: "${{ inputs.upload-artifact }}"
+  PUBLISH_RELEASE: "${{ inputs.publish-release }}"
   SIGN_BASE_URL: "${{ secrets.SIGN_BASE_URL }}-2"
   # === 自定义服务器配置（编译时内置，通过 option_env!() 注入） ===
   RS_PUB_KEY: "${{ secrets.RS_PUB_KEY }}"
@@ -310,7 +314,7 @@ jobs:
 
       - name: Publish Release
         uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
-        if: env.UPLOAD_ARTIFACT == 'true'
+        if: env.PUBLISH_RELEASE == 'true'
         with:
           prerelease: true
           tag_name: ${{ env.TAG_NAME }}
@@ -602,7 +606,7 @@ jobs:
           path: ./signed-apk/*.apk
 
       - name: Publish apk package
-        if: env.UPLOAD_ARTIFACT == 'true'
+        if: env.PUBLISH_RELEASE == 'true'
         uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
         with:
           prerelease: true
@@ -906,7 +910,7 @@ jobs:
             done
 
       - name: Publish debian/rpm package
-        if: env.UPLOAD_ARTIFACT == 'true'
+        if: env.PUBLISH_RELEASE == 'true'
         uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
         with:
           prerelease: true
@@ -944,7 +948,7 @@ jobs:
             cd res && HBB=`pwd`/.. FLUTTER=1 makepkg -f
 
       - name: Publish archlinux package
-        if: matrix.job.arch == 'x86_64' && env.UPLOAD_ARTIFACT == 'true'
+        if: matrix.job.arch == 'x86_64' && env.PUBLISH_RELEASE == 'true'
         uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
         with:
           prerelease: true
