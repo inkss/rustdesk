@@ -71,24 +71,39 @@ platforms:
 
 ### 源码修改点
 
-仅修改 `src/common.rs` 一个文件，约 15 行代码，不修改子模块：
+仅修改 `src/common.rs`，不修改子模块：
 
 1. `global_init()` — 启动时从 `RENDEZVOUS_SERVER` 环境变量写入 `PROD_RENDEZVOUS_SERVER`
 2. `get_key()` — 从 `RS_PUB_KEY` 环境变量读取默认公钥
 3. `get_api_server_()` — 从 `API_SERVER` 环境变量读取 API 服务器地址
+4. `check_software_update()` — 禁用官方更新检测
 
 ### Android 签名
 
-CI 构建时自动生成 keystore 并启用 v1+v2+v3 签名方案，兼容 Android 高版本（如小米 15 Pro）。
+CI 构建时如果没有配置签名密钥，会自动生成临时 keystore（每次不同，无法覆盖安装）。
 
-如需使用自定义签名密钥，可配置以下 Secrets：
+如需固定签名（支持覆盖安装更新），在本地生成一次 keystore 并配置到 GitHub Secrets：
 
-| Secret 名称 | 说明 |
+```bash
+# 1. 本地生成 keystore（只需执行一次）
+keytool -genkey -v -keystore release.keystore \
+  -keyalg RSA -keysize 2048 -validity 10000 \
+  -alias rustdesk -storepass 你的密码 -keypass 你的密码 \
+  -dname "CN=You, OU=Dev, O=You, L=City, ST=State, C=US"
+
+# 2. 编码为 Base64
+base64 -w 0 release.keystore   # Linux
+# base64 release.keystore      # macOS
+```
+
+然后在 GitHub **Settings → Secrets → Repository secrets** 中配置：
+
+| Secret 名称 | 值 |
 |---|---|
-| `ANDROID_SIGNING_KEY` | Android APK 签名密钥（Base64） |
-| `ANDROID_ALIAS` | Android 签名别名 |
-| `ANDROID_KEY_STORE_PASSWORD` | Android Keystore 密码 |
-| `ANDROID_KEY_PASSWORD` | Android 密钥密码 |
+| `ANDROID_SIGNING_KEY` | 上面输出的 Base64 字符串 |
+| `ANDROID_ALIAS` | `rustdesk` |
+| `ANDROID_KEY_STORE_PASSWORD` | 你设的密码 |
+| `ANDROID_KEY_PASSWORD` | 你设的密码 |
 
 ## 上游同步
 

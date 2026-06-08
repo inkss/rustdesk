@@ -129,8 +129,6 @@ pub fn global_init() -> bool {
             *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = server.to_owned();
         }
     }
-    // 改变应用名以禁用官方更新检测（is_custom_client() 检查应用名 != "RustDesk"）
-    *config::APP_NAME.write().unwrap() = "RustDesk-Custom".to_owned();
     #[cfg(target_os = "linux")]
     {
         if !crate::platform::linux::is_x11() {
@@ -949,13 +947,12 @@ pub fn is_modifier(evt: &KeyEvent) -> bool {
 }
 
 pub fn check_software_update() {
-    if is_custom_client() {
-        return;
-    }
-    let opt = LocalConfig::get_option(keys::OPTION_ENABLE_CHECK_UPDATE);
-    if config::option2bool(keys::OPTION_ENABLE_CHECK_UPDATE, &opt) {
-        std::thread::spawn(move || allow_err!(do_check_software_update()));
-    }
+    // 禁用官方更新检测（自定义编译版本不需要检查官方更新）
+    return;
+    // let opt = LocalConfig::get_option(keys::OPTION_ENABLE_CHECK_UPDATE);
+    // if config::option2bool(keys::OPTION_ENABLE_CHECK_UPDATE, &opt) {
+    //     std::thread::spawn(move || allow_err!(do_check_software_update()));
+    // }
 }
 
 // No need to check `danger_accept_invalid_cert` for now.

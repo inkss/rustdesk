@@ -27,6 +27,7 @@
 | `global_init()` | 从 `RENDEZVOUS_SERVER` 环境变量写入 `PROD_RENDEZVOUS_SERVER` | 编译时内置 ID 服务器地址 |
 | `get_key()` | 从 `RS_PUB_KEY` 环境变量读取默认公钥 | 编译时内置服务器公钥 |
 | `get_api_server_()` | 从 `API_SERVER` 环境变量读取 API 服务器 | 编译时内置 API 地址 |
+| `check_software_update()` | 直接 return，跳过更新检测 | 禁用官方更新检测 |
 
 **原理**: 使用 Rust `option_env!()` 宏在编译时读取环境变量。值来自 GitHub Secrets，不进入源码。
 
@@ -134,3 +135,5 @@ platforms:
 | 2026-06-07 | Release 描述优化，包含版本号和上游版本信息 |
 | 2026-06-07 | 移除 `build-rustdesk-web`，修复 `publish_unsigned` 平台跳过时的依赖问题 |
 | 2026-06-07 | 精简编译平台：移除 windows-sciter/macos/ios/linux-sciter/appimage/flatpak/publish_unsigned，只保留 windows/linux/android |
+| 2026-06-07 | 禁用官方更新检测（check_software_update 直接 return） |
+| 2026-06-07 | 添加 Android 专用编译 workflow（build-android.yml） |
