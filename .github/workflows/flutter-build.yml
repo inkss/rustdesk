@@ -9,6 +9,9 @@ on:
       upload-tag:
         type: string
         default: "nightly"
+      android-only:
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -79,12 +82,12 @@ jobs:
 
   generate-bridge:
     needs: [read-config]
-    if: needs.read-config.outputs.windows == 'true' || needs.read-config.outputs.linux == 'true' || needs.read-config.outputs.android == 'true'
+    if: (needs.read-config.outputs.windows == 'true' || needs.read-config.outputs.linux == 'true' || needs.read-config.outputs.android == 'true') && (!inputs.android-only || needs.read-config.outputs.android == 'true')
     uses: ./.github/workflows/bridge.yml
 
   build-RustDeskTempTopMostWindow:
     needs: [read-config]
-    if: needs.read-config.outputs.windows == 'true'
+    if: needs.read-config.outputs.windows == 'true' && !inputs.android-only
     uses: ./.github/workflows/third-party-RustDeskTempTopMostWindow.yml
     with:
       upload-artifact: ${{ inputs.upload-artifact }}
@@ -98,7 +101,7 @@ jobs:
   build-for-windows-flutter:
     name: ${{ matrix.job.target }}
     needs: [build-RustDeskTempTopMostWindow, generate-bridge, read-config]
-    if: needs.read-config.outputs.windows == 'true'
+    if: needs.read-config.outputs.windows == 'true' && !inputs.android-only
     runs-on: ${{ matrix.job.os }}
     strategy:
       fail-fast: false
@@ -607,7 +610,7 @@ jobs:
 
   build-rustdesk-linux:
     needs: [generate-bridge, read-config]
-    if: needs.read-config.outputs.linux == 'true'
+    if: needs.read-config.outputs.linux == 'true' && !inputs.android-only
     name: build rustdesk linux ${{ matrix.job.target }}
     runs-on: ${{ matrix.job.on }}
     strategy:
