@@ -25,9 +25,9 @@ jobs:
         id: check
         run: |
           # 获取上游最新版本 tag（纯数字格式，如 1.4.7）
-          LATEST=$(git tag -l '[0-9]*' --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LATEST=$(git tag | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
           # 获取本地已同步的最新版本（v 前缀格式，如 v1.4.7）
-          LOCAL_LATEST=$(git tag -l 'v[0-9]*' | sed 's/^v//' | sort -V | tail -1)
+          LOCAL_LATEST=$(git tag | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sed 's/^v//' | sort -V | tail -1)
           echo "upstream=$LATEST" >> $GITHUB_OUTPUT
           echo "local=$LOCAL_LATEST" >> $GITHUB_OUTPUT
           if [ -z "$LOCAL_LATEST" ] || [ "$LATEST" != "$LOCAL_LATEST" ]; then
@@ -44,30 +44,30 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=${{ steps.check.outputs.upstream }}
-          git fetch upstream "tag $VERSION"
+          git fetch upstream tag $VERSION
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # 尝试合并
-          if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
+          if git merge $VERSION --no-edit -m "Merge upstream release $VERSION"; then
             # 合并成功，创建 v 前缀 tag 并推送
-            git tag "v$VERSION"
+            git tag v$VERSION
             git push origin HEAD
-            git push origin "v$VERSION"
+            git push origin v$VERSION
             echo "✅ Merged and tagged v$VERSION"
             echo "merged=true" >> $GITHUB_OUTPUT
             echo "version=$VERSION" >> $GITHUB_OUTPUT
           else
             # 合并冲突，创建 PR 让用户手动解决
-            git merge --abort
-            BRANCH="upstream-merge-$VERSION"
-            git checkout -b "$BRANCH"
-            git merge "$VERSION" --no-edit || true
-            git push origin "$BRANCH"
+            git merge --abort || true
+            BRANCH=upstream-merge-$VERSION
+            git checkout -b $BRANCH
+            git merge $VERSION --no-edit || true
+            git push origin $BRANCH || git push origin $BRANCH --force
             gh pr create \
-              --title "🔀 Merge upstream release $VERSION" \
+              --title "Merge upstream release $VERSION" \
               --body "自动合并上游版本 $VERSION 时出现冲突，请手动解决后合并。" \
-              --base custom-build
+              --base custom-build || true
             echo "⚠️ Conflicts detected, PR created for v$VERSION"
             echo "merged=false" >> $GITHUB_OUTPUT
           fi
