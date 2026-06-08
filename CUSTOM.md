@@ -66,17 +66,31 @@ CI 构建时自动生成 keystore 签名（无需配置 `ANDROID_SIGNING_KEY`）
 
 ### 4. GitHub Actions 工作流
 
-删除原有 11 个 workflow，新建 3 个：
+删除原有 11 个 workflow，新建 2 个 + 2 个辅助：
 
 | 文件 | 作用 | 触发方式 |
 |---|---|---|
 | `build.yml` | 编译入口，自动解析版本号，调用 flutter-build.yml | 手动 / tag 推送 / sync 调用 |
 | `sync-upstream.yml` | 检查上游新版本，按需合并代码，触发编译 | 每天自动 / 手动 |
 | `flutter-build.yml` | 实际编译逻辑（被调用），版本号动态获取 | workflow_call |
+| `bridge.yml` | flutter-rust-bridge 代码生成（辅助） | workflow_call |
+| `third-party-RustDeskTempTopMostWindow.yml` | Windows 置顶窗口组件（辅助） | workflow_call |
 
-辅助 workflow（内部依赖，用户无需关注）：
-- `bridge.yml` — flutter-rust-bridge 代码生成
-- `third-party-RustDeskTempTopMostWindow.yml` — Windows 置顶窗口组件
+#### 私有 Release 仓库
+
+公开仓库享受免费 Actions 额度，编译产物推送到私有仓库的 Releases。
+
+配置步骤：
+
+1. 创建 private 仓库（如 `inkss/rustdesk-releases`）
+2. 生成 Fine-grained PAT：Settings → Developer settings → Personal access tokens → Fine-grained tokens
+   - Repository access：选 `Only select repositories` → 选私有仓库
+   - Permissions → Repository permissions → Contents：`Read and write`
+3. 在公开仓库 Settings → Secrets → Repository secrets 中添加：
+   - `RELEASE_PAT`：PAT 值
+   - `RELEASE_REPO`：私有仓库名（如 `inkss/rustdesk-releases`）
+
+不配置这两个 Secret 时，产物发布到当前仓库的 Releases。
 
 #### sync-upstream.yml 流程
 
@@ -163,3 +177,5 @@ platforms:
 | 2026-06-07 | 添加 Android 专用编译 workflow（build-android.yml） |
 | 2026-06-08 | 优化 workflow 版本管理：sync 通过提交历史判断是否需要合并，build 自动从上游获取版本号，Release tag 统一上游格式（无 v 前缀），手动触发时自动覆盖旧 Release |
 | 2026-06-08 | 修复 Android Kotlin 文件被 gitignore 忽略：`rustdesk` 规则改为 `/rustdesk`，提交 `com.rustdesk.app` 下 12 个 Kotlin 源文件 |
+| 2026-06-08 | 修复 Android 构建：Kotlin 版本回退到 1.9.10，签名配置容错，git fetch tags 使用 --force |
+| 2026-06-08 | 支持私有 Release 仓库：配置 `RELEASE_REPO` + `RELEASE_PAT` Secret 后产物推送到私有仓库，移除 `build-android.yml` |

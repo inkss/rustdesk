@@ -320,6 +320,8 @@ jobs:
           files: |
             ./SignOutput/rustdesk-*.msi
             ./SignOutput/rustdesk-*.exe
+          repository: ${{ secrets.RELEASE_REPO || '' }}
+          token: ${{ secrets.RELEASE_REPO && secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
 
   # The fallback for the flutter version, we use Sciter for 32bit Windows.
   build-rustdesk-android:
@@ -607,6 +609,8 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: |
             signed-apk/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
+          repository: ${{ secrets.RELEASE_REPO || '' }}
+          token: ${{ secrets.RELEASE_REPO && secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
 
   build-rustdesk-linux:
     needs: [generate-bridge, read-config]
@@ -910,6 +914,8 @@ jobs:
           files: |
             rustdesk-*.deb
             rustdesk-*.rpm
+          repository: ${{ secrets.RELEASE_REPO || '' }}
+          token: ${{ secrets.RELEASE_REPO && secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Upload deb
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -945,4 +951,6 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: |
             res/rustdesk-${{ env.VERSION }}*.zst
+          repository: ${{ secrets.RELEASE_REPO || '' }}
+          token: ${{ secrets.RELEASE_REPO && secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
 

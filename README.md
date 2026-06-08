@@ -24,6 +24,15 @@
 | `RS_PUB_KEY` | 服务器公钥（Base64 编码） | `your-base64-key=` |
 | `API_SERVER` | API 服务器地址（可选） | `https://api.your-server.com` |
 
+如需将编译产物推送到私有仓库（公开仓库享受免费 Actions 额度），额外配置：
+
+| Secret 名称 | 说明 |
+|---|---|
+| `RELEASE_REPO` | 私有仓库名（如 `inkss/rustdesk-releases`） |
+| `RELEASE_PAT` | Fine-grained PAT，需对私有仓库有 Contents 读写权限 |
+
+不配置时，产物发布到当前仓库的 Releases。
+
 ### 2. 触发编译
 
 - **手动触发**：进入 Actions 页面 → 选择 "Sync Upstream Release" → 点击 "Run workflow"
@@ -31,7 +40,7 @@
 
 ### 3. 下载产物
 
-从 **Releases** 页面下载安装包（不要从 Artifacts 下载，那里会被打包为 zip）：
+从 **Releases** 页面下载安装包（配置了私有仓库则去私有仓库的 Releases 页面）：
 
 - Windows: MSI 安装包 + EXE 安装包
 - Linux: DEB / RPM 包
