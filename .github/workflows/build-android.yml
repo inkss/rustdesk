@@ -17,7 +17,11 @@ permissions:
   contents: write
 
 jobs:
+  generate-bridge:
+    uses: ./.github/workflows/bridge.yml
+
   build:
+    needs: [generate-bridge]
     runs-on: ubuntu-24.04
     steps:
       - name: Free Disk Space
@@ -34,6 +38,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Restore bridge files
+        uses: actions/download-artifact@v4
+        with:
+          name: bridge-artifact
+          path: ./
 
       - name: Install dependencies
         run: |
@@ -66,29 +76,17 @@ jobs:
           [[ "${{ env.FLUTTER_VERSION }}" == "3.24.5" ]] && \
             git apply ${{ github.workspace }}/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff || true
 
-      - name: Restore bridge files
-        uses: actions/download-artifact@v4
-        with:
-          name: bridge-artifact
-          path: ./
-        continue-on-error: true
-
-      - name: Generate bridge (if not cached)
-        run: |
-          if [ ! -f ./src/bridge_generated.rs ]; then
-            echo "Bridge files not found, generating..."
-            cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
-            flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart
-          else
-            echo "Bridge files found, skipping generation"
-          fi
-
       - name: Setup Android NDK
-        uses: android-actions/setup-ndk@v1
+        uses: nttld/setup-ndk@ed92fe6cadad69be94a966a7ee3271275e62f779
+        id: setup-ndk
         with:
           ndk-version: ${{ env.NDK_VERSION }}
+          add-to-path: true
 
       - name: Build Rust library
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           rustup target add aarch64-linux-android
           cargo install cargo-ndk --version ${{ env.CARGO_NDK_VERSION }} --locked
@@ -114,6 +112,8 @@ jobs:
       - name: Build Flutter APK
         env:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           export PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
           sed -i "s/org.gradle.jvmargs=-Xmx1024M/org.gradle.jvmargs=-Xmx2g/g" ./flutter/android/gradle.properties
@@ -137,12 +137,3 @@ jobs:
         with:
           name: rustdesk-android-${{ env.VERSION }}
           path: output/*.apk
-
-      - name: Publish to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: true
-          tag_name: android-test
-          name: "Android Test Build"
-          files: output/*.apk
-        continue-on-error: true
