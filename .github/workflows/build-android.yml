@@ -1,0 +1,148 @@
+name: Build Android
+
+on:
+  workflow_dispatch:
+
+env:
+  RUST_VERSION: "1.75"
+  CARGO_NDK_VERSION: "3.1.2"
+  FLUTTER_VERSION: "3.24.5"
+  NDK_VERSION: "r28c"
+  VERSION: "1.4.7"
+  RS_PUB_KEY: "${{ secrets.RS_PUB_KEY }}"
+  RENDEZVOUS_SERVER: "${{ secrets.RENDEZVOUS_SERVER }}"
+  API_SERVER: "${{ secrets.API_SERVER }}"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: true
+          swap-storage: false
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang cmake curl gcc-multilib git g++ g++-multilib \
+            libayatana-appindicator3-dev libasound2-dev libc6-dev \
+            libclang-dev libunwind-dev libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev libgtk-3-dev libpam0g-dev \
+            libpulse-dev libva-dev libxcb-randr0-dev libxcb-shape0-dev \
+            libxcb-xfixes0-dev libxdo-dev libxfixes-dev llvm-dev nasm \
+            ninja-build openjdk-17-jdk-headless pkg-config tree wget
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Patch Flutter
+        run: |
+          cd $(dirname $(dirname $(which flutter)))
+          [[ "${{ env.FLUTTER_VERSION }}" == "3.24.5" ]] && \
+            git apply ${{ github.workspace }}/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff || true
+
+      - name: Restore bridge files
+        uses: actions/download-artifact@v4
+        with:
+          name: bridge-artifact
+          path: ./
+        continue-on-error: true
+
+      - name: Generate bridge (if not cached)
+        run: |
+          if [ ! -f ./src/bridge_generated.rs ]; then
+            echo "Bridge files not found, generating..."
+            cargo install flutter_rust_bridge_codegen --version 1.80.1 --locked
+            flutter_rust_bridge_codegen --rust-input ./src/flutter_ffi.rs --dart-output ./flutter/lib/generated_bridge.dart
+          else
+            echo "Bridge files found, skipping generation"
+          fi
+
+      - name: Setup Android NDK
+        uses: android-actions/setup-ndk@v1
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+
+      - name: Build Rust library
+        run: |
+          rustup target add aarch64-linux-android
+          cargo install cargo-ndk --version ${{ env.CARGO_NDK_VERSION }} --locked
+          cargo ndk --platform 21 --target aarch64-linux-android build --locked --release --features flutter,hwcodec
+
+      - name: Generate signing keystore
+        run: |
+          if [ -z "${{ secrets.ANDROID_SIGNING_KEY }}" ]; then
+            mkdir -p ./flutter/android/app
+            keytool -genkey -v \
+              -keystore ./flutter/android/app/release.keystore \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -alias rustdesk -storepass rustdesk123 -keypass rustdesk123 \
+              -dname "CN=RustDesk, OU=Dev, O=RustDesk, L=Unknown, ST=Unknown, C=US"
+            STORE_PATH=$(pwd)/flutter/android/app/release.keystore
+            printf "storeFile=%s\nstorePassword=rustdesk123\nkeyAlias=rustdesk\nkeyPassword=rustdesk123\n" \
+              "$STORE_PATH" > ./flutter/android/key.properties
+            echo "Generated auto-signing keystore"
+          else
+            echo "Using configured ANDROID_SIGNING_KEY"
+          fi
+
+      - name: Build Flutter APK
+        env:
+          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+        run: |
+          export PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
+          sed -i "s/org.gradle.jvmargs=-Xmx1024M/org.gradle.jvmargs=-Xmx2g/g" ./flutter/android/gradle.properties
+
+          mkdir -p ./flutter/android/app/src/main/jniLibs/arm64-v8a
+          cp ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so \
+            ./flutter/android/app/src/main/jniLibs/arm64-v8a/
+          cp ./target/aarch64-linux-android/release/liblibrustdesk.so \
+            ./flutter/android/app/src/main/jniLibs/arm64-v8a/librustdesk.so
+
+          pushd flutter
+          flutter build apk release --target-platform android-arm64 --split-per-abi
+          popd
+
+          mkdir -p output
+          cp flutter/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
+            output/rustdesk-${{ env.VERSION }}-aarch64.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: rustdesk-android-${{ env.VERSION }}
+          path: output/*.apk
+
+      - name: Publish to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: true
+          tag_name: android-test
+          name: "Android Test Build"
+          files: output/*.apk
+        continue-on-error: true
