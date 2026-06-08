@@ -129,6 +129,8 @@ pub fn global_init() -> bool {
             *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = server.to_owned();
         }
     }
+    // 改变应用名以禁用官方更新检测（is_custom_client() 检查应用名 != "RustDesk"）
+    *config::APP_NAME.write().unwrap() = "RustDesk-Custom".to_owned();
     #[cfg(target_os = "linux")]
     {
         if !crate::platform::linux::is_x11() {
