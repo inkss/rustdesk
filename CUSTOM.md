@@ -145,6 +145,7 @@ platforms:
 3. `src/common.rs` 的改动在函数内部，上游重构函数签名时可能需要手动合并
 4. `.github/workflows/` 目录完全重写，上游 CI 变更不影响本 fork
 5. `flutter-build.yml` 基于上游原始版本改造，上游大版本更新时可能需要重新同步
+6. `.gitignore` 中 `rustdesk` 已改为 `/rustdesk`，新增上游文件时注意检查是否被误忽略
 
 ---
 
@@ -161,3 +162,4 @@ platforms:
 | 2026-06-07 | 禁用官方更新检测（check_software_update 直接 return） |
 | 2026-06-07 | 添加 Android 专用编译 workflow（build-android.yml） |
 | 2026-06-08 | 优化 workflow 版本管理：sync 通过提交历史判断是否需要合并，build 自动从上游获取版本号，Release tag 统一上游格式（无 v 前缀），手动触发时自动覆盖旧 Release |
+| 2026-06-08 | 修复 Android Kotlin 文件被 gitignore 忽略：`rustdesk` 规则改为 `/rustdesk`，提交 `com.rustdesk.app` 下 12 个 Kotlin 源文件 |
