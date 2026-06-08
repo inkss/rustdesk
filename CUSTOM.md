@@ -11,8 +11,7 @@
 ## 分支策略
 
 - **工作分支**: `custom-build`（基于上游 release tag 创建）
-- **上游同步**: 每天自动检查上游新版本，合并后触发编译
-- 不使用 `main` 分支
+- **上游同步**: 每天自动检查上游正式发布版本 tag，合并后触发编译
 
 ---
 
@@ -43,7 +42,7 @@
 | `flutter/android/app/src/main/AndroidManifest.xml` | `package` 属性 + 所有组件引用 |
 | `flutter/android/app/src/debug/AndroidManifest.xml` | `package` 属性 |
 | `flutter/android/app/src/profile/AndroidManifest.xml` | `package` 属性 |
-| `flutter/android/app/src/main/kotlin/com/inkss/rustdesk/*.kt` | 12 个 Kotlin 文件的 `package` 声明（目录从 `carriez/flutter_hbb` 移动到 `inkss/rustdesk`） |
+| `flutter/android/app/src/main/kotlin/com/rustdesk/app/*.kt` | 12 个 Kotlin 文件的 `package` 声明（目录从 `carriez/flutter_hbb` 移动到 `rustdesk/app`） |
 | `flutter/android/app/src/main/kotlin/ffi.kt` | `import` 语句 |
 | `Cargo.toml` | macOS bundle `identifier` |
 
@@ -51,7 +50,7 @@
 
 ### 3. Android 签名配置
 
-`flutter/android/app/build.gradle` 中启用 v1+v2+v3 签名方案，兼容 Android 高版本（如小米 15 Pro）。
+`flutter/android/app/build.gradle` 中启用 v1+v2 签名方案，兼容 Android 高版本。
 
 ```groovy
 signingConfigs {
