@@ -21,49 +21,57 @@ jobs:
           git remote add upstream https://github.com/rustdesk/rustdesk.git
           git fetch upstream --tags
 
-      - name: Check for new release
+      - name: Check if merge needed
         id: check
         run: |
-          # 获取上游最新版本 tag（纯数字格式，如 1.4.7）
-          LATEST=$(git tag | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
-          # 获取本地已同步的最新版本（v 前缀格式，如 v1.4.7）
-          LOCAL_LATEST=$(git tag | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sed 's/^v//' | sort -V | tail -1)
-          echo "upstream=$LATEST" >> $GITHUB_OUTPUT
-          echo "local=$LOCAL_LATEST" >> $GITHUB_OUTPUT
-          if [ -z "$LOCAL_LATEST" ] || [ "$LATEST" != "$LOCAL_LATEST" ]; then
-            echo "new_release=true" >> $GITHUB_OUTPUT
-            echo "📦 New release found: $LATEST (local: ${LOCAL_LATEST:-none})"
+          # 获取上游最新版本 tag
+          LATEST=$(git tag -l '[0-9]*.[0-9]*.[0-9]*' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then
+            echo "❌ No upstream version tag found"
+            exit 1
+          fi
+          echo "version=$LATEST" >> $GITHUB_OUTPUT
+          echo "📦 Upstream latest: $LATEST"
+
+          # 检查上游最新 tag 的提交是否已在当前分支
+          # 无论本地有没有 tag，只要代码已经包含上游提交就不用合并
+          UPSTREAM_SHA=$(git rev-list -1 "$LATEST" 2>/dev/null || echo "")
+          if [ -z "$UPSTREAM_SHA" ]; then
+            echo "❌ Cannot resolve upstream tag $LATEST"
+            exit 1
+          fi
+
+          if git merge-base --is-ancestor "$UPSTREAM_SHA" HEAD 2>/dev/null; then
+            echo "need_merge=false" >> $GITHUB_OUTPUT
+            echo "✅ $LATEST commit already in history, skip merge"
           else
-            echo "✅ Already up to date: $LATEST"
+            echo "need_merge=true" >> $GITHUB_OUTPUT
+            echo "📦 $LATEST commit not in history, need merge"
           fi
 
       - name: Merge upstream release
-        if: steps.check.outputs.new_release == 'true'
+        if: steps.check.outputs.need_merge == 'true'
         id: merge
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=${{ steps.check.outputs.upstream }}
-          git fetch upstream tag $VERSION
+          VERSION=${{ steps.check.outputs.version }}
+          git fetch upstream tag "$VERSION"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # 尝试合并
-          if git merge $VERSION --no-edit -m "Merge upstream release $VERSION"; then
-            # 合并成功，创建 v 前缀 tag 并推送
-            git tag v$VERSION
+          if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
             git push origin HEAD
-            git push origin v$VERSION
-            echo "✅ Merged and tagged v$VERSION"
+            echo "✅ Merged $VERSION"
             echo "merged=true" >> $GITHUB_OUTPUT
-            echo "version=$VERSION" >> $GITHUB_OUTPUT
           else
             # 合并冲突，创建 PR 让用户手动解决
             git merge --abort || true
-            BRANCH=upstream-merge-$VERSION
-            git checkout -b $BRANCH
-            git merge $VERSION --no-edit || true
-            git push origin $BRANCH || git push origin $BRANCH --force
+            BRANCH="upstream-merge-$VERSION"
+            git checkout -b "$BRANCH"
+            git merge "$VERSION" --no-edit || true
+            git push origin "$BRANCH" || git push origin "$BRANCH" --force
             gh pr create \
               --title "Merge upstream release $VERSION" \
               --body "自动合并上游版本 $VERSION 时出现冲突，请手动解决后合并。" \
@@ -73,7 +81,7 @@ jobs:
           fi
 
       - name: Trigger build
-        if: steps.merge.outputs.merged == 'true'
+        if: steps.check.outputs.need_merge == 'false' || steps.merge.outputs.merged == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -81,7 +89,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'build.yml',
-              ref: 'custom-build',
-              inputs: { version: '${{ steps.merge.outputs.version }}' }
+              ref: 'custom-build'
             });
-            console.log('✅ Triggered build.yml for v${{ steps.merge.outputs.version }}');
+            console.log('✅ Triggered build.yml');

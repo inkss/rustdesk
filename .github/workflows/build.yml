@@ -6,18 +6,64 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - '[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
-    inputs:
-      version:
-        description: '版本号（留空使用代码默认版本）'
-        required: false
 
 permissions:
   contents: write
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git remote add upstream https://github.com/rustdesk/rustdesk.git
+          git fetch upstream --tags
+
+      - name: Resolve version
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # tag push：直接用 tag 名，去掉 v 前缀
+            RAW="${{ github.ref_name }}"
+          else
+            # workflow_dispatch（sync 调用）：从上游获取最新版本
+            RAW=$(git tag -l '[0-9]*.[0-9]*.[0-9]*' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          fi
+
+          VERSION="${RAW#v}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Cannot resolve version (raw: $RAW)"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📌 Resolved version: $VERSION"
+
+      - name: Clean existing release
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.resolve.outputs.version }}"
+          echo "🧹 Cleaning existing release/tag for $VERSION..."
+
+          gh release delete "$VERSION" --yes 2>/dev/null || true
+          git tag -d "$VERSION" 2>/dev/null || true
+          git push origin ":refs/tags/$VERSION" 2>/dev/null || true
+
+          echo "✅ Cleanup done"
+
   build:
+    needs: prepare
     uses: ./.github/workflows/flutter-build.yml
     secrets: inherit
     with:
       upload-artifact: true
-      upload-tag: ${{ github.ref_name || inputs.version || 'nightly' }}
+      upload-tag: ${{ needs.prepare.outputs.version }}

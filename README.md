@@ -58,9 +58,9 @@ platforms:
 ## 工作流说明
 
 | 工作流 | 触发方式 | 功能 |
-|---|---|---|
-| `build.yml` | 手动触发 / tag 推送 | 编译入口，上传产物到 Releases |
-| `sync-upstream.yml` | 每天自动 / 手动触发 | 检查上游新版本，合并代码，触发编译 |
+| --- | --- | --- |
+| `build.yml` | 手动触发 / tag 推送 / sync 调用 | 自动获取上游版本号，编译并上传到 Releases |
+| `sync-upstream.yml` | 每天自动 / 手动触发 | 检查上游新版本，按需合并代码，触发编译 |
 | `flutter-build.yml` | 被 build.yml 调用 | 实际的编译逻辑（不直接触发） |
 
 ## 技术原理
@@ -109,7 +109,9 @@ base64 -w 0 release.keystore   # Linux
 
 同步工作流每天自动检查上游仓库（`rustdesk/rustdesk`）的新版本：
 
-- ✅ 无冲突 → 自动合并，创建 tag，触发编译
+- ✅ 无冲突 → 自动合并，触发编译，Release tag 与上游版本号一致
 - ❌ 有冲突 → 自动创建 PR，手动解决后合并
+
+手动触发 sync 或 build 时，已有的同版本 Release 会被自动覆盖。
 
 上游仓库：<https://github.com/rustdesk/rustdesk>

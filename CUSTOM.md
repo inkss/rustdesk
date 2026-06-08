@@ -70,13 +70,37 @@ CI 构建时自动生成 keystore 签名（无需配置 `ANDROID_SIGNING_KEY`）
 
 | 文件 | 作用 | 触发方式 |
 |---|---|---|
-| `build.yml` | 编译入口，调用 flutter-build.yml | 手动 / tag 推送 |
-| `sync-upstream.yml` | 检查上游新版本，合并代码 | 每天自动 / 手动 |
-| `flutter-build.yml` | 实际编译逻辑（被调用） | workflow_call |
+| `build.yml` | 编译入口，自动解析版本号，调用 flutter-build.yml | 手动 / tag 推送 / sync 调用 |
+| `sync-upstream.yml` | 检查上游新版本，按需合并代码，触发编译 | 每天自动 / 手动 |
+| `flutter-build.yml` | 实际编译逻辑（被调用），版本号动态获取 | workflow_call |
 
 辅助 workflow（内部依赖，用户无需关注）：
 - `bridge.yml` — flutter-rust-bridge 代码生成
 - `third-party-RustDeskTempTopMostWindow.yml` — Windows 置顶窗口组件
+
+#### sync-upstream.yml 流程
+
+```
+fetch upstream tags
+       │
+  上游最新 tag 的提交已在 HEAD 中？
+      ╱              ╲
+    是                否
+     │                 │
+  跳过合并           合并代码 → push
+      ╲              ╱
+       ▼            ▼
+   触发 build.yml（不传版本号）
+```
+
+- 通过 `git merge-base --is-ancestor` 检查提交历史，不依赖本地 tag 是否存在
+- 不创建 `v*` 前缀 tag，Release tag 统一使用上游格式（如 `1.4.7`）
+
+#### build.yml 流程
+
+- `workflow_dispatch` 时：fetch upstream tags，自动获取最新版本号，清理旧 Release/tag 后编译
+- tag push 时：从 tag 名解析版本号，直接编译
+- 无手动版本号输入，版本号始终跟随上游
 
 ### 5. 编译平台配置
 
@@ -136,3 +160,4 @@ platforms:
 | 2026-06-07 | 精简编译平台：移除 windows-sciter/macos/ios/linux-sciter/appimage/flatpak/publish_unsigned，只保留 windows/linux/android |
 | 2026-06-07 | 禁用官方更新检测（check_software_update 直接 return） |
 | 2026-06-07 | 添加 Android 专用编译 workflow（build-android.yml） |
+| 2026-06-08 | 优化 workflow 版本管理：sync 通过提交历史判断是否需要合并，build 自动从上游获取版本号，Release tag 统一上游格式（无 v 前缀），手动触发时自动覆盖旧 Release |
