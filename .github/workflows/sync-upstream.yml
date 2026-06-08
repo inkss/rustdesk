@@ -81,6 +81,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'build.yml',
-              ref: 'custom-build'
+              ref: 'custom-build',
+              inputs: { version: '${{ steps.merge.outputs.version }}' }
             });
             console.log('✅ Triggered build.yml for v${{ steps.merge.outputs.version }}');

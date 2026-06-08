@@ -311,15 +311,9 @@ jobs:
         with:
           prerelease: true
           tag_name: ${{ env.TAG_NAME }}
-          name: "RustDesk ${{ env.VERSION }} (上游: ${{ env.TAG_NAME }})"
+          name: "RustDesk ${{ env.VERSION }}"
           body: |
-            ## RustDesk 自定义编译版 ${{ env.VERSION }}
-
             基于上游 [rustdesk/rustdesk](https://github.com/rustdesk/rustdesk) `${{ env.TAG_NAME }}` 编译，内置自定义 ID 服务器配置。
-
-            **编译日期**: ${{ github.event.head_commit.timestamp || '手动触发' }}
-
-            > ⚠️ 从 **Releases** 页面下载安装包，不要从 Artifacts 下载（Artifacts 会被打包为 zip）。
           files: |
             ./SignOutput/rustdesk-*.msi
             ./SignOutput/rustdesk-*.exe
