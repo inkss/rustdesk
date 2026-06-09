@@ -24,9 +24,27 @@
 
 > ID 和 Key 必须同时填写，否则会出现 key 不匹配。都不填则等同于官方客户端。
 >
-> 未配置 Android 签名时使用 debug 签名（每次不同，不能覆盖安装）。
->
 > 未配置私有仓库时，产物发布到当前仓库的 Releases。
+
+#### 生成 Android 签名密钥
+
+```bash
+# 1. 生成 keystore（只需执行一次）
+keytool -genkey -v -keystore release.keystore \
+  -keyalg RSA -keysize 2048 -validity 10000 \
+  -alias rustdesk -storepass 你的密码 -keypass 你的密码 \
+  -dname "CN=RustDesk, OU=Dev, O=RustDesk, L=Unknown, ST=Unknown, C=US"
+
+# 2. 编码为 Base64
+base64 -w 0 release.keystore   # Linux
+# base64 release.keystore      # macOS
+```
+
+将输出的 Base64 字符串填入 `ANDROID_SIGNING_KEY`，别名填 `rustdesk`，密码填你设的值。未配置时使用 debug 签名（每次不同，不能覆盖安装）。
+
+#### rustdesk-api 兼容
+
+本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。详见 [CUSTOM.md](CUSTOM.md)。
 
 ### 2. 触发编译
 
