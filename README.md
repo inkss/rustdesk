@@ -4,7 +4,7 @@
 
 > 详细的改动说明见 [CUSTOM.md](CUSTOM.md)。
 
-## 快速开始
+## 一、快速开始
 
 ### 1. 配置 GitHub Secrets
 
@@ -26,56 +26,6 @@
 >
 > 未配置私有仓库时，产物发布到当前仓库的 Releases。
 
-#### 生成 Android 签名密钥
-
-```bash
-# 1. 生成 keystore（只需执行一次）
-keytool -genkey -v -keystore release.keystore \
-  -keyalg RSA -keysize 2048 -validity 10000 \
-  -alias rustdesk -storepass 你的密码 -keypass 你的密码 \
-  -dname "CN=RustDesk, OU=Dev, O=RustDesk, L=Unknown, ST=Unknown, C=US"
-
-# 2. 编码为 Base64
-base64 -w 0 release.keystore   # Linux
-# base64 release.keystore      # macOS
-```
-
-将输出的 Base64 字符串填入 `ANDROID_SIGNING_KEY`，别名填 `rustdesk`，密码填你设的值。
-
-#### 私有 Release 仓库
-
-公开仓库享受免费 Actions 额度，但 Releases 对所有人可见。配置私有仓库后，编译产物只推送到私有仓库，避免泄露。
-
-1\. 创建私有仓库
-
-GitHub 上新建一个 private 仓库（如 `rustdesk-releases`）。创建时勾选 **Initialize this repository with a README**，仓库不能为空，否则 Release 创建会失败。
-
-2\. 生成 PAT
-
-GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token：
-
-- Token name：随意（如 `rustdesk-release`）
-- Expiration：选 1 年
-- Repository access：选 `Only select repositories` → 选刚建的私有仓库
-- Permissions → Repository permissions → **Contents**：`Read and write`
-
-生成后复制 token（`github_pat_` 开头，只显示一次）。
-
-3\. 配置 Secret
-
-在公开仓库 Settings → Secrets → Repository secrets 中添加：
-
-| Secret 名称 | 值 |
-| --- | --- |
-| `RELEASE_REPO` | 私有仓库名（如 `inkss/rustdesk-releases`） |
-| `RELEASE_PAT` | 上一步复制的 token |
-
-配置后，编译产物会推送到私有仓库的 Releases，当前仓库不再有产物。
-
-#### rustdesk-api 兼容
-
-本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。
-
 ### 2. 触发编译
 
 - **自动触发**：每天 UTC 03:23（北京时间 11:23）检查上游新版本，有更新则自动合并并编译
@@ -89,7 +39,7 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 - Linux: DEB（x86_64 / aarch64）+ RPM（x86_64）
 - Android: APK（aarch64）
 
-## 编译平台配置
+## 二、编译平台配置
 
 编辑 `.build-config.yml` 控制编译哪些平台：
 
@@ -106,7 +56,7 @@ platforms:
   flatpak: false
 ```
 
-## 工作流说明
+## 三、工作流说明
 
 | 工作流 | 触发方式 | 功能 |
 | --- | --- | --- |
@@ -114,7 +64,7 @@ platforms:
 | `build.yml` | tag 推送 / sync 调用 | 获取版本号，编译并发布到 Releases |
 | `flutter-build.yml` | 被 build.yml 调用 | 实际编译逻辑（不直接触发） |
 
-## 上游同步
+## 四、上游同步
 
 每天自动检查上游仓库（[rustdesk/rustdesk](https://github.com/rustdesk/rustdesk)）的新版本：
 
@@ -123,3 +73,55 @@ platforms:
 - 已是最新 → 跳过，不触发编译
 
 手动触发时，已有的同版本 Release 会被自动覆盖。
+
+## 五、参考内容
+
+### 1. 生成 Android 签名密钥
+
+```bash
+# 1. 生成 keystore（只需执行一次）
+keytool -genkey -v -keystore release.keystore \
+  -keyalg RSA -keysize 2048 -validity 10000 \
+  -alias rustdesk -storepass 你的密码 -keypass 你的密码 \
+  -dname "CN=RustDesk, OU=Dev, O=RustDesk, L=Unknown, ST=Unknown, C=US"
+
+# 2. 编码为 Base64
+base64 -w 0 release.keystore   # Linux
+# base64 release.keystore      # macOS
+```
+
+将输出的 Base64 字符串填入 `ANDROID_SIGNING_KEY`，别名填 `rustdesk`，密码填你设的值。
+
+### 2. 私有 Release 仓库
+
+公开仓库享受免费 Actions 额度，但 Releases 对所有人可见，存在泄露风险。
+
+1\. 创建私有仓库
+
+GitHub 上新建一个 private 仓库（如 `rustdesk-releases`），创建时勾选 **Initialize this repository with a README**[^1]。
+
+[^1]: 仓库不能为空，否则 Release 创建会失败。
+
+2\. 生成 PAT
+
+GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token：
+
+- Token name：随意（如 `rustdesk-release`）
+- Expiration：选 1 年
+- Repository access：选 `Only select repositories` → 选刚建的私有仓库
+- Permissions → Repository permissions → **Contents**：`Read and write`
+
+3\. 配置 Secret
+
+在公开仓库 Settings → Secrets → Repository secrets 中添加：
+
+| Secret 名称 | 值 |
+| --- | --- |
+| `RELEASE_REPO` | 私有仓库名（如 `inkss/rustdesk-releases`） |
+| `RELEASE_PAT` | 上一步复制的 token |
+
+配置后，编译产物会推送到私有仓库的 Releases，当前仓库不再有产物。
+
+## 3. rustdesk-api 兼容
+
+本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。
