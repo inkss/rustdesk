@@ -1835,7 +1835,6 @@ pub async fn get_key(sync: bool) -> String {
                 return builtin_key.to_owned();
             }
         }
-        key = config::RS_PUB_KEY.to_owned();
     }
     key
 }
