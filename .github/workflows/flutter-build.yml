@@ -580,7 +580,7 @@ jobs:
 
       - uses: r0adkll/sign-android-release@349ebdef58775b1e0d8099458af0816dc79b6407 # v1
         name: Sign app APK
-        if: env.ANDROID_SIGNING_KEY != null
+        if: ${{ env.ANDROID_SIGNING_KEY != '' }}
         id: sign-rustdesk
         with:
           releaseDirectory: ./signed-apk
