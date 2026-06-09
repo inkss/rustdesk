@@ -7,10 +7,11 @@
 ## 功能特性
 
 - ✅ 编译时内置 ID 服务器地址和公钥，客户端开箱即用
-- ✅ 支持全平台编译（Windows / macOS / Linux / Android / iOS）
+- ✅ 支持全平台编译（Windows / Linux / Android）
 - ✅ 自动同步上游新版本并触发编译
 - ✅ 用户可通过客户端设置覆盖内置值
 - ✅ Android 包名 `com.rustdesk.app`，可与原版 RustDesk 共存
+- ✅ 支持私有 Release 仓库，公开仓库享受免费 Actions 额度
 
 ## 快速开始
 
@@ -18,25 +19,38 @@
 
 在仓库 **Settings → Secrets and variables → actions → Repository secrets** 中添加：
 
-| Secret 名称 | 说明 | 示例 |
-|---|---|---|
-| `RENDEZVOUS_SERVER` | ID 服务器地址（含端口） | `your-server.com:21116` |
-| `RS_PUB_KEY` | 服务器公钥（Base64 编码） | `your-base64-key=` |
-| `API_SERVER` | API 服务器地址（可选） | `https://api.your-server.com` |
+**服务器配置（ID 和 Key 必须同时填写）：**
 
-如需将编译产物推送到私有仓库（公开仓库享受免费 Actions 额度），额外配置：
+| Secret 名称 | 说明 | 必填 |
+| --- | --- | --- |
+| `RENDEZVOUS_SERVER` | ID 服务器地址（含端口） | ✅ |
+| `RS_PUB_KEY` | 服务器公钥（Base64 编码） | ✅ |
+| `API_SERVER` | API 服务器地址 | 可选 |
+
+> ID 和 Key 必须同时填写，否则会出现 key 不匹配。都不填则等同于官方客户端。
+
+**Android 签名（可选，支持覆盖安装）：**
 
 | Secret 名称 | 说明 |
-|---|---|
+| --- | --- |
+| `ANDROID_SIGNING_KEY` | Base64 编码的 keystore 文件 |
+| `ANDROID_ALIAS` | keystore 别名（如 `rustdesk`） |
+| `ANDROID_KEY_STORE_PASSWORD` | keystore 密码 |
+| `ANDROID_KEY_PASSWORD` | key 密码 |
+
+**私有 Release 仓库（可选）：**
+
+| Secret 名称 | 说明 |
+| --- | --- |
 | `RELEASE_REPO` | 私有仓库名（如 `inkss/rustdesk-releases`） |
 | `RELEASE_PAT` | Fine-grained PAT，需对私有仓库有 Contents 读写权限 |
 
-不配置时，产物发布到当前仓库的 Releases。
+不配置私有仓库时，产物发布到当前仓库的 Releases。
 
 ### 2. 触发编译
 
 - **手动触发**：进入 Actions 页面 → 选择 "Sync Upstream Release" → 点击 "Run workflow"
-- **自动触发**：每天自动检查上游新版本，发现新版本后自动合并并编译
+- **自动触发**：每天 UTC 03:23（北京时间 11:23）自动检查上游新版本
 
 ### 3. 下载产物
 
@@ -45,74 +59,31 @@
 - Windows: MSI 安装包 + EXE 安装包
 - Linux: DEB / RPM 包
 - Android: APK（aarch64）
-- macOS: DMG（需在 `.build-config.yml` 中开启）
 
 ## 编译平台配置
 
-默认只编译 Windows、Android、Linux 三个常用平台以加快编译速度。编辑 `.build-config.yml` 可开启更多平台：
+编辑 `.build-config.yml` 控制编译哪些平台：
 
 ```yaml
 platforms:
   windows: true        # Windows x86_64 (MSI + EXE)
-  windows_sciter: false # Windows Sciter 版 (32位兼容)
-  macos: false          # macOS x86_64 + aarch64 (DMG)
-  linux: true           # Linux x86_64 + aarch64 (DEB + RPM)
-  linux_sciter: false   # Linux Sciter 版
-  android: true         # Android aarch64 (APK)
-  ios: false            # iOS（需要 Apple 开发者账号）
-  appimage: false       # Linux AppImage
-  flatpak: false        # Linux Flatpak
+  windows_sciter: false
+  macos: false
+  linux: true          # Linux x86_64 + aarch64 (DEB + RPM)
+  linux_sciter: false
+  android: true        # Android aarch64 (APK)
+  ios: false
+  appimage: false
+  flatpak: false
 ```
 
 ## 工作流说明
 
 | 工作流 | 触发方式 | 功能 |
 | --- | --- | --- |
-| `build.yml` | 手动触发 / tag 推送 / sync 调用 | 自动获取上游版本号，编译并上传到 Releases |
 | `sync-upstream.yml` | 每天自动 / 手动触发 | 检查上游新版本，按需合并代码，触发编译 |
+| `build.yml` | tag 推送 / sync 调用 | 自动获取上游版本号，编译并上传到 Releases |
 | `flutter-build.yml` | 被 build.yml 调用 | 实际的编译逻辑（不直接触发） |
-
-## 技术原理
-
-使用 Rust `option_env!()` 宏在编译时从环境变量读取服务器配置，硬编码进二进制文件。
-
-配置值存储在 GitHub Secrets 中，不会出现在源码、日志或编译产物中。
-
-### 源码修改点
-
-仅修改 `src/common.rs`，不修改子模块：
-
-1. `global_init()` — 启动时从 `RENDEZVOUS_SERVER` 环境变量写入 `PROD_RENDEZVOUS_SERVER`
-2. `get_key()` — 从 `RS_PUB_KEY` 环境变量读取默认公钥
-3. `get_api_server_()` — 从 `API_SERVER` 环境变量读取 API 服务器地址
-4. `check_software_update()` — 禁用官方更新检测
-
-### Android 签名
-
-CI 构建时如果没有配置签名密钥，会自动生成临时 keystore（每次不同，无法覆盖安装）。
-
-如需固定签名（支持覆盖安装更新），在本地生成一次 keystore 并配置到 GitHub Secrets：
-
-```bash
-# 1. 本地生成 keystore（只需执行一次）
-keytool -genkey -v -keystore release.keystore \
-  -keyalg RSA -keysize 2048 -validity 10000 \
-  -alias rustdesk -storepass 你的密码 -keypass 你的密码 \
-  -dname "CN=You, OU=Dev, O=You, L=City, ST=State, C=US"
-
-# 2. 编码为 Base64
-base64 -w 0 release.keystore   # Linux
-# base64 release.keystore      # macOS
-```
-
-然后在 GitHub **Settings → Secrets → Repository secrets** 中配置：
-
-| Secret 名称 | 值 |
-|---|---|
-| `ANDROID_SIGNING_KEY` | 上面输出的 Base64 字符串 |
-| `ANDROID_ALIAS` | `rustdesk` |
-| `ANDROID_KEY_STORE_PASSWORD` | 你设的密码 |
-| `ANDROID_KEY_PASSWORD` | 你设的密码 |
 
 ## 上游同步
 
