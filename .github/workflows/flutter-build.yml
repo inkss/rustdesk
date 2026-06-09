@@ -267,13 +267,6 @@ jobs:
           name: topmostwindow-artifacts
           path: "./rustdesk"
 
-      - name: Upload unsigned
-        if: env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: rustdesk-unsigned-windows-${{ matrix.job.arch }}
-          path: rustdesk
-
       - name: Sign rustdesk files
         if: env.UPLOAD_ARTIFACT == 'true' && env.SIGN_BASE_URL != '-2'
         shell: bash
@@ -597,12 +590,6 @@ jobs:
 
           rm -f /tmp/release.keystore
 
-      - name: Upload Artifacts
-        if: env.UPLOAD_ARTIFACT == 'true'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
-          path: ./signed-apk/*.apk
 
       - name: Publish apk package
         if: env.PUBLISH_RELEASE == 'true'
@@ -919,13 +906,6 @@ jobs:
             rustdesk-*.rpm
           repository: ${{ secrets.RELEASE_REPO || '' }}
           token: ${{ secrets.RELEASE_REPO && secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
-
-      - name: Upload deb
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: env.UPLOAD_ARTIFACT == 'true'
-        with:
-          name: rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.deb
-          path: rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.deb
 
       # only x86_64 for arch since we can not find newest arm64 docker image to build
       # old arch image does not make sense for arch since it is "arch" which always update to date
