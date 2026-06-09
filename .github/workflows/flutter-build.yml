@@ -268,7 +268,7 @@ jobs:
           path: "./rustdesk"
 
       - name: Sign rustdesk files
-        if: env.UPLOAD_ARTIFACT == 'true' && env.SIGN_BASE_URL != '-2'
+        if: env.SIGN_BASE_URL != '-2'
         shell: bash
         run: |
           pip3 install requests argparse
@@ -276,7 +276,6 @@ jobs:
 
       - name: Build self-extracted executable
         shell: bash
-        if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
@@ -290,7 +289,6 @@ jobs:
         uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
 
       - name: Build msi
-        if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           pushd ./res/msi
           python preprocess.py --arp -d ../../rustdesk
@@ -300,7 +298,7 @@ jobs:
           sha256sum ../../SignOutput/rustdesk-*.msi
 
       - name: Sign rustdesk self-extracted file
-        if: env.UPLOAD_ARTIFACT == 'true' && env.SIGN_BASE_URL != '-2'
+        if: env.SIGN_BASE_URL != '-2'
         shell: bash
         run: |
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./SignOutput
@@ -665,7 +663,7 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
-        if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
+        # always build
         with:
           toolchain: ${{ env.RUST_VERSION }}
           targets: ${{ matrix.job.target }}
@@ -682,14 +680,14 @@ jobs:
           sed -i  "s/\[\"cdylib\", \"staticlib\", \"rlib\"\]/\[\"cdylib\"\]/g" Cargo.toml
 
       - name: Restore bridge files
-        if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
+        # always build
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: bridge-artifact
           path: ./
 
       - name: Setup vcpkg with Github Actions binary cache
-        if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
+        # always build
         uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 # v11
         with:
           vcpkgDirectory: /opt/artifacts/vcpkg
@@ -697,7 +695,7 @@ jobs:
           doNotCache: false
 
       - name: Install vcpkg dependencies
-        if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
+        # always build
         run: |
           sudo apt install -y libva-dev && apt show libva-dev
           if ! $VCPKG_ROOT/vcpkg \
@@ -717,7 +715,7 @@ jobs:
         shell: bash
 
       - name: Restore bridge files
-        if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
+        # always build
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: bridge-artifact
@@ -726,7 +724,7 @@ jobs:
       - uses: rustdesk-org/run-on-arch-action@d3fcfbb632b84cf7f6bc772bfaaa2c2f4f8789a8 # no release tag; commit 2026-05-26
         name: Build rustdesk
         id: vcpkg
-        if: matrix.job.arch == 'x86_64' || env.UPLOAD_ARTIFACT == 'true'
+        # always build
         with:
           arch: ${{ matrix.job.arch }}
           distro: ${{ matrix.job.distro }}
@@ -911,7 +909,7 @@ jobs:
       # old arch image does not make sense for arch since it is "arch" which always update to date
       # and failed to makepkg arm64 on x86_64
       - name: Patch archlinux PKGBUILD
-        if: matrix.job.arch == 'x86_64' && env.UPLOAD_ARTIFACT == 'true'
+        if: matrix.job.arch == 'x86_64'
         run: |
           sed -i "s/x86_64/${{ matrix.job.arch }}/g" res/PKGBUILD
           if [[ "${{ matrix.job.arch }}" == "aarch64" ]]; then
@@ -919,7 +917,7 @@ jobs:
           fi
 
       - name: Build archlinux package
-        if: matrix.job.arch == 'x86_64' && env.UPLOAD_ARTIFACT == 'true'
+        if: matrix.job.arch == 'x86_64'
         uses: rustdesk-org/arch-makepkg-action@04200739ed1d0bf6f2188b6736b26a767c57a7f9 # no release tag; commit 2026-05-26
         with:
           packages:
