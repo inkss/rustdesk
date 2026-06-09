@@ -42,7 +42,35 @@ base64 -w 0 release.keystore   # Linux
 
 将输出的 Base64 字符串填入 `ANDROID_SIGNING_KEY`，别名填 `rustdesk`，密码填你设的值。
 
-*未配置时使用 debug 签名（每次不同，不能覆盖安装）。*
+#### 私有 Release 仓库
+
+公开仓库享受免费 Actions 额度，但 Releases 对所有人可见。配置私有仓库后，编译产物只推送到私有仓库，避免泄露。
+
+1\. 创建私有仓库
+
+GitHub 上新建一个 private 仓库（如 `rustdesk-releases`）。创建时勾选 **Initialize this repository with a README**，仓库不能为空，否则 Release 创建会失败。
+
+2\. 生成 PAT
+
+GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token：
+
+- Token name：随意（如 `rustdesk-release`）
+- Expiration：选 1 年
+- Repository access：选 `Only select repositories` → 选刚建的私有仓库
+- Permissions → Repository permissions → **Contents**：`Read and write`
+
+生成后复制 token（`github_pat_` 开头，只显示一次）。
+
+3\. 配置 Secret
+
+在公开仓库 Settings → Secrets → Repository secrets 中添加：
+
+| Secret 名称 | 值 |
+| --- | --- |
+| `RELEASE_REPO` | 私有仓库名（如 `inkss/rustdesk-releases`） |
+| `RELEASE_PAT` | 上一步复制的 token |
+
+配置后，编译产物会推送到私有仓库的 Releases，当前仓库不再有产物。
 
 #### rustdesk-api 兼容
 
