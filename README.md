@@ -40,11 +40,13 @@ base64 -w 0 release.keystore   # Linux
 # base64 release.keystore      # macOS
 ```
 
-将输出的 Base64 字符串填入 `ANDROID_SIGNING_KEY`，别名填 `rustdesk`，密码填你设的值。未配置时使用 debug 签名（每次不同，不能覆盖安装）。
+将输出的 Base64 字符串填入 `ANDROID_SIGNING_KEY`，别名填 `rustdesk`，密码填你设的值。
+
+*未配置时使用 debug 签名（每次不同，不能覆盖安装）。*
 
 #### rustdesk-api 兼容
 
-本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。详见 [CUSTOM.md](CUSTOM.md)。
+本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。
 
 ### 2. 触发编译
 
