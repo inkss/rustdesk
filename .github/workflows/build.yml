@@ -65,6 +65,5 @@ jobs:
     uses: ./.github/workflows/flutter-build.yml
     secrets: inherit
     with:
-      upload-artifact: true
       publish-release: true
       upload-tag: ${{ needs.prepare.outputs.version }}
