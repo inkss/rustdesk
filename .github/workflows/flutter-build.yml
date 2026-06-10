@@ -727,6 +727,9 @@ jobs:
           dockerRunArgs: |
             --volume "${PWD}:/workspace"
             --volume "/opt/artifacts:/opt/artifacts"
+            -e RS_PUB_KEY
+            -e RENDEZVOUS_SERVER
+            -e API_SERVER
           shell: /bin/bash
           install: |
             apt-get update -y
