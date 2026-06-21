@@ -56,7 +56,13 @@ fetch upstream tags
       ╱              ╲
     是                否
      │                 │
-  跳过              合并 → push → 触发 build
+  跳过           尝试合并到 custom-build
+                    ╱          ╲
+               成功             冲突
+                │                │
+         push + 触发 build    创建 upstream-merge-* 分支
+                              自动解决部分冲突
+                              创建 PR（含冲突详情）
 ```
 
 **build.yml 流程**：
@@ -91,3 +97,4 @@ fetch upstream tags
 | 2026-06-08 | 修复 Android 签名（改用 apksigner）、Kotlin 兼容性、gitignore 问题 |
 | 2026-06-08 | 跳过 secure_tcp 握手，兼容 rustdesk-api；移除防诈骗弹窗 |
 | 2026-06-09 | 重构 workflow：移除 UPLOAD_ARTIFACT/android-only，简化条件判断 |
+| 2026-06-21 | 修复 sync-upstream：改进冲突处理（UD/DU/UU 分类处理），PR 描述动态生成冲突详情 |

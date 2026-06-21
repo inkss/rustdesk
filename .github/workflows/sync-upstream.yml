@@ -61,22 +61,45 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # 尝试合并
+          # 在 custom-build 上尝试合并
           if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
+            # 无冲突：直接 push 到 custom-build
             git push origin HEAD
             echo "✅ Merged $VERSION"
             echo "merged=true" >> $GITHUB_OUTPUT
           else
-            # 合并冲突，创建 PR 让用户手动解决
-            git merge --abort || true
+            # 有冲突：创建分支处理
             BRANCH="upstream-merge-$VERSION"
             git checkout -b "$BRANCH"
-            git merge "$VERSION" --no-edit || true
-            git push origin "$BRANCH" || git push origin "$BRANCH" --force
+
+            CONFLICTS=$(git diff --name-only --diff-filter=U)
+            RESOLVED=""
+            MANUAL=""
+
+            for file in $CONFLICTS; do
+              if git status --porcelain "$file" | grep -q "^UD"; then
+                git rm "$file"
+                RESOLVED="$RESOLVED\n- ✅ \`$file\` (本地已删除，保持删除)"
+              elif git status --porcelain "$file" | grep -q "^DU"; then
+                git checkout --ours "$file"
+                git add "$file"
+                RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
+              else
+                MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
+              fi
+            done
+
+            git add -A
+            git commit -m "Merge upstream release $VERSION (conflicts resolved)"
+            git push origin "$BRANCH" --force
+
+            # 动态生成 PR 描述
+            PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL"
             gh pr create \
               --title "Merge upstream release $VERSION" \
-              --body "自动合并上游版本 $VERSION 时出现冲突，请手动解决后合并。" \
-              --base custom-build || true
+              --body "$(echo -e "$PR_BODY")" \
+              --base custom-build \
+              --head "$BRANCH" || echo "PR may already exist"
             echo "⚠️ Conflicts detected, PR created for v$VERSION"
             echo "merged=false" >> $GITHUB_OUTPUT
           fi
