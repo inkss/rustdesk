@@ -1,5 +1,5 @@
 name: Sync Upstream Release
-
+# sync upstream release workflow
 on:
   schedule:
     - cron: '23 3 * * *'  # 每天 UTC 03:23
