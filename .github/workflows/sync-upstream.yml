@@ -82,12 +82,12 @@ jobs:
                 git checkout --ours "$file"
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (保留本地 workflow)"
-              elif git status --porcelain "$file" | grep -q "^DU"; then
-                # DU: HEAD 删除，上游修改 → 保持删除
+              elif git status --porcelain "$file" | grep -q "^UD"; then
+                # UD: 本地已删除，上游修改 → 保持删除
                 git rm "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (本地已删除，保持删除)"
-              elif git status --porcelain "$file" | grep -q "^UD"; then
-                # UD: HEAD 修改，上游删除 → 保留本地版本
+              elif git status --porcelain "$file" | grep -q "^DU"; then
+                # DU: 上游已删除，本地修改 → 保留本地版本
                 git checkout --ours "$file"
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
@@ -102,7 +102,7 @@ jobs:
             git push origin "$BRANCH" --force
 
             # 动态生成 PR 描述
-            PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL"
+            PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL\n\n---\n\n合并此 PR 后，请手动触发 [build.yml](../../actions/workflows/build.yml) 工作流完成编译。"
             gh pr create \
               --title "Merge upstream release $VERSION" \
               --body "$(echo -e "$PR_BODY")" \
