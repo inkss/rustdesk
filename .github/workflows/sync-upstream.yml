@@ -12,7 +12,6 @@ jobs:
       contents: write
       pull-requests: write
       actions: write
-      workflows: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -78,7 +77,12 @@ jobs:
             MANUAL=""
 
             for file in $CONFLICTS; do
-              if git status --porcelain "$file" | grep -q "^DU"; then
+              if [[ "$file" == .github/workflows/* ]]; then
+                # workflow 文件：始终保留本地版本（GITHUB_TOKEN 无权修改）
+                git checkout --ours "$file"
+                git add "$file"
+                RESOLVED="$RESOLVED\n- ✅ \`$file\` (保留本地 workflow)"
+              elif git status --porcelain "$file" | grep -q "^DU"; then
                 # DU: HEAD 删除，上游修改 → 保持删除
                 git rm "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (本地已删除，保持删除)"
