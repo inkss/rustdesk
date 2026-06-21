@@ -77,14 +77,17 @@ jobs:
             MANUAL=""
 
             for file in $CONFLICTS; do
-              if git status --porcelain "$file" | grep -q "^UD"; then
+              if git status --porcelain "$file" | grep -q "^DU"; then
+                # DU: HEAD 删除，上游修改 → 保持删除
                 git rm "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (本地已删除，保持删除)"
-              elif git status --porcelain "$file" | grep -q "^DU"; then
+              elif git status --porcelain "$file" | grep -q "^UD"; then
+                # UD: HEAD 修改，上游删除 → 保留本地版本
                 git checkout --ours "$file"
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
               else
+                # UU: 双方修改 → 保留冲突标记
                 MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
               fi
             done
