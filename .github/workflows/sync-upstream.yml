@@ -83,7 +83,11 @@ jobs:
           git push origin --delete "$BRANCH" 2>/dev/null || true
 
           # 尝试合并
-          if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
+          git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION" || true
+
+          # 检查是否有冲突
+          CONFLICTS=$(git diff --name-only --diff-filter=U)
+          if [ -z "$CONFLICTS" ]; then
             # 无冲突：恢复本地 workflow 文件
             cp -f /tmp/workflow_backup/* .github/workflows/
             git add .github/workflows/
