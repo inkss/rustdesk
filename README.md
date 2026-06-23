@@ -131,9 +131,7 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 | Secret | 用途 | 推荐类型 | 权限 | 必填 |
 | --- | --- | --- | --- | --- |
 | `RELEASE_PAT` | 推送编译产物到私有仓库 | Fine-grained | 选私有仓库 → Contents: `Read and write` | 配置私有仓库时必填 |
-| `SYNC_PAT` | 上游同步时创建 PR | Classic | 勾选 `repo` scope | 可选（未配置时用 GITHUB_TOKEN） |
-
-> `SYNC_PAT` 需要 Classic token，因为 Fine-grained token 可能无法创建 PR。
+| `SYNC_PAT` | 上游同步时创建 PR | Fine-grained 或 Classic | Fine-grained: 选本仓库 → Pull requests: `Read and write`；Classic: 勾选 `repo` scope | 可选（未配置时用 GITHUB_TOKEN） |
 
 ### 4. rustdesk-api 兼容
 
