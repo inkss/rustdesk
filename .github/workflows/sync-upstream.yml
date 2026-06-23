@@ -13,6 +13,10 @@ permissions:
 jobs:
   check-and-sync:
     runs-on: ubuntu-latest
+    outputs:
+      need_merge: ${{ steps.check.outputs.need_merge }}
+      version: ${{ steps.check.outputs.version }}
+      merged: ${{ steps.merge.outputs.merged }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -64,8 +68,6 @@ jobs:
       - name: Merge upstream release
         if: steps.check.outputs.need_merge == 'true'
         id: merge
-        env:
-          GH_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
         run: |
           VERSION=${{ steps.check.outputs.version }}
           git fetch upstream tag "$VERSION"
@@ -93,7 +95,6 @@ jobs:
             echo "merged=true" >> $GITHUB_OUTPUT
           else
             # 有冲突：创建分支处理
-            BRANCH="upstream-merge-$VERSION"
             git checkout -b "$BRANCH"
 
             CONFLICTS=$(git diff --name-only --diff-filter=U)
@@ -103,16 +104,13 @@ jobs:
 
             for file in $CONFLICTS; do
               if git status --porcelain "$file" | grep -q "^DU"; then
-                # DU: 本地已删除，上游修改 → 保持删除
                 git rm "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (本地已删除，保持删除)"
               elif git status --porcelain "$file" | grep -q "^UD"; then
-                # UD: 上游已删除，本地修改 → 保留本地版本
                 git checkout --ours "$file"
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
               elif [[ "$file" == .github/workflows/* ]]; then
-                # workflow 文件冲突：先解决冲突状态，再记录上游 diff
                 git checkout --ours "$file"
                 git add "$file"
                 FILE_DIFF=$(git diff "$VERSION" HEAD -- "$file" 2>/dev/null | head -100)
@@ -120,12 +118,11 @@ jobs:
                   WORKFLOW_DIFFS="$WORKFLOW_DIFFS\n\n### $file\n\n\`\`\`diff\n$FILE_DIFF\n\`\`\`"
                 fi
               else
-                # 非 workflow 文件冲突：保留冲突标记让用户在 PR 中解决
                 MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
               fi
             done
 
-            # 恢复所有本地 workflow 文件（覆盖自动合并的结果）
+            # 恢复所有本地 workflow 文件
             cp -f /tmp/workflow_backup/* .github/workflows/ 2>/dev/null || true
             git add .github/workflows/
             RESOLVED="$RESOLVED\n- ✅ 所有 workflow 文件 (保留本地版本)"
@@ -134,28 +131,50 @@ jobs:
             git commit -m "Merge upstream release $VERSION (conflicts resolved)"
             git push origin "$BRANCH" --force
 
-            # 动态生成 PR 描述
-            PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL"
+            # 保存变量供后续 step 使用
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+            echo "resolved<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$RESOLVED" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "manual<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$MANUAL" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "workflow_diffs<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$WORKFLOW_DIFFS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
 
-            # 如果有 workflow 文件的上游 diff，添加到 PR 描述
-            if [ -n "$WORKFLOW_DIFFS" ]; then
-              PR_BODY="$PR_BODY\n\n---\n\n## 上游 workflow 文件变更（已丢弃，仅供参考）\n\n以下为上游对 workflow 文件的改动，本地版本已保留。如需采用上游改动，请手动合并。$WORKFLOW_DIFFS"
-            fi
-
-            PR_BODY="$PR_BODY\n\n---\n\n### 合并方式\n\n**请在合并 commit 消息中包含 \`[build]\` 以自动触发编译。**\n\n推荐使用以下 commit 消息：\n\`\`\`\nMerge upstream release $VERSION [build]\n\`\`\`\n\n或在 GitHub 合并页面底部的输入框中修改消息。"
-
-            # 添加时间戳避免与已关闭的 PR 冲突
-            TIMESTAMP=$(date +%Y%m%d%H%M%S)
-            # 强制使用 SYNC_PAT，避免继承 check step 的 GITHUB_TOKEN
-            export GH_TOKEN="${{ secrets.SYNC_PAT }}"
-            gh pr create \
-              --title "Merge upstream release $VERSION ($TIMESTAMP)" \
-              --body "$(echo -e "$PR_BODY")" \
-              --base custom-build \
-              --head "$BRANCH" || echo "PR may already exist"
-            echo "⚠️ Conflicts detected, PR created for v$VERSION"
             echo "merged=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Conflicts detected for v$VERSION"
           fi
+
+      - name: Create PR for conflicts
+        if: steps.merge.outputs.merged == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT }}
+          GITHUB_TOKEN: ""
+        run: |
+          VERSION=${{ steps.merge.outputs.version }}
+          BRANCH=${{ steps.merge.outputs.branch }}
+          RESOLVED="${{ steps.merge.outputs.resolved }}"
+          MANUAL="${{ steps.merge.outputs.manual }}"
+          WORKFLOW_DIFFS="${{ steps.merge.outputs.workflow_diffs }}"
+
+          # 动态生成 PR 描述
+          PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL"
+
+          if [ -n "$WORKFLOW_DIFFS" ]; then
+            PR_BODY="$PR_BODY\n\n---\n\n## 上游 workflow 文件变更（已丢弃，仅供参考）\n\n以下为上游对 workflow 文件的改动，本地版本已保留。如需采用上游改动，请手动合并。$WORKFLOW_DIFFS"
+          fi
+
+          PR_BODY="$PR_BODY\n\n---\n\n### 合并方式\n\n**请在合并 commit 消息中包含 \`[build]\` 以自动触发编译。**\n\n推荐使用以下 commit 消息：\n\`\`\`\nMerge upstream release $VERSION [build]\n\`\`\`\n\n或在 GitHub 合并页面底部的输入框中修改消息。"
+
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          gh pr create \
+            --title "Merge upstream release $VERSION ($TIMESTAMP)" \
+            --body "$(echo -e "$PR_BODY")" \
+            --base custom-build \
+            --head "$BRANCH" || echo "PR may already exist"
 
       - name: Trigger build
         if: steps.merge.outputs.merged == 'true'
