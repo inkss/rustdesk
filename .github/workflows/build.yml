@@ -30,18 +30,15 @@ jobs:
             # push 到 custom-build：检查 commit 消息是否包含 [build]
             MSG=$(git log -1 --pretty=%B)
             if echo "$MSG" | grep -q '\[build\]'; then
-              echo "skip=false" >> $GITHUB_OUTPUT
               echo "✅ Build requested via [build] tag"
             else
-              echo "skip=true" >> $GITHUB_OUTPUT
               echo "⏭️ No [build] tag in commit message, skipping"
+              echo "skip=true" >> $GITHUB_OUTPUT
             fi
-          else
-            echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Add upstream remote
-        if: github.event_name == 'workflow_dispatch'
+        if: steps.should_build.outputs.skip != 'true' && github.event_name == 'workflow_dispatch'
         run: |
           git remote add upstream https://github.com/rustdesk/rustdesk.git 2>/dev/null || true
           git fetch upstream --tags --force
