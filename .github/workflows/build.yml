@@ -47,13 +47,14 @@ jobs:
           git fetch upstream --tags --force
 
       - name: Resolve version
+        if: steps.should_build.outputs.skip != 'true'
         id: resolve
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
+          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
             # tag push：直接用 tag 名，去掉 v 前缀
             RAW="${{ github.ref_name }}"
           else
-            # workflow_dispatch（sync 调用）：从上游获取最新版本
+            # workflow_dispatch 或 push 到 custom-build：从上游获取最新版本
             RAW=$(git tag -l '[0-9]*.[0-9]*.[0-9]*' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
           fi
 
@@ -67,7 +68,7 @@ jobs:
           echo "📌 Resolved version: $VERSION"
 
       - name: Clean existing release
-        if: github.event_name == 'workflow_dispatch'
+        if: steps.should_build.outputs.skip != 'true' && github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
