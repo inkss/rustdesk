@@ -128,8 +128,10 @@ jobs:
 
             PR_BODY="$PR_BODY\n\n---\n\n### 合并方式\n\n**请在合并 commit 消息中包含 \`[build]\` 以自动触发编译。**\n\n推荐使用以下 commit 消息：\n\`\`\`\nMerge upstream release $VERSION [build]\n\`\`\`\n\n或在 GitHub 合并页面底部的输入框中修改消息。"
 
+            # 添加时间戳避免与已关闭的 PR 冲突
+            TIMESTAMP=$(date +%Y%m%d%H%M%S)
             gh pr create \
-              --title "Merge upstream release $VERSION" \
+              --title "Merge upstream release $VERSION ($TIMESTAMP)" \
               --body "$(echo -e "$PR_BODY")" \
               --base custom-build \
               --head "$BRANCH" || echo "PR may already exist"
