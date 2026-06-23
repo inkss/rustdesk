@@ -98,3 +98,4 @@ fetch upstream tags
 | 2026-06-08 | 跳过 secure_tcp 握手，兼容 rustdesk-api；移除防诈骗弹窗 |
 | 2026-06-09 | 重构 workflow：移除 UPLOAD_ARTIFACT/android-only，简化条件判断 |
 | 2026-06-21 | 修复 sync-upstream：改进冲突处理（UD/DU/UU 分类处理），PR 描述动态生成冲突详情 |
+| 2026-06-22 | sync-upstream 支持 SYNC_PAT：workflow 文件冲突可在 PR 中保留标记供人工解决；未配置时 fallback 保留本地版本 |

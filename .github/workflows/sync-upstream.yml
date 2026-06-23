@@ -54,12 +54,22 @@ jobs:
         if: steps.check.outputs.need_merge == 'true'
         id: merge
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 优先使用 SYNC_PAT（可推送 workflow 文件变更），未配置则 fallback 到 GITHUB_TOKEN
+          PUSH_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
         run: |
           VERSION=${{ steps.check.outputs.version }}
           git fetch upstream tag "$VERSION"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 配置 push 使用的 token
+          if [ -n "${{ secrets.SYNC_PAT }}" ]; then
+            git remote set-url origin "https://x-access-token:${PUSH_TOKEN}@github.com/${{ github.repository }}.git"
+            HAS_PAT=true
+          else
+            HAS_PAT=false
+          fi
 
           # 在 custom-build 上尝试合并
           if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
@@ -86,13 +96,13 @@ jobs:
                 git checkout --ours "$file"
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
-              elif [[ "$file" == .github/workflows/* ]]; then
-                # workflow 文件内容冲突（UU）：保留本地版本（GITHUB_TOKEN 无权修改 workflow 文件）
+              elif [[ "$file" == .github/workflows/* ]] && [ "$HAS_PAT" = false ]; then
+                # workflow 文件冲突但无 SYNC_PAT：保留本地版本（无法推送 workflow 变更）
                 git checkout --ours "$file"
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (workflow 文件，保留本地版本)"
               else
-                # 其他内容冲突：保留冲突标记
+                # 有 SYNC_PAT 或非 workflow 文件：保留冲突标记让用户在 PR 中解决
                 MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
               fi
             done
