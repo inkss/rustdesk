@@ -124,7 +124,7 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 
 配置后，编译产物会推送到私有仓库的 Releases，当前仓库不再有产物。
 
-### 4. 上游同步 PAT（SYNC_PAT）
+### 3. 上游同步 PAT（SYNC_PAT）
 
 上游同步时如果遇到冲突，需要推送包含 workflow 文件变更的 commit（GitHub 限制 `GITHUB_TOKEN` 无权修改 `.github/workflows/` 文件）。配置此 PAT 后，冲突 PR 可以包含完整的冲突标记，便于在 PR 中直接解决。
 
@@ -149,6 +149,6 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 
 未配置时，冲突合并会自动保留本地 workflow 版本（丢弃上游改动），PR 中不会出现 workflow 文件的冲突标记。
 
-## 3. rustdesk-api 兼容
+### 4. rustdesk-api 兼容
 
 本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。
