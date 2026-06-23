@@ -83,11 +83,7 @@ jobs:
           git push origin --delete "$BRANCH" 2>/dev/null || true
 
           # 尝试合并（不自动提交，保留冲突状态）
-          git merge "$VERSION" --no-edit --no-commit || true
-
-          # 检查是否有冲突
-          CONFLICTS=$(git diff --name-only --diff-filter=U)
-          if [ -z "$CONFLICTS" ]; then
+          if git merge "$VERSION" --no-edit --no-commit; then
             # 无冲突：提交并恢复本地 workflow 文件
             git commit -m "Merge upstream release $VERSION"
             cp -f /tmp/workflow_backup/* .github/workflows/
