@@ -124,26 +124,16 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 
 配置后，编译产物会推送到私有仓库的 Releases，当前仓库不再有产物。
 
-### 3. 上游同步 PAT（SYNC_PAT）
+### 3. PAT 汇总
 
-上游同步遇到冲突时，需要创建 PR。`GITHUB_TOKEN` 可能没有创建 PR 的权限，需要配置 PAT。
+本项目需要两个 PAT，创建方式相同（GitHub → Settings → Developer settings → Personal access tokens）：
 
-1\. 生成 PAT
+| Secret | 用途 | 推荐类型 | 权限 | 必填 |
+| --- | --- | --- | --- | --- |
+| `RELEASE_PAT` | 推送编译产物到私有仓库 | Fine-grained | 选私有仓库 → Contents: `Read and write` | 配置私有仓库时必填 |
+| `SYNC_PAT` | 上游同步时创建 PR | Classic | 勾选 `repo` scope | 可选（未配置时用 GITHUB_TOKEN） |
 
-GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** 或 **Tokens (classic)**：
-
-- **Fine-grained tokens**：Repository access → 选本仓库 → Repository permissions → **Pull requests**：`Read and write`
-- **Classic tokens**：勾选 **repo** scope
-
-2\. 配置 Secret
-
-在本仓库 Settings → Secrets → Repository secrets 中添加：
-
-| Secret 名称 | 值 |
-| --- | --- |
-| `SYNC_PAT` | 上一步复制的 token |
-
-未配置时，使用 `GITHUB_TOKEN` 创建 PR（可能因权限不足失败）。
+> `SYNC_PAT` 需要 Classic token，因为 Fine-grained token 可能无法创建 PR。
 
 ### 4. rustdesk-api 兼容
 
