@@ -56,8 +56,12 @@ jobs:
           if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
             # tag push：直接用 tag 名，去掉 v 前缀
             RAW="${{ github.ref_name }}"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            # PR 合并：从分支名解析版本（upstream-merge-$VERSION）
+            HEAD_REF="${{ github.event.pull_request.head.ref }}"
+            RAW="${HEAD_REF#upstream-merge-}"
           else
-            # workflow_dispatch 或 push 到 custom-build：从上游获取最新版本
+            # workflow_dispatch：从上游获取最新版本
             RAW=$(git tag -l '[0-9]*.[0-9]*.[0-9]*' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
           fi
 
