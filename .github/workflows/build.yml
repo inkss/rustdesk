@@ -5,6 +5,8 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - '[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - custom-build
   workflow_dispatch:
 
 permissions:
@@ -15,10 +17,28 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.resolve.outputs.version }}
+      skip: ${{ steps.should_build.outputs.skip }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Check if build requested
+        id: should_build
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/custom-build" ]; then
+            # push 到 custom-build：检查 commit 消息是否包含 [build]
+            MSG=$(git log -1 --pretty=%B)
+            if echo "$MSG" | grep -q '\[build\]'; then
+              echo "skip=false" >> $GITHUB_OUTPUT
+              echo "✅ Build requested via [build] tag"
+            else
+              echo "skip=true" >> $GITHUB_OUTPUT
+              echo "⏭️ No [build] tag in commit message, skipping"
+            fi
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Add upstream remote
         if: github.event_name == 'workflow_dispatch'
@@ -62,6 +82,7 @@ jobs:
 
   build:
     needs: prepare
+    if: needs.prepare.outputs.skip != 'true'
     uses: ./.github/workflows/flutter-build.yml
     secrets: inherit
     with:
