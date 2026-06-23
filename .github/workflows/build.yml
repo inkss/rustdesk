@@ -16,8 +16,8 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.resolve.outputs.version }}
-      skip: ${{ steps.should_build.outputs.skip }}
+      version: ${{ steps.resolve.outputs.version || '' }}
+      skip: ${{ steps.should_build.outputs.skip || 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:
