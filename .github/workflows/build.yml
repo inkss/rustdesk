@@ -5,8 +5,9 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - '[0-9]+.[0-9]+.[0-9]+'
-    branches:
-      - custom-build
+  pull_request:
+    types: [closed]
+    branches: [custom-build]
   workflow_dispatch:
 
 permissions:
@@ -26,14 +27,19 @@ jobs:
       - name: Check if build requested
         id: should_build
         run: |
-          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/custom-build" ]; then
-            # push 到 custom-build：检查 commit 消息是否包含 [build]
-            MSG=$(git log -1 --pretty=%B)
-            if echo "$MSG" | grep -q '\[build\]'; then
-              echo "✅ Build requested via [build] tag"
-            else
-              echo "⏭️ No [build] tag in commit message, skipping"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # PR 合并：检查是否已合并且 commit 消息包含 [build]
+            if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
+              echo "⏭️ PR closed without merge, skipping"
               echo "skip=true" >> $GITHUB_OUTPUT
+            else
+              MSG=$(git log -1 --pretty=%B)
+              if echo "$MSG" | grep -q '\[build\]'; then
+                echo "✅ Build requested via [build] tag in PR merge commit"
+              else
+                echo "⏭️ No [build] tag in merge commit message, skipping"
+                echo "skip=true" >> $GITHUB_OUTPUT
+              fi
             fi
           fi
 
