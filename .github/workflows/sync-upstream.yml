@@ -85,8 +85,55 @@ jobs:
           # 尝试合并（不自动提交，保留冲突状态）
           git merge "$VERSION" --no-edit --no-commit || true
 
-          # 检查是否有未解决的冲突
-          if [ -z "$(git ls-files -u)" ]; then
+          # 检查是否有冲突（通过 git status 检查）
+          if git status | grep -q "conflict"; then
+            # 有冲突：创建分支处理
+            git checkout -b "$BRANCH"
+
+            CONFLICTS=$(git diff --name-only --diff-filter=U)
+            RESOLVED=""
+            MANUAL=""
+            WORKFLOW_DIFFS=""
+
+            for file in $CONFLICTS; do
+              if git status --porcelain "$file" | grep -q "^DU"; then
+                git rm "$file"
+                RESOLVED="$RESOLVED\n- ✅ \`$file\` (本地已删除，保持删除)"
+              elif git status --porcelain "$file" | grep -q "^UD"; then
+                git checkout --ours "$file"
+                git add "$file"
+                RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
+              elif [[ "$file" == .github/workflows/* ]]; then
+                git checkout --ours "$file"
+                git add "$file"
+                FILE_DIFF=$(git diff "$VERSION" HEAD -- "$file" 2>/dev/null | head -100)
+                if [ -n "$FILE_DIFF" ]; then
+                  WORKFLOW_DIFFS="$WORKFLOW_DIFFS\n\n### $file\n\n\`\`\`diff\n$FILE_DIFF\n\`\`\`"
+                fi
+              else
+                MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
+              fi
+            done
+
+            # 恢复所有本地 workflow 文件
+            cp -f /tmp/workflow_backup/* .github/workflows/ 2>/dev/null || true
+            git add .github/workflows/
+            RESOLVED="$RESOLVED\n- ✅ 所有 workflow 文件 (保留本地版本)"
+
+            git add -A
+            git commit -m "Merge upstream release $VERSION (conflicts resolved)"
+            git push origin "$BRANCH" --force
+
+            # 保存变量供后续 step 使用（用文件存储多行内容）
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+            echo -e "$RESOLVED" > /tmp/pr_resolved.txt
+            echo -e "$MANUAL" > /tmp/pr_manual.txt
+            echo -e "$WORKFLOW_DIFFS" > /tmp/pr_workflow_diffs.txt
+
+            echo "merged=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Conflicts detected for v$VERSION"
+          else
             # 无冲突：提交并恢复本地 workflow 文件
             git commit -m "Merge upstream release $VERSION"
             cp -f /tmp/workflow_backup/* .github/workflows/
@@ -97,7 +144,7 @@ jobs:
             git push origin HEAD
             echo "✅ Merged $VERSION"
             echo "merged=true" >> $GITHUB_OUTPUT
-          else
+          fi
             # 有冲突：创建分支处理
             git checkout -b "$BRANCH"
 
