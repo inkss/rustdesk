@@ -61,9 +61,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # 备份本地 workflow 文件（无论是否有冲突，都保留本地版本）
+          mkdir -p /tmp/workflow_backup
+          cp -r .github/workflows/* /tmp/workflow_backup/ 2>/dev/null || true
+
           # 在 custom-build 上尝试合并
           if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
-            # 无冲突：直接 push 到 custom-build
+            # 无冲突：恢复本地 workflow 文件
+            cp -r /tmp/workflow_backup/* .github/workflows/
+            git checkout HEAD -- .github/workflows/ || true
+            git add .github/workflows/
+            if git diff --cached --quiet; then
+              echo "No workflow changes to revert"
+            else
+              git commit -m "Keep local workflow files" || true
+            fi
             git push origin HEAD
             echo "✅ Merged $VERSION"
             echo "merged=true" >> $GITHUB_OUTPUT
@@ -88,11 +100,7 @@ jobs:
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
               elif [[ "$file" == .github/workflows/* ]]; then
-                # workflow 文件冲突：保留本地版本，记录上游 diff 供参考
-                git checkout --ours "$file"
-                git add "$file"
-                RESOLVED="$RESOLVED\n- ✅ \`$file\` (workflow 文件，保留本地版本)"
-                # 生成上游 diff
+                # workflow 文件冲突：记录上游 diff 供参考
                 FILE_DIFF=$(git diff HEAD "$VERSION" -- "$file" 2>/dev/null | head -100)
                 if [ -n "$FILE_DIFF" ]; then
                   WORKFLOW_DIFFS="$WORKFLOW_DIFFS\n\n### $file\n\n\`\`\`diff\n$FILE_DIFF\n\`\`\`"
@@ -102,6 +110,12 @@ jobs:
                 MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
               fi
             done
+
+            # 恢复所有本地 workflow 文件
+            cp -r /tmp/workflow_backup/* .github/workflows/ 2>/dev/null || true
+            git checkout HEAD -- .github/workflows/ 2>/dev/null || true
+            git add .github/workflows/
+            RESOLVED="$RESOLVED\n- ✅ 所有 workflow 文件 (保留本地版本)"
 
             git add -A
             git commit -m "Merge upstream release $VERSION (conflicts resolved)"
