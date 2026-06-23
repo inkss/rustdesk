@@ -146,12 +146,13 @@ jobs:
 
             # 添加时间戳避免与已关闭的 PR 冲突
             TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            # 强制使用 SYNC_PAT，避免继承 check step 的 GITHUB_TOKEN
+            export GH_TOKEN="${{ secrets.SYNC_PAT }}"
             gh pr create \
               --title "Merge upstream release $VERSION ($TIMESTAMP)" \
               --body "$(echo -e "$PR_BODY")" \
               --base custom-build \
-              --head "$BRANCH" \
-              --token "${{ secrets.SYNC_PAT }}" || echo "PR may already exist"
+              --head "$BRANCH" || echo "PR may already exist"
             echo "⚠️ Conflicts detected, PR created for v$VERSION"
             echo "merged=false" >> $GITHUB_OUTPUT
           fi
