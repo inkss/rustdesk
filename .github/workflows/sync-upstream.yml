@@ -82,12 +82,23 @@ jobs:
           BRANCH="upstream-merge-$VERSION"
           git push origin --delete "$BRANCH" 2>/dev/null || true
 
-          # 尝试合并
-          git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION" || true
+          # 尝试合并（不自动提交，保留冲突状态）
+          git merge "$VERSION" --no-edit --no-commit || true
 
           # 检查是否有冲突
           CONFLICTS=$(git diff --name-only --diff-filter=U)
           if [ -z "$CONFLICTS" ]; then
+            # 无冲突：提交并恢复本地 workflow 文件
+            git commit -m "Merge upstream release $VERSION"
+            cp -f /tmp/workflow_backup/* .github/workflows/
+            git add .github/workflows/
+            if ! git diff --cached --quiet; then
+              git commit -m "Keep local workflow files"
+            fi
+            git push origin HEAD
+            echo "✅ Merged $VERSION"
+            echo "merged=true" >> $GITHUB_OUTPUT
+          else
             # 无冲突：恢复本地 workflow 文件
             cp -f /tmp/workflow_backup/* .github/workflows/
             git add .github/workflows/
