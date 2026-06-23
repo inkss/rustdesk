@@ -85,8 +85,8 @@ jobs:
           # 尝试合并（不自动提交，保留冲突状态）
           git merge "$VERSION" --no-edit --no-commit || true
 
-          # 检查是否有冲突（通过 git status 检查）
-          if git status | grep -q "conflict"; then
+          # 检查是否有冲突（通过 git status 检查，大小写不敏感）
+          if git status | grep -qi "conflict"; then
             # 有冲突：创建分支处理
             git branch -D "$BRANCH" 2>/dev/null || true
             git checkout -b "$BRANCH"
