@@ -81,14 +81,15 @@ jobs:
           # 删除已存在的分支（清理上次失败的残留）
           BRANCH="upstream-merge-$VERSION"
           git push origin --delete "$BRANCH" 2>/dev/null || true
+          git branch -D "$BRANCH" 2>/dev/null || true
 
           # 尝试合并（不自动提交，保留冲突状态）
           git merge "$VERSION" --no-edit --no-commit || true
 
-          # 检查是否有冲突（通过 git status 检查，大小写不敏感）
-          if git status | grep -qi "conflict"; then
+          # 用 git ls-files -u 检查是否有未解决的冲突
+          UNMERGED=$(git ls-files -u)
+          if [ -n "$UNMERGED" ]; then
             # 有冲突：创建分支处理
-            git branch -D "$BRANCH" 2>/dev/null || true
             git checkout -b "$BRANCH"
 
             CONFLICTS=$(git diff --name-only --diff-filter=U)
@@ -125,7 +126,7 @@ jobs:
             git commit -m "Merge upstream release $VERSION (conflicts resolved)"
             git push origin "$BRANCH" --force
 
-            # 保存变量供后续 step 使用（用文件存储多行内容）
+            # 保存变量供后续 step 使用
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "branch=$BRANCH" >> $GITHUB_OUTPUT
             echo -e "$RESOLVED" > /tmp/pr_resolved.txt
@@ -135,13 +136,10 @@ jobs:
             echo "merged=false" >> $GITHUB_OUTPUT
             echo "⚠️ Conflicts detected for v$VERSION"
           else
-            # 无冲突：提交并恢复本地 workflow 文件
-            git commit -m "Merge upstream release $VERSION"
+            # 无冲突：恢复本地 workflow 文件，提交合并
             cp -f /tmp/workflow_backup/* .github/workflows/
             git add .github/workflows/
-            if ! git diff --cached --quiet; then
-              git commit -m "Keep local workflow files"
-            fi
+            git commit -m "Merge upstream release $VERSION"
             git push origin HEAD
             echo "✅ Merged $VERSION"
             echo "merged=true" >> $GITHUB_OUTPUT
