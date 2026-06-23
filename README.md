@@ -131,7 +131,7 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 | Secret | 用途 | 推荐类型 | 权限 | 必填 |
 | --- | --- | --- | --- | --- |
 | `RELEASE_PAT` | 推送编译产物到私有仓库 | Fine-grained | 选私有仓库 → Contents: `Read and write` | 配置私有仓库时必填 |
-| `SYNC_PAT` | 上游同步时创建 PR | Fine-grained | 选本仓库 → Actions: `Read and write`、Contents: `Read and write`、Pull requests: `Read and write` | 可选（未配置时用 GITHUB_TOKEN） |
+| `REPO_TOKEN` | 上游同步时创建 PR | Classic | 勾选 `repo` scope | 可选（未配置时用 GITHUB_TOKEN） |
 
 ### 4. rustdesk-api 兼容
 

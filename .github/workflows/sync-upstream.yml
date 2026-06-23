@@ -145,7 +145,7 @@ jobs:
       - name: Create PR for conflicts
         if: steps.merge.outputs.merged == 'false'
         env:
-          GH_TOKEN: ${{ secrets.SYNC_PAT }}
+          GH_TOKEN: ${{ secrets.REPO_TOKEN }}
           GITHUB_TOKEN: ""
         run: |
           VERSION=${{ steps.merge.outputs.version }}
