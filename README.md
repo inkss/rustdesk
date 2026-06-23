@@ -31,6 +31,7 @@
 
 - **自动触发**：每天 UTC 03:23（北京时间 11:23）检查上游新版本，有更新则自动合并并编译
 - **手动触发**：Actions → Sync Upstream Release → Run workflow（或直接触发 Build RustDesk）
+- **PR 合并触发**：解决冲突后合并 PR 时，commit 消息包含 `[build]` 即可自动编译
 
 ### 3. 下载产物
 
