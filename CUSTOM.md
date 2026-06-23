@@ -99,3 +99,4 @@ fetch upstream tags
 | 2026-06-09 | 重构 workflow：移除 UPLOAD_ARTIFACT/android-only，简化条件判断 |
 | 2026-06-21 | 修复 sync-upstream：改进冲突处理（UD/DU/UU 分类处理），PR 描述动态生成冲突详情 |
 | 2026-06-23 | sync-upstream 优化：workflow 文件保留本地版本，PR 描述含上游 diff；SYNC_PAT 用于创建 PR |
+| 2026-06-23 | 全面优化 action：修复 version 输出 BUG、精确 git add、修复版本解析、避免重复触发 |
