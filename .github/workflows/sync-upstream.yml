@@ -85,8 +85,8 @@ jobs:
           # 尝试合并（不自动提交，保留冲突状态）
           git merge "$VERSION" --no-edit --no-commit || true
 
-          # 检查是否有冲突（通过检查未解决的文件）
-          if git diff --check 2>/dev/null; then
+          # 检查是否有未解决的冲突
+          if [ -z "$(git ls-files -u)" ]; then
             # 无冲突：提交并恢复本地 workflow 文件
             git commit -m "Merge upstream release $VERSION"
             cp -f /tmp/workflow_backup/* .github/workflows/
