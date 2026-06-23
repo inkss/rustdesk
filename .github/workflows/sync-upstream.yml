@@ -99,16 +99,6 @@ jobs:
             echo "✅ Merged $VERSION"
             echo "merged=true" >> $GITHUB_OUTPUT
           else
-            # 无冲突：恢复本地 workflow 文件
-            cp -f /tmp/workflow_backup/* .github/workflows/
-            git add .github/workflows/
-            if ! git diff --cached --quiet; then
-              git commit -m "Keep local workflow files"
-            fi
-            git push origin HEAD
-            echo "✅ Merged $VERSION"
-            echo "merged=true" >> $GITHUB_OUTPUT
-          else
             # 有冲突：创建分支处理
             git checkout -b "$BRANCH"
 
