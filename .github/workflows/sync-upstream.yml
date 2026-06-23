@@ -150,7 +150,8 @@ jobs:
               --title "Merge upstream release $VERSION ($TIMESTAMP)" \
               --body "$(echo -e "$PR_BODY")" \
               --base custom-build \
-              --head "$BRANCH" || echo "PR may already exist"
+              --head "$BRANCH" \
+              --token "${{ secrets.SYNC_PAT }}" || echo "PR may already exist"
             echo "⚠️ Conflicts detected, PR created for v$VERSION"
             echo "merged=false" >> $GITHUB_OUTPUT
           fi
