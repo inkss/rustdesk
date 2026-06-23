@@ -77,22 +77,22 @@ jobs:
             MANUAL=""
 
             for file in $CONFLICTS; do
-              if [[ "$file" == .github/workflows/* ]]; then
-                # workflow 文件：始终保留本地版本（GITHUB_TOKEN 无权修改）
-                git checkout --ours "$file"
-                git add "$file"
-                RESOLVED="$RESOLVED\n- ✅ \`$file\` (保留本地 workflow)"
-              elif git status --porcelain "$file" | grep -q "^UD"; then
-                # UD: 本地已删除，上游修改 → 保持删除
+              if git status --porcelain "$file" | grep -q "^DU"; then
+                # DU: 本地已删除，上游修改 → 保持删除
                 git rm "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (本地已删除，保持删除)"
-              elif git status --porcelain "$file" | grep -q "^DU"; then
-                # DU: 上游已删除，本地修改 → 保留本地版本
+              elif git status --porcelain "$file" | grep -q "^UD"; then
+                # UD: 上游已删除，本地修改 → 保留本地版本
                 git checkout --ours "$file"
                 git add "$file"
                 RESOLVED="$RESOLVED\n- ✅ \`$file\` (上游已删除，保留本地版本)"
+              elif [[ "$file" == .github/workflows/* ]]; then
+                # workflow 文件内容冲突（UU）：保留本地版本（GITHUB_TOKEN 无权修改 workflow 文件）
+                git checkout --ours "$file"
+                git add "$file"
+                RESOLVED="$RESOLVED\n- ✅ \`$file\` (workflow 文件，保留本地版本)"
               else
-                # UU: 双方修改 → 保留冲突标记
+                # 其他内容冲突：保留冲突标记
                 MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
               fi
             done
