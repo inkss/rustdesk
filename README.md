@@ -21,7 +21,6 @@
 | `ANDROID_KEY_PASSWORD` | key 密码 | 可选 |
 | `RELEASE_REPO` | 私有仓库名（如 `inkss/rustdesk-releases`） | 可选 |
 | `RELEASE_PAT` | Fine-grained PAT，对私有仓库有 Contents 读写权限 | 可选 |
-| `SYNC_PAT` | Fine-grained PAT，对本仓库有 Contents + Pull requests 读写权限 | 可选 |
 
 > ID 和 Key 必须同时填写，否则会出现 key 不匹配。都不填则等同于官方客户端。
 >
@@ -124,31 +123,6 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 
 配置后，编译产物会推送到私有仓库的 Releases，当前仓库不再有产物。
 
-### 3. 上游同步 PAT（SYNC_PAT）
-
-上游同步时如果遇到冲突，需要推送包含 workflow 文件变更的 commit（GitHub 限制 `GITHUB_TOKEN` 无权修改 `.github/workflows/` 文件）。配置此 PAT 后，冲突 PR 可以包含完整的冲突标记，便于在 PR 中直接解决。
-
-1\. 生成 PAT
-
-GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token：
-
-- Token name：随意（如 `rustdesk-sync`）
-- Expiration：选 1 年
-- Repository access：选 `Only select repositories` → 选本仓库（`inkss/rustdesk`）
-- Permissions → Repository permissions：
-  - **Contents**：`Read and write`
-  - **Pull requests**：`Read and write`
-
-2\. 配置 Secret
-
-在本仓库 Settings → Secrets → Repository secrets 中添加：
-
-| Secret 名称 | 值 |
-| --- | --- |
-| `SYNC_PAT` | 上一步复制的 token |
-
-未配置时，冲突合并会自动保留本地 workflow 版本（丢弃上游改动），PR 中不会出现 workflow 文件的冲突标记。
-
-### 4. rustdesk-api 兼容
+### 3. rustdesk-api 兼容
 
 本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。
