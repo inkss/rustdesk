@@ -5,13 +5,14 @@ on:
     - cron: '23 3 * * *'  # 每天 UTC 03:23
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
 jobs:
   check-and-sync:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      actions: write
     steps:
       - uses: actions/checkout@v4
         with:
