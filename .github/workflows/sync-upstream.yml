@@ -53,7 +53,7 @@ jobs:
         if: steps.check.outputs.need_merge == 'true'
         id: merge
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
         run: |
           VERSION=${{ steps.check.outputs.version }}
           git fetch upstream tag "$VERSION"

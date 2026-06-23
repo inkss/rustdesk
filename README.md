@@ -21,6 +21,7 @@
 | `ANDROID_KEY_PASSWORD` | key 密码 | 可选 |
 | `RELEASE_REPO` | 私有仓库名（如 `inkss/rustdesk-releases`） | 可选 |
 | `RELEASE_PAT` | Fine-grained PAT，对私有仓库有 Contents 读写权限 | 可选 |
+| `SYNC_PAT` | Classic PAT，用于创建 PR（需 `repo` scope） | 可选 |
 
 > ID 和 Key 必须同时填写，否则会出现 key 不匹配。都不填则等同于官方客户端。
 >
@@ -123,6 +124,27 @@ GitHub → Settings → Developer settings → Personal access tokens → Fine-g
 
 配置后，编译产物会推送到私有仓库的 Releases，当前仓库不再有产物。
 
-### 3. rustdesk-api 兼容
+### 3. 上游同步 PAT（SYNC_PAT）
+
+上游同步遇到冲突时，需要创建 PR。`GITHUB_TOKEN` 可能没有创建 PR 的权限，需要配置 PAT。
+
+1\. 生成 PAT
+
+GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** 或 **Tokens (classic)**：
+
+- **Fine-grained tokens**：Repository access → 选本仓库 → Repository permissions → **Pull requests**：`Read and write`
+- **Classic tokens**：勾选 **repo** scope
+
+2\. 配置 Secret
+
+在本仓库 Settings → Secrets → Repository secrets 中添加：
+
+| Secret 名称 | 值 |
+| --- | --- |
+| `SYNC_PAT` | 上一步复制的 token |
+
+未配置时，使用 `GITHUB_TOKEN` 创建 PR（可能因权限不足失败）。
+
+### 4. rustdesk-api 兼容
 
 本版本兼容 [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api)，跳过了 `secure_tcp` 握手，登录 API 账户后不会出现连接超时。
