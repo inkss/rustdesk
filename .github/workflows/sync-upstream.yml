@@ -25,7 +25,17 @@ jobs:
 
       - name: Check if merge needed
         id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # 检查是否已有 open 的 PR（避免重复创建）
+          EXISTING_PR=$(gh pr list --repo "${{ github.repository }}" --state open --head "upstream-merge-*" --json number --jq '.[0].number')
+          if [ -n "$EXISTING_PR" ]; then
+            echo "⏭️ PR #$EXISTING_PR already exists, skipping"
+            echo "need_merge=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           # 获取上游最新版本 tag
           LATEST=$(git tag -l '[0-9]*.[0-9]*.[0-9]*' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
           if [ -z "$LATEST" ]; then
@@ -64,6 +74,10 @@ jobs:
           # 备份本地 workflow 文件
           mkdir -p /tmp/workflow_backup
           cp -r .github/workflows/* /tmp/workflow_backup/ 2>/dev/null || true
+
+          # 删除已存在的分支（清理上次失败的残留）
+          BRANCH="upstream-merge-$VERSION"
+          git push origin --delete "$BRANCH" 2>/dev/null || true
 
           # 尝试合并
           if git merge "$VERSION" --no-edit -m "Merge upstream release $VERSION"; then
