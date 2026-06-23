@@ -131,18 +131,12 @@ jobs:
             git commit -m "Merge upstream release $VERSION (conflicts resolved)"
             git push origin "$BRANCH" --force
 
-            # 保存变量供后续 step 使用
+            # 保存变量供后续 step 使用（用文件存储多行内容）
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-            echo "resolved<<EOF" >> $GITHUB_OUTPUT
-            echo -e "$RESOLVED" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            echo "manual<<EOF" >> $GITHUB_OUTPUT
-            echo -e "$MANUAL" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            echo "workflow_diffs<<EOF" >> $GITHUB_OUTPUT
-            echo -e "$WORKFLOW_DIFFS" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            echo -e "$RESOLVED" > /tmp/pr_resolved.txt
+            echo -e "$MANUAL" > /tmp/pr_manual.txt
+            echo -e "$WORKFLOW_DIFFS" > /tmp/pr_workflow_diffs.txt
 
             echo "merged=false" >> $GITHUB_OUTPUT
             echo "⚠️ Conflicts detected for v$VERSION"
@@ -156,9 +150,9 @@ jobs:
         run: |
           VERSION=${{ steps.merge.outputs.version }}
           BRANCH=${{ steps.merge.outputs.branch }}
-          RESOLVED="${{ steps.merge.outputs.resolved }}"
-          MANUAL="${{ steps.merge.outputs.manual }}"
-          WORKFLOW_DIFFS="${{ steps.merge.outputs.workflow_diffs }}"
+          RESOLVED=$(cat /tmp/pr_resolved.txt)
+          MANUAL=$(cat /tmp/pr_manual.txt)
+          WORKFLOW_DIFFS=$(cat /tmp/pr_workflow_diffs.txt)
 
           # 动态生成 PR 描述
           PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL"
