@@ -112,7 +112,7 @@ jobs:
             git push origin "$BRANCH" --force
 
             # 动态生成 PR 描述
-            PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL\n\n---\n\n**合并此 PR 时，请在 commit 消息中包含 \`[build]\` 以自动触发编译。**\n\n示例：\`\`\`Merge upstream release $VERSION [build]\`\`\`"
+            PR_BODY="自动合并上游版本 $VERSION 时出现冲突。\n\n## 已自动解决\n$RESOLVED\n\n## 需人工处理\n$MANUAL\n\n---\n\n### 合并方式\n\n**请在合并 commit 消息中包含 \`[build]\` 以自动触发编译。**\n\n推荐使用以下 commit 消息：\n\`\`\`\nMerge upstream release $VERSION [build]\n\`\`\`\n\n或在 GitHub 合并页面底部的输入框中修改消息。"
             gh pr create \
               --title "Merge upstream release $VERSION" \
               --body "$(echo -e "$PR_BODY")" \
