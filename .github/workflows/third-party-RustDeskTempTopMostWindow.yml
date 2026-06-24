@@ -45,9 +45,9 @@ jobs:
       - name: Download the source code
         run: |
           git clone --depth 1 https://github.com/rustdesk-org/RustDeskTempTopMostWindow RustDeskTempTopMostWindow
-          cd RustDeskTempTopMostWindow && git fetch --depth 1 origin 53b548a5398624f7149a382000397993542ad796 && git checkout 53b548a5398624f7149a382000397993542ad796
+          cd RustDeskTempTopMostWindow && git fetch --depth 1 origin ecd8d6a139eee76845ea66423fb739af450fda90 && git checkout ecd8d6a139eee76845ea66423fb739af450fda90
 
-        # Build. commit 53b548a5398624f7149a382000397993542ad796 is tag v0.3
+        # Build. commit ecd8d6a supports ARM64 (2026-06-18)
       - name: Build the project
         run: |
           cd RustDeskTempTopMostWindow
