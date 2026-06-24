@@ -104,3 +104,4 @@ fetch upstream tags
 | 2026-06-24 | 统一 Release 描述信息：所有平台（Windows/Android/Linux/Arch）使用相同的详细 body |
 | 2026-06-24 | 系统审查并修复 workflow 问题：修复 --vram 传递给 ARM64、bridge cache key、模板注入、重复下载、并发控制等 |
 | 2026-06-24 | 更新 RustDeskTempTopMostWindow 到支持 ARM64 的版本（ecd8d6a, 2026-06-18） |
+| 2026-06-24 | 修复 bridge.yml：添加 Flutter 3.44 bridge 生成，支持 Windows ARM64 编译 |
