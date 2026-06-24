@@ -100,3 +100,5 @@ fetch upstream tags
 | 2026-06-21 | 修复 sync-upstream：改进冲突处理（UD/DU/UU 分类处理），PR 描述动态生成冲突详情 |
 | 2026-06-23 | sync-upstream 优化：workflow 文件保留本地版本，PR 描述含上游 diff；SYNC_PAT 用于创建 PR |
 | 2026-06-23 | 全面优化 action：修复 version 输出 BUG、精确 git add、修复版本解析、避免重复触发 |
+| 2026-06-24 | 修复 Windows ARM64 编译：artifact 名称添加平台后缀（x64/ARM64）匹配下载 |
+| 2026-06-24 | 统一 Release 描述信息：所有平台（Windows/Android/Linux/Arch）使用相同的详细 body |

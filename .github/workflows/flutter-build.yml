@@ -50,6 +50,14 @@ env:
   RS_PUB_KEY: "${{ secrets.RS_PUB_KEY }}"
   RENDEZVOUS_SERVER: "${{ secrets.RENDEZVOUS_SERVER }}"
   API_SERVER: "${{ secrets.API_SERVER }}"
+  # Release 描述信息
+  RELEASE_BODY: |
+    基于上游 [rustdesk/rustdesk](https://github.com/rustdesk/rustdesk) `${{ inputs.upload-tag || '1.4.7' }}` 编译，内置自定义 ID 服务器配置。
+
+    **平台支持：**
+    - Windows: x86_64 (MSI + EXE) / ARM64 (MSI + EXE)
+    - Linux: x86_64 + aarch64 (DEB + RPM + Arch)
+    - Android: aarch64 (APK)
 
 jobs:
   read-config:
@@ -358,8 +366,7 @@ jobs:
           prerelease: false
           tag_name: ${{ env.TAG_NAME }}
           name: "RustDesk ${{ env.VERSION }}"
-          body: |
-            基于上游 [rustdesk/rustdesk](https://github.com/rustdesk/rustdesk) `${{ env.TAG_NAME }}` 编译，内置自定义 ID 服务器配置。
+          body: ${{ env.RELEASE_BODY }}
           files: |
             ./SignOutput/rustdesk-*.msi
             ./SignOutput/rustdesk-*.exe
@@ -643,6 +650,7 @@ jobs:
         with:
           prerelease: false
           tag_name: ${{ env.TAG_NAME }}
+          body: ${{ env.RELEASE_BODY }}
           files: |
             signed-apk/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.apk
           repository: ${{ secrets.RELEASE_REPO || '' }}
@@ -950,6 +958,7 @@ jobs:
         with:
           prerelease: false
           tag_name: ${{ env.TAG_NAME }}
+          body: ${{ env.RELEASE_BODY }}
           files: |
             rustdesk-*.deb
             rustdesk-*.rpm
@@ -981,6 +990,7 @@ jobs:
         with:
           prerelease: false
           tag_name: ${{ env.TAG_NAME }}
+          body: ${{ env.RELEASE_BODY }}
           files: |
             res/rustdesk-${{ env.VERSION }}*.zst
           repository: ${{ secrets.RELEASE_REPO || '' }}
