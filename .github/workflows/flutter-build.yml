@@ -64,8 +64,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       windows: ${{ steps.config.outputs.windows }}
+      windows_arm64: ${{ steps.config.outputs.windows_arm64 }}
       linux: ${{ steps.config.outputs.linux }}
       android: ${{ steps.config.outputs.android }}
+      windows_matrix: ${{ steps.config.outputs.windows_matrix }}
+      windows_flutter_matrix: ${{ steps.config.outputs.windows_flutter_matrix }}
     steps:
       - uses: actions/checkout@v4
       - name: Read build config
@@ -73,7 +76,7 @@ jobs:
         run: |
           if [ -f .build-config.yml ]; then
             python3 -c "
-          import yaml, os
+          import yaml, os, json
           out = os.environ['GITHUB_OUTPUT']
           with open('.build-config.yml') as f:
               cfg = yaml.safe_load(f)
@@ -81,11 +84,37 @@ jobs:
           with open(out, 'a') as f:
               for k, v in p.items():
                   f.write(f'{k}={str(v).lower()}\n')
+              # Generate TopMostWindow matrix
+              topmost_jobs = [{'target': 'windows-2022', 'platform': 'x64'}]
+              # Generate Windows Flutter matrix
+              flutter_jobs = [{
+                  'target': 'x86_64-pc-windows-msvc',
+                  'os': 'windows-2022',
+                  'arch': 'x86_64',
+                  'flutter-arch': 'x64',
+                  'vcpkg-triplet': 'x64-windows-static',
+                  'build-args': '--vram',
+              }]
+              if str(p.get('windows_arm64', False)).lower() == 'true':
+                  topmost_jobs.append({'target': 'windows-11-arm', 'platform': 'ARM64'})
+                  flutter_jobs.append({
+                      'target': 'aarch64-pc-windows-msvc',
+                      'os': 'windows-11-arm',
+                      'arch': 'aarch64',
+                      'flutter-arch': 'arm64',
+                      'vcpkg-triplet': 'arm64-windows-static',
+                      'build-args': '',
+                  })
+              f.write(f'windows_matrix={json.dumps(topmost_jobs)}\n')
+              f.write(f'windows_flutter_matrix={json.dumps(flutter_jobs)}\n')
           "
           else
             echo "windows=true" >> $GITHUB_OUTPUT
+            echo "windows_arm64=false" >> $GITHUB_OUTPUT
             echo "linux=true" >> $GITHUB_OUTPUT
             echo "android=true" >> $GITHUB_OUTPUT
+            echo 'windows_matrix=[{"target":"windows-2022","platform":"x64"}]' >> $GITHUB_OUTPUT
+            echo 'windows_flutter_matrix=[{"target":"x86_64-pc-windows-msvc","os":"windows-2022","arch":"x86_64","flutter-arch":"x64","vcpkg-triplet":"x64-windows-static","build-args":"--vram"}]' >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
 
@@ -101,15 +130,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        job:
-          - {
-              target: windows-2022,
-              platform: x64,
-            }
-          - {
-              target: windows-11-arm,
-              platform: ARM64,
-            }
+        job: ${{ fromJSON(needs.read-config.outputs.windows_matrix) }}
     with:
       upload-artifact: true
       target: ${{ matrix.job.target }}
@@ -125,27 +146,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        job:
-          # - { target: i686-pc-windows-msvc        , os: windows-2022                  }
-          # - { target: x86_64-pc-windows-gnu       , os: windows-2022                  }
-          - {
-              target: x86_64-pc-windows-msvc,
-              os: windows-2022,
-              arch: x86_64,
-              flutter-arch: x64,
-              vcpkg-triplet: x64-windows-static,
-              build-args: "--vram",
-            }
-          - {
-              target: aarch64-pc-windows-msvc,
-              os: windows-11-arm,
-              arch: aarch64,
-              flutter-arch: arm64,
-              vcpkg-triplet: arm64-windows-static,
-              # vram is x86/x64-only (NVENC needs CUDA, Intel MediaSDK needs __rdtsc);
-              # no NV/Intel/AMD hardware exists on Windows-on-ARM, so vram stays disabled here.
-              build-args: "",
-            }
+        job: ${{ fromJSON(needs.read-config.outputs.windows_flutter_matrix) }}
     steps:
       - name: Export GitHub Actions cache environment variables
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7

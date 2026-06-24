@@ -4,5 +4,6 @@
 
 platforms:
   windows: true        # Windows x86_64 (MSI + EXE 安装包)
+  windows_arm64: false # Windows ARM64 (需要 Flutter 3.44)
   linux: true          # Linux x86_64 + aarch64 (DEB + RPM)
   android: true        # Android aarch64 (APK)
