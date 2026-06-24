@@ -33,6 +33,7 @@ env:
 jobs:
   build-RustDeskTempTopMostWindow:
     runs-on: ${{ inputs.target }}
+    timeout-minutes: 30
     strategy:
         fail-fast: false
     env:
@@ -43,12 +44,13 @@ jobs:
 
       - name: Download the source code
         run: |
-          git clone https://github.com/rustdesk-org/RustDeskTempTopMostWindow RustDeskTempTopMostWindow
+          git clone --depth 1 https://github.com/rustdesk-org/RustDeskTempTopMostWindow RustDeskTempTopMostWindow
+          cd RustDeskTempTopMostWindow && git fetch --depth 1 origin 53b548a5398624f7149a382000397993542ad796 && git checkout 53b548a5398624f7149a382000397993542ad796
 
         # Build. commit 53b548a5398624f7149a382000397993542ad796 is tag v0.3
       - name: Build the project
         run: |
-          cd RustDeskTempTopMostWindow && git checkout 53b548a5398624f7149a382000397993542ad796
+          cd RustDeskTempTopMostWindow
           msbuild ${{ env.project_path }} -p:Configuration=${{ inputs.configuration }} -p:Platform=${{ inputs.platform }} /p:TargetVersion=${{ inputs.target_version }}
 
       - name: Archive build artifacts

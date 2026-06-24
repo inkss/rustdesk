@@ -10,6 +10,10 @@ on:
     branches: [custom-build]
   workflow_dispatch:
 
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 

@@ -61,10 +61,10 @@ jobs:
 
       - name: Cache Bridge
         id: cache-bridge
-        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           path: /tmp/flutter_rust_bridge
-          key: vcpkg-${{ matrix.job.arch }}
+          key: bridge-${{ matrix.job.target }}
 
       - name: Install flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2

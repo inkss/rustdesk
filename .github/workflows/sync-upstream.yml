@@ -5,6 +5,10 @@ on:
     - cron: '23 3 * * *'  # 每天 UTC 03:23
   workflow_dispatch:
 
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
@@ -142,7 +146,7 @@ jobs:
             cp -f /tmp/workflow_backup/* .github/workflows/
             git add .github/workflows/
             git commit -m "Merge upstream release $VERSION"
-            git push origin HEAD
+            git push origin HEAD:custom-build
             echo "✅ Merged $VERSION"
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "merged=true" >> $GITHUB_OUTPUT
@@ -151,12 +155,15 @@ jobs:
       - name: Create PR for conflicts
         if: steps.merge.outputs.merged == 'false'
         uses: actions/github-script@v7
+        env:
+          VERSION: ${{ steps.merge.outputs.version }}
+          BRANCH: ${{ steps.merge.outputs.branch }}
         with:
-          token: ${{ secrets.REPO_TOKEN }}
+          token: ${{ secrets.REPO_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const version = '${{ steps.merge.outputs.version }}';
-            const branch = '${{ steps.merge.outputs.branch }}';
+            const version = process.env.VERSION;
+            const branch = process.env.BRANCH;
             const resolved = fs.readFileSync('/tmp/pr_resolved.txt', 'utf8');
             const manual = fs.readFileSync('/tmp/pr_manual.txt', 'utf8');
             const workflowDiffs = fs.readFileSync('/tmp/pr_workflow_diffs.txt', 'utf8');
