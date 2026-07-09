@@ -56,3 +56,6 @@ vcpkg_installed
 flutter/lib/generated_plugin_registrant.dart
 libsciter.dylib
 flutter/web/
+# ===
+# CodeBuddy IDE 内部工作记忆（AI 会话用，非项目源码，本地保留）
+.codebuddy/
