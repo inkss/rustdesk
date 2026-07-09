@@ -116,8 +116,17 @@ jobs:
                 if [ -n "$FILE_DIFF" ]; then
                   WORKFLOW_DIFFS="$WORKFLOW_DIFFS\n\n### $file\n\n\`\`\`diff\n$FILE_DIFF\n\`\`\`"
                 fi
+              elif git ls-files -s "$file" | awk '{print $1}' | grep -q "^160000"; then
+                # 子模块 gitlink 冲突：直接采用上游 gitlink。
+                # 已确认本地提交是上游提交的前向祖先，无内部分叉，等价于库升级。
+                # 用 update-index --cacheinfo 直接写索引，避免未检出子模块导致 git add 失败。
+                SUBMODULE_SHA=$(git ls-tree "$VERSION" -- "$file" | awk '{print $3}')
+                git update-index --cacheinfo "160000,${SUBMODULE_SHA},$file" 2>/dev/null || true
+                RESOLVED="$RESOLVED\n- ✅ \`$file\` (子模块冲突，采用上游 gitlink)"
               else
-                MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，需人工解决)"
+                # 内容冲突：暂存工作区合并结果（可能含冲突标记），交由人工在 PR 中复核
+                git add "$file"
+                MANUAL="$MANUAL\n- ⚠️ \`$file\` (内容冲突，暂存供人工复核)"
               fi
             done
 
@@ -126,9 +135,16 @@ jobs:
             git add .github/workflows/
             RESOLVED="$RESOLVED\n- ✅ 所有 workflow 文件 (保留本地版本)"
 
-            # 精确添加合并产生的文件（排除临时文件和缓存）
-            git add Cargo.toml Cargo.lock src/ flutter/ libs/ res/ appimage/ build.py \
-              .cargo/ .github/patches/ README.md CUSTOM.md 2>/dev/null || true
+            # 兜底：逐个暂存所有遗留未合并项，确保提交前索引无 unmerged 项。
+            # （替换原先脆弱的复合 git add ... libs/ ...，该命令因子模块冲突中止导致 commit 退出 128）
+            for f in $(git diff --name-only --diff-filter=U); do
+              if git ls-files -s "$f" | awk '{print $1}' | grep -q "^160000"; then
+                SUBMODULE_SHA=$(git ls-tree "$VERSION" -- "$f" | awk '{print $3}')
+                git update-index --cacheinfo "160000,${SUBMODULE_SHA},$f" 2>/dev/null || true
+              else
+                git add "$f" 2>/dev/null || true
+              fi
+            done
             git commit -m "Merge upstream release $VERSION (conflicts resolved)"
             git push origin "$BRANCH" --force
 
