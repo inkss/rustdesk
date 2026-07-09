@@ -107,3 +107,4 @@ fetch upstream tags
 | 2026-06-24 | 修复 bridge.yml：添加 Flutter 3.44 bridge 生成，支持 Windows ARM64 编译 |
 | 2026-06-24 | 添加 .build-config.yml 中 windows_arm64 选项控制 Windows ARM64 编译（默认禁用） |
 | 2026-07-09 | 修复 sync-upstream：合并 v1.4.9 失败（commit 退出 128）。根因为 libs/hbb_common 子模块 gitlink 冲突——CI 未检出子模块导致无法自动解决，且兜底复合 `git add ... libs/ ...` 因该冲突中止、索引残留未合并项。新增子模块 gitlink 冲突自动处理（采用上游 gitlink，已确认是前向更新无内部分叉），内容冲突改为显式暂存并标记人工复核，并以「逐个暂存所有遗留未合并项」的兜底循环替换脆弱复合 git add，确保 commit 前索引干净 |
+| 2026-07-09 | 修复 v1.4.9 编译失败（actions run 28995435596）：`src/` 已升至上游 1.4.9，但 `libs/hbb_common` 子模块指针仍停在旧提交 `387603f4`，缺少 `ControlledContext`、`OPTION_ALLOW_SCOPE_VIOLATION_*`、proto `controlled_context` 等符号。将子模块前移到上游 1.4.9 配套的 `7e1c392c`（纯前向更新，无内部分叉），提交 `c4e271282` 并打 `1.4.9` tag 触发重编 |
