@@ -13,6 +13,7 @@ permissions:
   contents: write
   pull-requests: write
   actions: write
+  workflows: write
 
 jobs:
   check-and-sync:
@@ -130,9 +131,16 @@ jobs:
               fi
             done
 
-            # 恢复所有本地 workflow 文件
-            cp -f /tmp/workflow_backup/* .github/workflows/ 2>/dev/null || true
-            git add .github/workflows/
+            # 恢复所有本地 workflow 文件，并彻底丢弃上游新增/改动的 workflow。
+            # 先清空索引中 .github/workflows/ 的全部条目（-f 可清理冲突残留与上游新增项），
+            # 再清空工作树，只还原本地备份集，避免把上游 workflow 带入提交
+            # （否则 GITHUB_TOKEN 等无 workflows 权限的令牌推送会被服务端拒绝）。
+            if [ -n "$(ls -A /tmp/workflow_backup 2>/dev/null)" ]; then
+              git rm -r -f --cached --quiet .github/workflows/ >/dev/null 2>&1 || true
+              rm -f .github/workflows/*
+              cp -f /tmp/workflow_backup/* .github/workflows/ 2>/dev/null || true
+              git add .github/workflows/
+            fi
             RESOLVED="$RESOLVED\n- ✅ 所有 workflow 文件 (保留本地版本)"
 
             # 兜底：逐个暂存所有遗留未合并项，确保提交前索引无 unmerged 项。
@@ -158,9 +166,13 @@ jobs:
             echo "merged=false" >> $GITHUB_OUTPUT
             echo "⚠️ Conflicts detected for v$VERSION"
           else
-            # 无冲突：恢复本地 workflow 文件，提交合并
-            cp -f /tmp/workflow_backup/* .github/workflows/
-            git add .github/workflows/
+            # 无冲突：恢复本地 workflow 文件（丢弃上游新增/改动的 workflow），提交合并
+            if [ -n "$(ls -A /tmp/workflow_backup 2>/dev/null)" ]; then
+              git rm -r -f --cached --quiet .github/workflows/ >/dev/null 2>&1 || true
+              rm -f .github/workflows/*
+              cp -f /tmp/workflow_backup/* .github/workflows/ 2>/dev/null || true
+              git add .github/workflows/
+            fi
             git commit -m "Merge upstream release $VERSION"
             git push origin HEAD:custom-build
             echo "✅ Merged $VERSION"
