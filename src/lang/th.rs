@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "การเชื่อมต่อแบบ Relay "),
         ("Secure Connection", "การเชื่อมต่อที่ปลอดภัย"),
         ("Insecure Connection", "การเชื่อมต่อที่ไม่ปลอดภัย"),
-        ("Continue", ""),
         ("Scale original", "ขนาดเดิม"),
         ("Scale adaptive", "ขนาดยืดหยุ่น"),
         ("General", "ทั่วไป"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "จอภาพทั้งหมด"),
         ("#{} monitor", "จอภาพ {}"),
         ("conn-e2ee-unavailable-tip", "ไม่สามารถยืนยันการเข้ารหัสแบบต้นทางถึงปลายทางได้\nอุปกรณ์ระยะไกลอาจยังอยู่ระหว่างการตั้งค่า โปรดลองอีกครั้งภายหลัง\nหากปัญหานี้ยังเกิดขึ้นต่อไป เซิร์ฟเวอร์อาจไม่น่าเชื่อถือ\nต้องการดำเนินการต่อหรือไม่?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID ไวท์ลิสต์"),
         ("Use ID whitelisting", "ใช้งาน ID ไวท์ลิสต์"),
         ("id_whitelist_tip", "อนุญาตเฉพาะการเชื่อมต่อจาก ID ที่ไวท์ลิสต์"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "เวลารอก่อนเปลี่ยนไปใช้รีเลย์ (วินาที)"),
         ("relay-fallback-delay-tip", "การเชื่อมต่อผ่านรีเลย์ที่สร้างไว้แล้วจะรอการเชื่อมต่อ WebRTC โดยตรงนานเท่าใดก่อนที่จะถูกใช้แทน เพิ่มค่าเพื่อให้การเชื่อมต่อโดยตรงที่ช้ามีเวลามากขึ้น ลดค่าเพื่อเปลี่ยนไปใช้รีเลย์เร็วขึ้นในเครือข่ายที่ไม่สามารถเชื่อมต่อโดยตรงได้ เว้นว่างไว้เพื่อใช้ค่าเริ่มต้น 2.5 วินาที"),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

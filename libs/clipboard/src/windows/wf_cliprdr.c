@@ -51,8 +51,6 @@
 #define WF_CLIPRDR_MAX_FORMAT_NAME_WCHARS 255u
 /* Bound the peer-provided UTF-8 scan separately from the converted Windows name. */
 #define WF_CLIPRDR_MAX_FORMAT_NAME_UTF8_BYTES (WF_CLIPRDR_MAX_FORMAT_NAME_WCHARS * 4u)
-<<<<<<< HEAD
-=======
 /* File clipboard redirection always advertises the descriptor and contents formats. */
 #define WF_CLIPRDR_FILE_FORMAT_COUNT 2u
 #define WF_CLIPRDR_COM_LPT_PREFIX_LENGTH 3u
@@ -63,7 +61,6 @@ BOOL wf_cliprdr_format_data_size_valid(SIZE_T size)
 {
 	return size <= UINT32_MAX;
 }
->>>>>>> 1.5.0
 
 /* Validates the remote descriptor array size after cItems has been read safely. */
 static BOOL wf_cliprdr_file_group_descriptor_size_valid(SIZE_T size, UINT count)
@@ -84,8 +81,6 @@ static BOOL wf_cliprdr_file_group_descriptor_size_valid(SIZE_T size, UINT count)
 	return size >= descriptors_size;
 }
 
-<<<<<<< HEAD
-=======
 static BOOL wf_cliprdr_file_name_equals(const WCHAR *component, SIZE_T length,
 										const WCHAR *expected)
 {
@@ -199,7 +194,6 @@ static BOOL wf_cliprdr_file_group_descriptor_names_valid(
 	return TRUE;
 }
 
->>>>>>> 1.5.0
 static BOOL wf_cliprdr_bounded_strlen(const char *value, size_t max_len, size_t *len)
 {
 	size_t i;
@@ -2746,19 +2740,6 @@ static UINT wf_cliprdr_server_format_list(CliprdrClientContext *context,
 
 	AcquireSRWLockExclusive(&clipboard->format_map_lock);
 	if (!clear_format_map(clipboard))
-<<<<<<< HEAD
-		return ERROR_INTERNAL_ERROR;
-	clipboard->copied = FALSE;
-
-	if (formatList->numFormats > WF_CLIPRDR_MAX_FORMATS)
-		return ERROR_INTERNAL_ERROR;
-
-	if (formatList->numFormats > 0 && !formatList->formats)
-		return ERROR_INTERNAL_ERROR;
-
-	if (!map_ensure_capacity(clipboard, formatList->numFormats))
-		return ERROR_INTERNAL_ERROR;
-=======
 		goto unlock_fail;
 	clipboard->copied = FALSE;
 
@@ -2770,7 +2751,6 @@ static UINT wf_cliprdr_server_format_list(CliprdrClientContext *context,
 
 	if (!map_ensure_capacity(clipboard, formatList->numFormats))
 		goto fail;
->>>>>>> 1.5.0
 
 	clipboard->copied = TRUE;
 
@@ -2792,50 +2772,30 @@ static UINT wf_cliprdr_server_format_list(CliprdrClientContext *context,
 			if (!wf_cliprdr_bounded_strlen(format->formatName,
 			                               WF_CLIPRDR_MAX_FORMAT_NAME_UTF8_BYTES, &name_len))
 			{
-<<<<<<< HEAD
-				return wf_cliprdr_server_format_list_fail(clipboard);
-=======
 				goto fail;
->>>>>>> 1.5.0
 			}
 
 			if (name_len == 0)
 			{
-<<<<<<< HEAD
-				return wf_cliprdr_server_format_list_fail(clipboard);
-=======
 				goto fail;
->>>>>>> 1.5.0
 			}
 
 			size = MultiByteToWideChar(CP_UTF8, 0, format->formatName, (int)name_len,
 			                           NULL, 0);
 			if (size <= 0)
 			{
-<<<<<<< HEAD
-				return wf_cliprdr_server_format_list_fail(clipboard);
-=======
 				goto fail;
->>>>>>> 1.5.0
 			}
 
 			if ((UINT)size > WF_CLIPRDR_MAX_FORMAT_NAME_WCHARS)
 			{
-<<<<<<< HEAD
-				return wf_cliprdr_server_format_list_fail(clipboard);
-=======
 				goto fail;
->>>>>>> 1.5.0
 			}
 
 			mapping->name = calloc((size_t)size + 1, sizeof(WCHAR));
 			if (!mapping->name)
 			{
-<<<<<<< HEAD
-				return wf_cliprdr_server_format_list_fail(clipboard);
-=======
 				goto fail;
->>>>>>> 1.5.0
 			}
 
 			if (MultiByteToWideChar(CP_UTF8, 0, format->formatName, (int)name_len,
@@ -2843,21 +2803,13 @@ static UINT wf_cliprdr_server_format_list(CliprdrClientContext *context,
 			{
 				free(mapping->name);
 				mapping->name = NULL;
-<<<<<<< HEAD
-				return wf_cliprdr_server_format_list_fail(clipboard);
-=======
 				goto fail;
->>>>>>> 1.5.0
 			}
 
 			mapping->local_format_id = RegisterClipboardFormatW((LPWSTR)mapping->name);
 			if (mapping->local_format_id == 0)
 			{
-<<<<<<< HEAD
-				return wf_cliprdr_server_format_list_fail(clipboard);
-=======
 				goto fail;
->>>>>>> 1.5.0
 			}
 		}
 		else

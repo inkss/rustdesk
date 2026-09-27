@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "اتصال الوسيط"),
         ("Secure Connection", "اتصال آمن"),
         ("Insecure Connection", "اتصال غير آمن"),
-        ("Continue", ""),
         ("Scale original", "المقياس الأصلي"),
         ("Scale adaptive", "مقياس التكيف"),
         ("General", "عام"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "جميع الشاشات"),
         ("#{} monitor", "الشاشة رقم {}"),
         ("conn-e2ee-unavailable-tip", "تعذر التحقق من التشفير من طرف إلى طرف.\nقد يكون الجهاز البعيد ما يزال قيد الإعداد. حاول مرة أخرى لاحقًا.\nإذا استمر حدوث ذلك، فقد يكون الخادم غير موثوق به.\nهل تريد المتابعة على أي حال؟"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "القائمة البيضاء للمعرفات"),
         ("Use ID whitelisting", "استخدام القائمة البيضاء للمعرفات"),
         ("id_whitelist_tip", "فقط المعرفات في القائمة البيضاء تستطيع الوصول لي"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "مهلة التراجع إلى الترحيل بالثواني"),
         ("relay-fallback-delay-tip", "المدة التي ينتظرها اتصال الترحيل القائم بالفعل الاتصالَ المباشر عبر WebRTC قبل أن يُستخدم بدلًا منه. زِدها لمنح الاتصال المباشر البطيء فرصة أكبر للفوز؛ وقلّلها للاستقرار على الترحيل أسرع في الشبكات التي يتعذر فيها الاتصال المباشر. اتركها فارغة للقيمة الافتراضية 2.5 ثانية."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

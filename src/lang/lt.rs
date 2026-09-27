@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Tarpinė jungtis"),
         ("Secure Connection", "Saugus ryšys"),
         ("Insecure Connection", "Nesaugus ryšys"),
-        ("Continue", ""),
         ("Scale original", "Pakeisti originalų mastelį"),
         ("Scale adaptive", "Pritaikomas mastelis"),
         ("General", "Bendra"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Visi monitoriai"),
         ("#{} monitor", "Monitorius {}"),
         ("conn-e2ee-unavailable-tip", "Nepavyko patikrinti galinio šifravimo.\nNuotolinis įrenginys galbūt vis dar nustatomas. Bandykite dar kartą vėliau.\nJei tai kartojasi, serveris gali būti nepatikimas.\nVis tiek tęsti?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID baltasis sąrašas"),
         ("Use ID whitelisting", "Naudoti patikimą ID sąrašą"),
         ("id_whitelist_tip", "Mane gali pasiekti tik baltajame sąraše esantys ID"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Delsa prieš pereinant prie perdavimo sekundėmis"),
         ("relay-fallback-delay-tip", "Kiek laiko jau užmegztas perdavimo ryšys laukia tiesioginio WebRTC ryšio, kol bus panaudotas vietoj jo. Padidinkite, kad lėtam tiesioginiam ryšiui būtų skirta daugiau laiko; sumažinkite, kad tinkluose, kuriuose tiesioginis ryšys neįmanomas, greičiau būtų pereinama prie perdavimo. Palikite tuščią numatytajai 2.5 sekundės reikšmei."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

@@ -1,10 +1,6 @@
 [package]
 name = "rustdesk-portable-packer"
-<<<<<<< HEAD
-version = "1.4.9"
-=======
 version = "1.5.0"
->>>>>>> 1.5.0
 edition = "2021"
 description = "RustDesk Remote Desktop"
 

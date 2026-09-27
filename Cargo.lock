@@ -1305,11 +1305,7 @@ dependencies = [
 [[package]]
 name = "clipboard-master"
 version = "4.0.0-beta.6"
-<<<<<<< HEAD
-source = "git+https://github.com/rustdesk-org/clipboard-master#7762d74e38db37cfeb6ded88c964b9cdbddfb6db"
-=======
 source = "git+https://github.com/rustdesk-org/clipboard-master#522fafb65edfe7939cf63fa797f916569ecab595"
->>>>>>> 1.5.0
 dependencies = [
  "objc",
  "objc-foundation",
@@ -2640,11 +2636,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
-<<<<<<< HEAD
- "windows-sys 0.60.2",
-=======
  "windows-sys 0.61.2",
->>>>>>> 1.5.0
 ]
 
 [[package]]
@@ -6780,11 +6772,7 @@ dependencies = [
 [[package]]
 name = "rdev"
 version = "0.5.0-2"
-<<<<<<< HEAD
-source = "git+https://github.com/rustdesk-org/rdev#871bf1c856d6a30af2f56ab8848396a025140855"
-=======
 source = "git+https://github.com/rustdesk-org/rdev#a361d86a8b0245f3618a9efb375c149530a6b599"
->>>>>>> 1.5.0
 dependencies = [
  "cocoa 0.24.1",
  "core-foundation 0.9.4",
@@ -7099,11 +7087,7 @@ dependencies = [
 
 [[package]]
 name = "rustdesk"
-<<<<<<< HEAD
-version = "1.4.9"
-=======
 version = "1.5.0"
->>>>>>> 1.5.0
 dependencies = [
  "android-wakelock",
  "android_logger",
@@ -7218,11 +7202,7 @@ dependencies = [
 
 [[package]]
 name = "rustdesk-portable-packer"
-<<<<<<< HEAD
-version = "1.4.9"
-=======
 version = "1.5.0"
->>>>>>> 1.5.0
 dependencies = [
  "brotli",
  "dirs 5.0.1",
@@ -7294,11 +7274,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.11.0",
-<<<<<<< HEAD
- "windows-sys 0.60.2",
-=======
  "windows-sys 0.61.2",
->>>>>>> 1.5.0
 ]
 
 [[package]]
@@ -7355,11 +7331,7 @@ dependencies = [
  "security-framework 3.5.1",
  "security-framework-sys",
  "webpki-root-certs",
-<<<<<<< HEAD
- "windows-sys 0.60.2",
-=======
  "windows-sys 0.61.2",
->>>>>>> 1.5.0
 ]
 
 [[package]]

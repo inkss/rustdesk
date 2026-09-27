@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Αναμεταδιδόμενη σύνδεση"),
         ("Secure Connection", "Ασφαλής σύνδεση"),
         ("Insecure Connection", "Μη ασφαλής σύνδεση"),
-        ("Continue", ""),
         ("Scale original", "Κλιμάκωση πρωτότυπου"),
         ("Scale adaptive", "Αυτόματη προσαρμογή κλίμακας"),
         ("General", "Γενικά"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Όλες οι οθόνες"),
         ("#{} monitor", "Οθόνη {}"),
         ("conn-e2ee-unavailable-tip", "Δεν ήταν δυνατή η επαλήθευση της κρυπτογράφησης από άκρο σε άκρο.\nΗ απομακρυσμένη συσκευή μπορεί να ρυθμίζεται ακόμα. Δοκιμάστε ξανά αργότερα.\nΑν αυτό συνεχιστεί, ο διακομιστής μπορεί να μην είναι αξιόπιστος.\nΣυνέχεια παρ' όλα αυτά;"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Λίστα επιτρεπόμενων ID"),
         ("Use ID whitelisting", "Χρήση λίστας επιτρεπόμενων ID"),
         ("id_whitelist_tip", "Μόνο τα ID της λίστας επιτρεπόμενων έχουν πρόσβαση σε εμένα"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Καθυστέρηση πριν από τη χρήση αναμεταδότη σε δευτερόλεπτα"),
         ("relay-fallback-delay-tip", "Πόσο χρόνο περιμένει μια ήδη ενεργή σύνδεση αναμεταδότη την απευθείας σύνδεση WebRTC πριν χρησιμοποιηθεί στη θέση της. Αυξήστε το για να δώσετε σε μια αργή απευθείας σύνδεση περισσότερο χρόνο. Μειώστε το για ταχύτερη επιστροφή στον αναμεταδότη σε δίκτυα όπου δεν είναι δυνατή η απευθείας σύνδεση. Αφήστε το κενό για την προεπιλογή των 2.5 δευτερολέπτων."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

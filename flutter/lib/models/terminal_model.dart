@@ -92,12 +92,9 @@ class TerminalModel with ChangeNotifier {
   /// The listener (typically TerminalPage) can use this to auto-close the tab/page.
   VoidCallback? onClosed;
 
-<<<<<<< HEAD
-=======
   ValueChanged<String>? onClipboardWriteBlocked;
   ValueChanged<String>? onClipboardWriteSucceeded;
 
->>>>>>> 1.5.0
   Future<void> _handleInput(String data) async {
     // xterm can complete asynchronous input after the Flutter page has gone
     // away. Stop before reading or clearing widget-owned modifier state.

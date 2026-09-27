@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Releeühendus"),
         ("Secure Connection", "Turvaline ühendus"),
         ("Insecure Connection", "Ebaturvaline ühendus"),
-        ("Continue", ""),
         ("Scale original", "Originaalskaala"),
         ("Scale adaptive", "Kohanduv skaala"),
         ("General", "Üldine"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Kõik kuvarid"),
         ("#{} monitor", "Kuvar {}"),
         ("conn-e2ee-unavailable-tip", "Otspunktkrüptimist ei saanud kontrollida.\nKaugseade võib olla veel seadistamisel. Proovige hiljem uuesti.\nKui see jätkub, ei pruugi server olla usaldusväärne.\nKas jätkata siiski?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID lubamisloend"),
         ("Use ID whitelisting", "Kasuta ID-lubamisloendit"),
         ("id_whitelist_tip", "Ainult lubamisloendis ID saab mulle ligi"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Viivitus enne relee kasutamist sekundites"),
         ("relay-fallback-delay-tip", "Kui kaua juba loodud releeühendus ootab otsest WebRTC-ühendust, enne kui seda selle asemel kasutatakse. Suurendage, et anda aeglasele otseühendusele rohkem aega; vähendage, et võrkudes, kus otseühendust luua ei saa, releele kiiremini üle minna. Jätke tühjaks vaikeväärtuse 2.5 sekundit kasutamiseks."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Połączenie przez bramkę"),
         ("Secure Connection", "Połączenie szyfrowane"),
         ("Insecure Connection", "Połączenie nieszyfrowane"),
-        ("Continue", ""),
         ("Scale original", "Skalowanie oryginalne"),
         ("Scale adaptive", "Dopasuj do wyświetlacza"),
         ("General", "Ogólne"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Wszystkie ekrany"),
         ("#{} monitor", "Ekran {}"),
         ("conn-e2ee-unavailable-tip", "Nie można zweryfikować szyfrowania end-to-end.\nUrządzenie zdalne może nadal się konfigurować. Spróbuj ponownie później.\nJeśli problem będzie się powtarzał, serwer może być niezaufany.\nKontynuować mimo to?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Biała lista ID"),
         ("Use ID whitelisting", "Użyj białej listy ID"),
         ("id_whitelist_tip", "Zezwalaj na łączenie z tym komputerem tylko z ID znajdujących się na białej liście"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Opóźnienie przed przejściem na przekaźnik w sekundach"),
         ("relay-fallback-delay-tip", "Jak długo nawiązane już połączenie przez przekaźnik czeka na bezpośrednie połączenie WebRTC, zanim zostanie użyte zamiast niego. Zwiększ, aby dać wolnemu połączeniu bezpośredniemu więcej czasu; zmniejsz, aby w sieciach, w których połączenie bezpośrednie jest niemożliwe, szybciej przechodzić na przekaźnik. Pozostaw puste, aby użyć wartości domyślnej 2.5 sekundy."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

@@ -255,11 +255,8 @@ class FfiModel with ChangeNotifier {
     _inputBlocked = false;
     _timer?.cancel();
     _timer = null;
-<<<<<<< HEAD
-=======
     _androidDocumentPickerActive = false;
     _androidDocumentPickerInterruptedConnection = false;
->>>>>>> 1.5.0
     resetRestartReconnectState();
     clearPermissions();
     waitForImageTimer?.cancel();
@@ -977,8 +974,6 @@ class FfiModel with ChangeNotifier {
     _restartReconnectDelayTimer = null;
   }
 
-<<<<<<< HEAD
-=======
   void beginAndroidDocumentPicker() {
     if (!isAndroid) return;
     _androidDocumentPickerActive = true;
@@ -996,7 +991,6 @@ class FfiModel with ChangeNotifier {
     reconnect(parent.target!.dialogManager, sessionId, false);
   }
 
->>>>>>> 1.5.0
   /// Auto-retry check for "Remote desktop is offline" error.
   /// returns true to auto-retry, false otherwise.
   bool shouldAutoRetryOnOffline(

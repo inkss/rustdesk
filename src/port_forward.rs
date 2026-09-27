@@ -120,11 +120,7 @@ pub async fn listen(
                 let password = password.clone();
                 let mut forward = Framed::new(forward, BytesCodec::new());
                 let mut close_port_forward = false;
-<<<<<<< HEAD
-                match connect_and_login(&id, &password, &mut ui_receiver, interface.clone(), &mut forward, key, token, is_rdp, &mut close_port_forward).await {
-=======
                 match connect_and_login(&id, &password, &mut ui_receiver, interface.clone(), &mut forward, key, token, is_rdp, &mut close_port_forward, &remote_host, remote_port).await {
->>>>>>> 1.5.0
                     Ok(Some(stream)) => {
                         let interface = interface.clone();
                         tokio::spawn(async move {
@@ -170,11 +166,8 @@ async fn connect_and_login(
     token: &str,
     is_rdp: bool,
     close_port_forward: &mut bool,
-<<<<<<< HEAD
-=======
     remote_host: &str,
     remote_port: i32,
->>>>>>> 1.5.0
 ) -> ResultType<Option<Stream>> {
     let conn_type = if is_rdp {
         ConnType::RDP

@@ -44,7 +44,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("id_change_tip", "a-z, A-Z, 0-9, -(대시) 및 _(밑줄) 문자만 허용됩니다. 첫 글자는 a-z, A-Z여야 합니다. 길이는 6에서 16 사이여야 합니다."),
         ("Website", "웹사이트"),
         ("About", "정보"),
-        ("Slogan_tip", "이 혼란스러운 세상에서 마음을 담아 만들었습니다!"),
+        ("Slogan_tip", "이 혼란스러운 세상에서 마음을 담아 만들었습니다! - 한국어 번역: 비너스걸"),
         ("Privacy Statement", "개인정보 보호정책"),
         ("Mute", "음소거"),
         ("Build Date", "빌드 날짜"),
@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "릴레이 연결"),
         ("Secure Connection", "보안 연결"),
         ("Insecure Connection", "보안되지 않은 연결"),
-        ("Continue", ""),
         ("Scale original", "원본 크기 조정"),
         ("Scale adaptive", "크기 조정 가능"),
         ("General", "일반"),
@@ -379,11 +378,7 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Screen Share", "화면 공유"),
         ("ubuntu-21-04-required", "Wayland는 Ubuntu 21.04 이상 버전이 필요합니다."),
         ("wayland-requires-higher-linux-version", "Wayland는 상위 버전의 Linux 배포판이 필요합니다. X11 데스크탑을 사용하거나 OS를 변경하세요."),
-<<<<<<< HEAD
-        ("xdp-portal-unavailable", ""),
-=======
         ("xdp-portal-unavailable", "Wayland 화면 캡처에 실패했습니다. XDG Desktop Portal이 중단되었거나 사용할 수 없습니다. `systemctl --user restart xdg-desktop-portal` 명령으로 다시 시작해 보세요."),
->>>>>>> 1.5.0
         ("JumpLink", "점프 링크"),
         ("Please Select the screen to be shared(Operate on the peer side).", "공유할 화면을 선택하세요 (피어 측에서 작동)"),
         ("Show RustDesk", "RustDesk 표시"),
@@ -753,9 +748,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Show on the minimized toolbar", "최소화된 도구 모음에 표시"),
         ("All monitors", "모든 모니터"),
         ("#{} monitor", "#{} 모니터"),
-<<<<<<< HEAD
-        ("conn-e2ee-unavailable-tip", "종단 간 암호화를 확인할 수 없습니다.\n원격 장치가 아직 설정 중일 수 있습니다. 나중에 다시 시도하세요.\n이 문제가 계속되면 서버를 신뢰할 수 없을 수 있습니다.\n그래도 계속하시겠습니까?"),
-=======
         ("conn-e2ee-unavailable-tip", "종단 간 암호화를 확인할 수 없습니다.\n원격 장치가 여전히 설정 중일 수 있습니다. 나중에 다시 시도해 보세요.\n이런 일이 계속 발생하면 서버가 신뢰할 수 없을 수도 있습니다.\n어쨌든 계속하시겠습니까?"),
         ("ID whitelisting", "ID 화이트리스트"),
         ("Use ID whitelisting", "ID 화이트리스트 사용"),
@@ -789,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "릴레이 대체 작동 지연 시간 (초)"),
         ("relay-fallback-delay-tip", "이미 연결된 중계 연결이 직접 WebRTC 연결을 얼마나 기다린 후 대신 사용되는지입니다. 값을 늘리면 느린 직접 연결에 더 많은 시간을 주고, 줄이면 직접 연결이 불가능한 네트워크에서 더 빨리 중계로 전환합니다. 비워 두면 기본값 2.5초가 사용됩니다."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "음성 통화를 시작하려면 '화면 공유' 페이지에서 '오디오 캡처'를 사용함으로 하세요.")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

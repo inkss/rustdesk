@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Рэтрансляванае падключэнне"),
         ("Secure Connection", "Бяспечнае падключэнне"),
         ("Insecure Connection", "Нябяспечнае падключэнне"),
-        ("Continue", ""),
         ("Scale original", "Арыгінальны маштаб"),
         ("Scale adaptive", "Адаптыўны маштаб"),
         ("General", "Агульныя"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Усе манітори"),
         ("#{} monitor", "Манітор {}"),
         ("conn-e2ee-unavailable-tip", "Не ўдалося праверыць скразное шыфраванне.\nАддаленая прылада, магчыма, яшчэ наладжваецца. Паспрабуйце пазней.\nКалі гэта будзе паўтарацца, сервер можа быць ненадзейным.\nУсё роўна працягнуць?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Спіс дазволеных ID"),
         ("Use ID whitelisting", "Выкарыстоўваць белы спіс ID"),
         ("id_whitelist_tip", "Атрымліваць доступ да маёй прылады могуць толькі ID з белага спісу."),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Затрымка пераходу на рэтранслятар у секундах"),
         ("relay-fallback-delay-tip", "Колькі часу ўжо ўсталяванае злучэнне праз рэтранслятар чакае прамога злучэння WebRTC, перш чым будзе выкарыстана замест яго. Павялічце, каб даць павольнаму прамому злучэнню больш часу; паменшыце, каб хутчэй пераходзіць на рэтранслятар у сетках, дзе прамое злучэнне немагчымае. Пакіньце пустым для значэння па змаўчанні 2.5 секунды."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

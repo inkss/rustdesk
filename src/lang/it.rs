@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Connessione relay"),
         ("Secure Connection", "Connessione sicura"),
         ("Insecure Connection", "Connessione non sicura"),
-        ("Continue", ""),
         ("Scale original", "Scala originale"),
         ("Scale adaptive", "Scala adattiva"),
         ("General", "Generale"),
@@ -749,9 +748,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Show on the minimized toolbar", "Visualizza nella barra strumenti ridotta a icona"),
         ("All monitors", "Tutti gli schermi"),
         ("#{} monitor", "Schermo {}"),
-<<<<<<< HEAD
-        ("conn-e2ee-unavailable-tip", "Impossibile verificare la crittografia end-to-end.\nIl dispositivo remoto potrebbe essere ancora in configurazione. Riprova più tardi.\nSe il problema persiste, il server potrebbe non essere attendibile.\nContinuare comunque?"),
-=======
         ("conn-e2ee-unavailable-tip", "Impossibile verificare la crittografia end-to-end.\nIl dispositivo remoto potrebbe essere ancora in configurazione. Riprova più tardi.\nSe il problema persiste, il server potrebbe non essere attendibile.\nVuoi continuare?"),
         ("ID whitelisting", "ID autorizzati"),
         ("Use ID whitelisting", "Usa elenco ID autorizzati"),
@@ -785,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Ritardo fallback relay (secondi)"),
         ("relay-fallback-delay-tip", "Quanto tempo una connessione relay già attiva attende la connessione WebRTC diretta prima di essere usata. Aumentalo per dare a una connessione diretta lenta più tempo per funzionare; diminuiscilo per passare prima al relay sulle reti in cui non è possibile effettuare una connessione diretta. Lascia vuoto per il valore predefinito di 2,5 secondi."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "Per avviare una chiamata vocale, attiva nella pagina 'Condivisione schermo' la voce 'Cattura audio'.")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

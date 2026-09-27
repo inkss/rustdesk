@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Connessione tramudada (relay)"),
         ("Secure Connection", "Connessione segura"),
         ("Insecure Connection", "Connessione non segura"),
-        ("Continue", ""),
         ("Scale original", "Iscala originale"),
         ("Scale adaptive", "Iscala adativa"),
         ("General", "Generale"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Totu sos ischermos"),
         ("#{} monitor", "Ischermu {}"),
         ("conn-e2ee-unavailable-tip", "No est istadu possìbile verificare sa tzifratzione de punta a punta.\nSu dispositivu remotu podet èssere ancora in fase de configuratzione. Torra a proare prus a tardu.\nSi custu sighit a acontèssere, su server podet non èssere fidadu.\nBoles sighire comente siat?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID autorizados"),
         ("Use ID whitelisting", "Imprea elencu ID autorizados"),
         ("id_whitelist_tip", "Si podent connètere a custa iscrivania petzi sos ID autorizados"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Tardu prima de impreare su relè in segundos"),
         ("relay-fallback-delay-tip", "Cantu tempus una connessione de relè giai istabilida abetat sa connessione direta WebRTC prima de èssere impreada in su postu suo. Aumenta pro dare prus tempus a una connessione direta lenta; diminuì pro colare prima a su relè in sas retes in ue non si podet fàghere una connessione direta. Lassa bòidu pro su valore predefinidu de 2.5 segundos."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "Pro aviare una mutida de boghe, ativa in sa pàgina \"Cumpartzidura de ischermu\" s’elementu \"Catura de s’àudio\".")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

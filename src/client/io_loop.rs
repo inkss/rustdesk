@@ -15,8 +15,6 @@ use crate::{
 // Restart msgbox text is kept as a legacy UI fallback; Flutter handles the type as a control event.
 const RESTART_REMOTE_DEVICE_NO_DATA_TIMEOUT: Duration = Duration::from_secs(5);
 const KCP_CLOSE_REASON_FLUSH_DELAY: Duration = Duration::from_millis(30);
-<<<<<<< HEAD
-=======
 // Deadline for the parting close-reason send once the peer is presumed gone; KCP waits for send
 // capacity with no deadline of its own.
 const KCP_CLOSE_REASON_GONE_DEADLINE: Duration = Duration::from_millis(500);
@@ -27,7 +25,6 @@ const WEBRTC_SUSPECT_GRACE: Duration = Duration::from_secs(3);
 // KCP gets no such hint, only how long since a packet arrived; its endpoint pings an idle peer
 // about every 2s, so this is several missed pings, and matches the 8s WebRTC arrives at.
 const KCP_PEER_SILENCE_LIMIT: Duration = Duration::from_secs(8);
->>>>>>> 1.5.0
 #[cfg(feature = "unix-file-copy-paste")]
 use crate::{clipboard::try_empty_clipboard_files, clipboard_file::unix_file_clip};
 use base::{
@@ -210,8 +207,6 @@ impl<T: InvokeUiSession> Remote<T> {
                     .unwrap()
                     .set_connected();
                 let is_secured = peer.is_secured();
-<<<<<<< HEAD
-=======
                 // Only WebRTC needs refining: its label names the transport that won the race,
                 // not the family ICE ended up nominating, and it is the one path where the two
                 // can disagree with the address the rendezvous observed.
@@ -220,7 +215,6 @@ impl<T: InvokeUiSession> Remote<T> {
                 } else {
                     stream_type
                 };
->>>>>>> 1.5.0
                 self.handler
                     .set_connection_type(is_secured, direct, stream_type); // flutter -> connection_ready
                 if !is_secured
@@ -272,12 +266,9 @@ impl<T: InvokeUiSession> Remote<T> {
 
                 let _keep_it = client::hc_connection(feedback, rendezvous_server, token).await;
                 let mut last_recv_time = Instant::now();
-<<<<<<< HEAD
-=======
                 let mut webrtc_suspect_since: Option<Instant> = None;
                 let mut last_rx_progress = peer.rx_progress();
                 let mut peer_gone = false;
->>>>>>> 1.5.0
 
                 loop {
                     tokio::select! {
@@ -344,8 +335,6 @@ impl<T: InvokeUiSession> Remote<T> {
                                 self.handler.msgbox("restarting-show", "Restarting remote device", "Connection in progress. Please wait.", "");
                                 break;
                             }
-<<<<<<< HEAD
-=======
                             let rx_progress = peer.rx_progress();
                             // `None` for transports that report none, and it never changes for a
                             // given one, so they are inert here.
@@ -377,7 +366,6 @@ impl<T: InvokeUiSession> Remote<T> {
                                 self.handler.msgbox("error", "Connection Error", "Timeout", "");
                                 break;
                             }
->>>>>>> 1.5.0
                             let elapsed = fps_instant.elapsed().as_millis();
                             if elapsed < 1000 {
                                 continue;
@@ -1698,8 +1686,6 @@ impl<T: InvokeUiSession> Remote<T> {
                         !lc.disable_clipboard.v && !lc.view_only.v
                     };
                     if clipboard_allowed {
-<<<<<<< HEAD
-=======
                         #[cfg(all(
                             feature = "flutter",
                             not(any(target_os = "android", target_os = "ios"))
@@ -1712,7 +1698,6 @@ impl<T: InvokeUiSession> Remote<T> {
                             let session_id = self.handler.lc.read().unwrap().session_id;
                             crate::flutter::send_clipboard_msg_to_other_sessions(msg, session_id);
                         }
->>>>>>> 1.5.0
                         #[cfg(not(any(target_os = "android", target_os = "ios")))]
                         {
                             self.initial_clipboard_pending = false;
@@ -1739,8 +1724,6 @@ impl<T: InvokeUiSession> Remote<T> {
                         !lc.disable_clipboard.v && !lc.view_only.v
                     };
                     if clipboard_allowed {
-<<<<<<< HEAD
-=======
                         #[cfg(all(
                             feature = "flutter",
                             not(any(target_os = "android", target_os = "ios"))
@@ -1753,7 +1736,6 @@ impl<T: InvokeUiSession> Remote<T> {
                             let session_id = self.handler.lc.read().unwrap().session_id;
                             crate::flutter::send_clipboard_msg_to_other_sessions(msg, session_id);
                         }
->>>>>>> 1.5.0
                         #[cfg(not(any(target_os = "android", target_os = "ios")))]
                         {
                             self.initial_clipboard_pending = false;

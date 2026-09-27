@@ -372,11 +372,7 @@ pub fn session_toggle_option(session_id: SessionID, value: String) {
     }
     #[cfg(feature = "unix-file-copy-paste")]
     if sessions::get_session_by_session_id(&session_id).is_some()
-<<<<<<< HEAD
-        && (value == config::keys::OPTION_ENABLE_FILE_COPY_PASTE || value == "view-only")
-=======
         && (value == keys::OPTION_ENABLE_FILE_COPY_PASTE || value == "view-only")
->>>>>>> 1.5.0
     {
         crate::flutter::update_file_clipboard_required();
     }

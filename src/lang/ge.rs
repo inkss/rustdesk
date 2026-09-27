@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "რეტრანსლირებული კავშირი"),
         ("Secure Connection", "უსაფრთხო კავშირი"),
         ("Insecure Connection", "არაუსაფრთხო კავშირი"),
-        ("Continue", ""),
         ("Scale original", "ორიგინალური მასშტაბი"),
         ("Scale adaptive", "ადაპტირებადი მასშტაბი"),
         ("General", "ზოგადი"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "ყველა მონიტორი"),
         ("#{} monitor", "მონიტორი {}"),
         ("conn-e2ee-unavailable-tip", "ბოლომდე დაშიფვრის გადამოწმება ვერ მოხერხდა.\nდისტანციური მოწყობილობა შესაძლოა ჯერ კიდევ მზადდება. სცადეთ მოგვიანებით.\nთუ ეს კვლავ გაგრძელდება, სერვერი შესაძლოა არასანდო იყოს.\nმაინც გააგრძელებთ?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "დაშვებული ID-ების სია"),
         ("Use ID whitelisting", "ID თეთრი სიის გამოყენება"),
         ("id_whitelist_tip", "მხოლოდ თეთრ სიაში არსებულ ID-ებს შეუძლიათ ჩემს მოწყობილობაზე წვდომა."),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "რელეზე გადასვლის დაყოვნება წამებში"),
         ("relay-fallback-delay-tip", "რამდენ ხანს ელოდება უკვე დამყარებული რელე-კავშირი პირდაპირ WebRTC კავშირს, სანამ მის ნაცვლად გამოიყენება. გაზარდეთ, რომ ნელ პირდაპირ კავშირს მეტი დრო მისცეთ; შეამცირეთ, რომ ქსელებში, სადაც პირდაპირი კავშირი შეუძლებელია, უფრო სწრაფად გადავიდეს რელეზე. დატოვეთ ცარიელი ნაგულისხმევი 2.5 წამისთვის."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Aktarmalı Bağlantı"),
         ("Secure Connection", "Güvenli Bağlantı"),
         ("Insecure Connection", "Güvenli Olmayan Bağlantı"),
-        ("Continue", ""),
         ("Scale original", "Orijinal ölçekte"),
         ("Scale adaptive", "Uyarlanabilir ölçekte"),
         ("General", "Genel"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Tüm monitörler"),
         ("#{} monitor", "Monitör {}"),
         ("conn-e2ee-unavailable-tip", "Uçtan uca şifreleme doğrulanamadı.\nUzak cihaz hâlâ kuruluyor olabilir. Daha sonra tekrar deneyin.\nBu sorun devam ederse sunucu güvenilir olmayabilir.\nYine de devam edilsin mi?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "İzinli ID listesi"),
         ("Use ID whitelisting", "İzinli ID listesini kullan"),
         ("id_whitelist_tip", "Bu masaüstüne yalnızca izinli ID'ler bağlanabilir"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Aktarıcıya geçiş gecikmesi (saniye)"),
         ("relay-fallback-delay-tip", "Zaten kurulmuş bir aktarıcı bağlantısının, onun yerine kullanılmadan önce doğrudan WebRTC bağlantısını ne kadar beklediğidir. Yavaş bir doğrudan bağlantıya daha fazla süre tanımak için artırın; doğrudan bağlantının kurulamadığı ağlarda aktarıcıya daha erken geçmek için azaltın. Varsayılan 2.5 saniye için boş bırakın."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "Sesli arama başlatmak için \"Ekran paylaşımı\" sayfasındaki \"Ses yakalama\" seçeneğini açın.")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

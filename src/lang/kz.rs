@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Релай Қосылым"),
         ("Secure Connection", "Қауіпсіз Қосылым"),
         ("Insecure Connection", "Қатерлі Қосылым"),
-        ("Continue", ""),
         ("Scale original", "Scale original"),
         ("Scale adaptive", "Scale adaptive"),
         ("General", "Жалпы"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Барлық мониторлар"),
         ("#{} monitor", "Монитор {}"),
         ("conn-e2ee-unavailable-tip", "Ұштан-ұшқа шифрлауды тексеру мүмкін болмады.\nҚашықтағы құрылғы әлі бапталып жатқан болуы мүмкін. Кейінірек қайталап көріңіз.\nЕгер бұл қайталана берсе, сервер сенімсіз болуы мүмкін.\nСонда да жалғастыру керек пе?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID Ақ-тізімі"),
         ("Use ID whitelisting", "ID ақ-тізімін қолдану"),
         ("id_whitelist_tip", "Маған тек ақ-тізімделген ID қол жеткізе алады"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Релеге ауысу кідірісі, секундпен"),
         ("relay-fallback-delay-tip", "Бұрыннан орнатылған реле байланысы тікелей WebRTC байланысын қанша уақыт күтеді, содан кейін оның орнына қолданылады. Баяу тікелей байланысқа көбірек уақыт беру үшін үлкейтіңіз; тікелей байланыс мүмкін емес желілерде релеге тезірек ауысу үшін кішірейтіңіз. Әдепкі 2.5 секунд үшін бос қалдырыңыз."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

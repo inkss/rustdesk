@@ -182,10 +182,7 @@ async fn accept_connection_(
     socket: Stream,
     secure: bool,
     meta: ConnectionMeta,
-<<<<<<< HEAD
-=======
     slot: crate::rendezvous_mediator::PunchSlot,
->>>>>>> 1.5.0
 ) -> ResultType<()> {
     let local_addr = socket.local_addr();
     drop(socket);
@@ -248,9 +245,6 @@ pub async fn create_tcp_connection(
         }
         log::info!("wake up macos");
     }
-<<<<<<< HEAD
-    Connection::start(addr, stream, id, Arc::downgrade(&server), meta).await;
-=======
     Connection::start(
         addr,
         stream,
@@ -260,7 +254,6 @@ pub async fn create_tcp_connection(
         unauthorized,
     )
     .await;
->>>>>>> 1.5.0
     Ok(())
 }
 
@@ -364,14 +357,9 @@ pub(crate) async fn accept_connection(
     peer_addr: SocketAddr,
     secure: bool,
     meta: ConnectionMeta,
-<<<<<<< HEAD
-) {
-    if let Err(err) = accept_connection_(server, socket, secure, meta).await {
-=======
     slot: crate::rendezvous_mediator::PunchSlot,
 ) {
     if let Err(err) = accept_connection_(server, socket, secure, meta, slot).await {
->>>>>>> 1.5.0
         log::warn!("Failed to accept connection from {}: {}", peer_addr, err);
     }
 }

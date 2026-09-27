@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "חיבור באמצעות ממסר"),
         ("Secure Connection", "חיבור מאובטח"),
         ("Insecure Connection", "חיבור לא מאובטח"),
-        ("Continue", ""),
         ("Scale original", "קנה מידה מקורי"),
         ("Scale adaptive", "קנה מידה מותאם"),
         ("General", "כללי"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "כל המסכים"),
         ("#{} monitor", "מסך {}"),
         ("conn-e2ee-unavailable-tip", "לא ניתן לאמת הצפנה מקצה לקצה.\nייתכן שהמכשיר המרוחק עדיין בתהליך הגדרה. נסה שוב מאוחר יותר.\nאם זה ממשיך לקרות, ייתכן שהשרת אינו מהימן.\nלהמשיך בכל זאת?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "רשימת מזהים מורשים"),
         ("Use ID whitelisting", "השתמש ברשימה לבנה של מזהים"),
         ("id_whitelist_tip", "רק מזהים מהרשימה הלבנה יכולים לגשת אלי"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "השהיה לפני מעבר לממסר בשניות"),
         ("relay-fallback-delay-tip", "כמה זמן חיבור ממסר שכבר נוצר ממתין לחיבור WebRTC הישיר לפני שישמש במקומו. הגדל כדי לתת לחיבור ישיר איטי יותר זמן; הקטן כדי לעבור מהר יותר לממסר ברשתות שבהן לא ניתן ליצור חיבור ישיר. השאר ריק לערך ברירת המחדל של 2.5 שניות."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

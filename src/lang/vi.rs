@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Kết nối chuyển tiếp"),
         ("Secure Connection", "Kết nối bảo mật"),
         ("Insecure Connection", "Kết nối không bảo mật"),
-        ("Continue", ""),
         ("Scale original", "Tỷ lệ gốc"),
         ("Scale adaptive", "Tỷ lệ thích ứng"),
         ("General", "Chung"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Tất cả màn hình"),
         ("#{} monitor", "Màn hình {}"),
         ("conn-e2ee-unavailable-tip", "Không thể xác minh mã hóa đầu cuối.\nThiết bị từ xa có thể vẫn đang được thiết lập. Hãy thử lại sau.\nNếu điều này tiếp tục xảy ra, máy chủ có thể không đáng tin cậy.\nVẫn tiếp tục?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Danh sách trắng ID"),
         ("Use ID whitelisting", "Sử dụng danh sách trắng ID"),
         ("id_whitelist_tip", "Chỉ ID trong danh sách trắng mới có thể truy cập"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Độ trễ trước khi chuyển sang trung chuyển (giây)"),
         ("relay-fallback-delay-tip", "Kết nối trung chuyển đã thiết lập sẽ chờ kết nối WebRTC trực tiếp trong bao lâu trước khi được dùng thay thế. Tăng giá trị để cho kết nối trực tiếp chậm thêm thời gian; giảm để chuyển sang trung chuyển sớm hơn trên các mạng không thể kết nối trực tiếp. Để trống để dùng giá trị mặc định 2.5 giây."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

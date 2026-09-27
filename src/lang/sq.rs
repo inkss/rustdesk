@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Lidhja rele"),
         ("Secure Connection", "Lidhje e sigurt"),
         ("Insecure Connection", "Lidhje e pasigurt"),
-        ("Continue", ""),
         ("Scale original", "Shkalla origjinale"),
         ("Scale adaptive", " E përsjhtatshme në shkallë"),
         ("General", "Gjeneral"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Të gjithë monitorët"),
         ("#{} monitor", "Monitori {}"),
         ("conn-e2ee-unavailable-tip", "Enkriptimi nga skaji në skaj nuk mund të verifikohej.\nPajisja e largët mund të jetë ende duke u konfiguruar. Provoni përsëri më vonë.\nNëse kjo vazhdon të ndodhë, serveri mund të mos jetë i besueshëm.\nTë vazhdohet gjithsesi?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Lista e bardhë e ID-ve"),
         ("Use ID whitelisting", "Përdor listën e bardhë të ID-ve"),
         ("id_whitelist_tip", "Vetëm ID-të e listës së bardhë mund të më aksesojnë."),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Vonesa para kalimit te releja në sekonda"),
         ("relay-fallback-delay-tip", "Sa gjatë pret një lidhje releje tashmë e vendosur lidhjen e drejtpërdrejtë WebRTC përpara se të përdoret në vend të saj. Rriteni për t'i dhënë më shumë kohë një lidhjeje të drejtpërdrejtë të ngadaltë; uleni për të kaluar më shpejt te releja në rrjete ku lidhja e drejtpërdrejtë nuk është e mundur. Lëreni bosh për vlerën e parazgjedhur prej 2.5 sekondash."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

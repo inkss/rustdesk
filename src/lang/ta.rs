@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "ரிலே இணைப்பு"),
         ("Secure Connection", "பாதுகாப்பான இணைப்பு"),
         ("Insecure Connection", "பாதுகாப்பற்ற இணைப்பு"),
-        ("Continue", ""),
         ("Scale original", "அசல் அளவு"),
         ("Scale adaptive", "தகவமைப்பு அளவு"),
         ("General", "பொது"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "அனைத்து மானிட்டர்களும்"),
         ("#{} monitor", "மானிட்டர் {}"),
         ("conn-e2ee-unavailable-tip", "முடிவு-முதல்-முடிவு குறியாக்கத்தை சரிபார்க்க முடியவில்லை.\nதொலை சாதனம் இன்னும் அமைக்கப்பட்டுக் கொண்டிருக்கலாம். பின்னர் மீண்டும் முயற்சிக்கவும்.\nஇது தொடர்ந்து நடந்தால், சேவையகம் நம்பகமற்றதாக இருக்கலாம்.\nஎப்படியும் தொடரவா?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID அனுமதிப்பட்டியல்"),
         ("Use ID whitelisting", "ID அனுமதிப்பட்டியலைப் பயன்படுத்து"),
         ("id_whitelist_tip", "அனுமதிப்பட்டியலில் உள்ள ID-கள் மட்டுமே என்னை அணுக முடியும்"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "ரிலேக்கு மாறுவதற்கான தாமதம் வினாடிகளில்"),
         ("relay-fallback-delay-tip", "ஏற்கனவே நிறுவப்பட்ட ரிலே இணைப்பு நேரடி WebRTC இணைப்புக்காக எவ்வளவு நேரம் காத்திருக்கிறது, அதன் பிறகு அதற்குப் பதிலாகப் பயன்படுத்தப்படுகிறது. மெதுவான நேரடி இணைப்புக்கு அதிக நேரம் வழங்க அதிகரிக்கவும்; நேரடி இணைப்பு சாத்தியமில்லாத பிணையங்களில் விரைவாக ரிலேக்கு மாற குறைக்கவும். இயல்புநிலை 2.5 வினாடிகளுக்கு காலியாக விடவும்."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

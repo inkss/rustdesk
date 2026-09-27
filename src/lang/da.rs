@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Viderestillingsforbindelse"),
         ("Secure Connection", "Sikker forbindelse"),
         ("Insecure Connection", "Usikker forbindelse"),
-        ("Continue", ""),
         ("Scale original", "Original skalering"),
         ("Scale adaptive", "Adaptiv skalering"),
         ("General", "Generelt"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Alle skærme"),
         ("#{} monitor", "Skærm {}"),
         ("conn-e2ee-unavailable-tip", "End-to-end-kryptering kunne ikke bekræftes.\nDen eksterne enhed er muligvis stadig ved at blive konfigureret. Prøv igen senere.\nHvis dette fortsætter, er serveren muligvis ikke pålidelig.\nFortsæt alligevel?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID whitelisting"),
         ("Use ID whitelisting", "Brug ID whitelisting"),
         ("id_whitelist_tip", "Kun ID'er på whitelisten kan få adgang til mig"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Forsinkelse før brug af relæ i sekunder"),
         ("relay-fallback-delay-tip", "Hvor længe en allerede oprettet relæforbindelse venter på den direkte WebRTC-forbindelse, før den bruges i stedet. Forøg for at give en langsom direkte forbindelse mere tid; sænk for hurtigere at falde tilbage til relæet på netværk, hvor en direkte forbindelse ikke kan oprettes. Lad feltet stå tomt for standardværdien 2.5 sekunder."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

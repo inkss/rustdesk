@@ -527,10 +527,7 @@ impl Connection {
         id: i32,
         server: super::ServerPtrWeak,
         meta: super::ConnectionMeta,
-<<<<<<< HEAD
-=======
         unauthorized: UnauthorizedID,
->>>>>>> 1.5.0
     ) {
         let super::ConnectionMeta {
             control_permissions,
@@ -1633,12 +1630,8 @@ impl Connection {
         v["typ"] = json!(typ as i8);
         v["info"] = serde_json::Value::String(info.to_string());
         v["conn_id"] = json!(self.inner.id());
-<<<<<<< HEAD
-        if typ == AlarmAuditType::IpWhitelist {
-=======
         v["nonce"] = json!(uuid::Uuid::new_v4().to_string());
         if typ == AlarmAuditType::IpWhitelist || typ == AlarmAuditType::IdWhitelist {
->>>>>>> 1.5.0
             if let Some(audit_ref) = self.conn_audit_ref() {
                 v["conn_audit_ref"] = json!(audit_ref);
             }
@@ -1663,15 +1656,6 @@ impl Connection {
                 "message": message,
             }),
         );
-<<<<<<< HEAD
-    }
-
-    #[inline]
-    async fn post_audit_async(url: String, v: Value) -> ResultType<String> {
-        crate::post_request(url, v.to_string(), "").await
-    }
-
-=======
     }
 
     async fn post_audit_async(url: String, v: Value) -> ResultType<String> {
@@ -1773,7 +1757,6 @@ impl Connection {
         }
     }
 
->>>>>>> 1.5.0
     fn set_conn_audit_primary_auth(&mut self, method: ConnAuditPrimaryAuth) {
         self.conn_audit_primary_auth = method;
     }
@@ -1791,11 +1774,7 @@ impl Connection {
         }
     }
 
-<<<<<<< HEAD
-    fn normalize_port_forward_target(pf: &mut PortForward) -> (String, bool) {
-=======
     pub(super) fn normalize_port_forward_target(pf: &mut PortForward) -> (String, bool) {
->>>>>>> 1.5.0
         let mut is_rdp = false;
         if pf.host == "RDP" && pf.port == 0 {
             pf.host = "localhost".to_owned();
@@ -2190,13 +2169,6 @@ impl Connection {
         self.update_scoped_login_options().await;
         if let Some((dir, show_hidden)) = self.file_transfer.clone() {
             self.keyboard = false;
-<<<<<<< HEAD
-            let dir = if !dir.is_empty() && std::path::Path::new(&dir).is_dir() {
-                &dir
-            } else {
-                ""
-            };
-=======
             let is_existing_dir = !dir.is_empty() && std::path::Path::new(&dir).is_dir();
             let is_allowed_dir =
                 is_existing_dir && crate::common::is_peer_path_allowed(&dir, false);
@@ -2208,7 +2180,6 @@ impl Connection {
                 );
             }
             let dir = if is_allowed_dir { &dir } else { "" };
->>>>>>> 1.5.0
             if !wait_session_id_confirm {
                 self.read_dir(dir, show_hidden);
             } else {
@@ -2733,8 +2704,6 @@ impl Connection {
         self.terminal_persistent = false;
     }
 
-<<<<<<< HEAD
-=======
     // Approval and whitelist decisions must stay bound to the same controller identity and
     // session scope across authentication retries.
     fn login_scope_digest(lr: &LoginRequest) -> [u8; 32] {
@@ -2821,7 +2790,6 @@ impl Connection {
         }
     }
 
->>>>>>> 1.5.0
     async fn handle_login_request_without_validation(&mut self, lr: &LoginRequest) {
         self.lr = lr.clone();
         self.peer_argb = crate::str2color(&format!("{}{}", &lr.my_id, &lr.my_platform), 0xff);
@@ -2901,12 +2869,9 @@ impl Connection {
                 return true;
             }
             self.reset_session_scope_for_login();
-<<<<<<< HEAD
-=======
             if !self.check_id_whitelist().await {
                 return false;
             }
->>>>>>> 1.5.0
             match lr.union {
                 Some(login_request::Union::FileTransfer(ft)) => {
                     if !Self::permission(
@@ -2966,8 +2931,6 @@ impl Connection {
                 }
             }
 
-<<<<<<< HEAD
-=======
             self.stream.set_send_timeout(
                 if self.file_transfer.is_some()
                     || self.terminal
@@ -2979,7 +2942,6 @@ impl Connection {
                 },
             );
 
->>>>>>> 1.5.0
             if !crate::common::is_direct_ip_access(&lr.username) && lr.username != Config::get_id()
             {
                 self.send_login_error(crate::client::LOGIN_MSG_OFFLINE)
@@ -3992,16 +3954,6 @@ impl Connection {
                         if !self.view_camera {
                             self.change_resolution(Some(dr.display as _), &dr.resolution);
                         }
-<<<<<<< HEAD
-                    }
-                    #[cfg(all(feature = "flutter", feature = "plugin_framework"))]
-                    #[cfg(not(any(target_os = "android", target_os = "ios")))]
-                    Some(misc::Union::PluginRequest(p)) => {
-                        let msg =
-                            crate::plugin::handle_client_event(&p.id, &self.lr.my_id, &p.content);
-                        self.send(msg).await;
-=======
->>>>>>> 1.5.0
                     }
                     Some(misc::Union::AutoAdjustFps(fps)) => video_service::VIDEO_QOS
                         .lock()
@@ -5917,11 +5869,7 @@ impl Connection {
         let allowed = match conn_type {
             AuthConnType::Remote => true,
             AuthConnType::FileTransfer => Self::is_file_transfer_scoped_message(msg),
-<<<<<<< HEAD
-            AuthConnType::PortForward => false,
-=======
             AuthConnType::PortForward => Self::is_port_forward_scoped_message(msg),
->>>>>>> 1.5.0
             AuthConnType::ViewCamera => Self::is_view_camera_scoped_message(msg),
             AuthConnType::Terminal => Self::is_terminal_scoped_message(msg),
         };
@@ -5995,8 +5943,6 @@ impl Connection {
         false
     }
 
-<<<<<<< HEAD
-=======
     fn is_port_forward_scoped_message(msg: &Message) -> bool {
         matches!(
             msg.union.as_ref(),
@@ -6004,7 +5950,6 @@ impl Connection {
         )
     }
 
->>>>>>> 1.5.0
     fn is_terminal_scoped_message(msg: &Message) -> bool {
         match msg.union.as_ref() {
             Some(message::Union::TerminalAction(_)) => true,
@@ -6155,10 +6100,7 @@ impl Connection {
             Some(message::Union::ScreenshotResponse(_)) => "screenshot_response",
             Some(message::Union::TerminalAction(_)) => "terminal_action",
             Some(message::Union::TerminalResponse(_)) => "terminal_response",
-<<<<<<< HEAD
-=======
             Some(message::Union::PortForwardChannel(_)) => "port_forward_channel",
->>>>>>> 1.5.0
             Some(message::Union::Misc(misc)) => Self::misc_message_family(misc),
             Some(_) => "message.other",
             None => "empty",
@@ -6180,10 +6122,7 @@ impl Connection {
             Some(misc::Union::ChangeDisplayResolution(_)) => "misc.change_display_resolution",
             Some(misc::Union::MessageQuery(_)) => "misc.message_query",
             Some(misc::Union::FollowCurrentDisplay(_)) => "misc.follow_current_display",
-<<<<<<< HEAD
-=======
             Some(misc::Union::SwitchSidesRequest(_)) => "misc.switch_sides_request",
->>>>>>> 1.5.0
             Some(_) => "misc.other",
             None => "misc.empty",
         }
@@ -6514,10 +6453,7 @@ pub enum AlarmAuditType {
     TerminalOsLoginBackoff = 7,
     TerminalOsLoginConcurrency = 8,
     SessionScopeViolation = 9,
-<<<<<<< HEAD
-=======
     IdWhitelist = 10,
->>>>>>> 1.5.0
 }
 
 pub enum FileAuditType {
@@ -7106,8 +7042,6 @@ mod raii {
     }
 }
 
-<<<<<<< HEAD
-=======
 // An empty whitelist allows everyone.
 //
 // A peer connecting across servers reports `<its id>@<its own server>` (see
@@ -7178,7 +7112,6 @@ fn wildcard_match(pattern: &str, text: &str) -> bool {
     pi == p.len()
 }
 
->>>>>>> 1.5.0
 #[cfg(test)]
 mod test {
     #[allow(unused)]
@@ -7686,13 +7619,10 @@ mod test {
                         misc_msg(|m| m.set_capture_displays(CaptureDisplays::new())),
                         Some("misc.capture_displays"),
                     ),
-<<<<<<< HEAD
-=======
                     (
                         misc_msg(|m| m.set_switch_sides_request(SwitchSidesRequest::new())),
                         Some("misc.switch_sides_request"),
                     ),
->>>>>>> 1.5.0
                     (msg(|m| m.set_clipboard(Clipboard::new())), None),
                     (
                         msg(|m| m.set_multi_clipboards(MultiClipboards::new())),
@@ -7715,13 +7645,10 @@ mod test {
                         }),
                         Some("misc.option"),
                     ),
-<<<<<<< HEAD
-=======
                     (
                         msg(|m| m.set_port_forward_channel(PortForwardChannel::new())),
                         Some("port_forward_channel"),
                     ),
->>>>>>> 1.5.0
                 ],
             ),
             (
@@ -7744,13 +7671,10 @@ mod test {
                         misc_msg(|m| m.set_toggle_privacy_mode(TogglePrivacyMode::new())),
                         Some("misc.toggle_privacy_mode"),
                     ),
-<<<<<<< HEAD
-=======
                     (
                         misc_msg(|m| m.set_switch_sides_request(SwitchSidesRequest::new())),
                         Some("misc.switch_sides_request"),
                     ),
->>>>>>> 1.5.0
                     (misc_msg(|m| m.set_chat_message(ChatMessage::new())), None),
                     (msg(|m| m.set_clipboard(Clipboard::new())), None),
                     (
@@ -7786,13 +7710,10 @@ mod test {
                         }),
                         Some("misc.option"),
                     ),
-<<<<<<< HEAD
-=======
                     (
                         msg(|m| m.set_port_forward_channel(PortForwardChannel::new())),
                         Some("port_forward_channel"),
                     ),
->>>>>>> 1.5.0
                 ],
             ),
             (
@@ -7843,13 +7764,10 @@ mod test {
                         msg(|m| m.set_terminal_action(TerminalAction::new())),
                         Some("terminal_action"),
                     ),
-<<<<<<< HEAD
-=======
                     (
                         misc_msg(|m| m.set_switch_sides_request(SwitchSidesRequest::new())),
                         Some("misc.switch_sides_request"),
                     ),
->>>>>>> 1.5.0
                 ],
             ),
             (
@@ -7860,13 +7778,10 @@ mod test {
                         None,
                     ),
                     (msg(|m| m.set_terminal_action(TerminalAction::new())), None),
-<<<<<<< HEAD
-=======
                     (
                         misc_msg(|m| m.set_switch_sides_request(SwitchSidesRequest::new())),
                         None,
                     ),
->>>>>>> 1.5.0
                 ],
             ),
             (
@@ -7886,13 +7801,10 @@ mod test {
                         msg(|m| m.set_screenshot_request(ScreenshotRequest::new())),
                         Some("screenshot_request"),
                     ),
-<<<<<<< HEAD
-=======
                     (
                         misc_msg(|m| m.set_switch_sides_request(SwitchSidesRequest::new())),
                         Some("misc.switch_sides_request"),
                     ),
->>>>>>> 1.5.0
                     (misc_msg(|m| m.set_refresh_video(true)), None),
                     (misc_msg(|m| m.set_refresh_video_display(0)), None),
                     (
@@ -7902,13 +7814,10 @@ mod test {
                         }),
                         None,
                     ),
-<<<<<<< HEAD
-=======
                     (
                         msg(|m| m.set_port_forward_channel(PortForwardChannel::new())),
                         None,
                     ),
->>>>>>> 1.5.0
                 ],
             ),
         ];
@@ -8007,8 +7916,6 @@ mod test {
             Ok(BoolOption::NotSet)
         );
     }
-<<<<<<< HEAD
-=======
     #[test]
     fn only_a_newer_remote_control_of_the_same_session_keeps_the_screen_unlocked() {
         let replaced_by = super::raii::AuthedConnID::is_newer_session_remote;
@@ -8043,5 +7950,4 @@ mod test {
         assert!(!replaced_by(&conn(3, remote, key(8, "peer")), 2, &mine));
         assert!(!replaced_by(&conn(3, remote, key(7, "other")), 2, &mine));
     }
->>>>>>> 1.5.0
 }

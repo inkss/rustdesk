@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Connexió amb repetidor"),
         ("Secure Connection", "Connexió segura"),
         ("Insecure Connection", "Connexió no segura"),
-        ("Continue", ""),
         ("Scale original", "Escala original"),
         ("Scale adaptive", "Escala adaptativa"),
         ("General", "General"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Tots els monitors"),
         ("#{} monitor", "Monitor {}"),
         ("conn-e2ee-unavailable-tip", "No s'ha pogut verificar el xifratge d'extrem a extrem.\nEl dispositiu remot encara es pot estar configurant. Torneu-ho a provar més tard.\nSi això continua passant, el servidor pot no ser de confiança.\nVoleu continuar igualment?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID admesos"),
         ("Use ID whitelisting", "Utilitza un llistat d'ID admesos"),
         ("id_whitelist_tip", "Només els ID admesos es podran connectar"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Retard abans de recórrer al relé en segons"),
         ("relay-fallback-delay-tip", "Quant de temps espera una connexió de relé ja establerta la connexió directa WebRTC abans d'utilitzar-se en lloc seu. Augmenteu-lo per donar més temps a una connexió directa lenta; reduïu-lo per passar abans al relé en xarxes on no es pot fer una connexió directa. Deixeu-lo buit per al valor predeterminat de 2.5 segons."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

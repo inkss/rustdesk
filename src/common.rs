@@ -121,7 +121,6 @@ impl Drop for SimpleCallOnReturn {
 }
 
 pub fn global_init() -> bool {
-<<<<<<< HEAD
     // 编译时内置自定义服务器配置
     // PROD_RENDEZVOUS_SERVER 优先级低于用户配置，用户可在设置中覆盖
     if let Some(server) = option_env!("RENDEZVOUS_SERVER") {
@@ -129,10 +128,8 @@ pub fn global_init() -> bool {
             *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = server.to_owned();
         }
     }
-=======
     #[cfg(all(target_os = "linux", feature = "drm"))]
     crate::platform::linux::dispatch_wayland_display_probe();
->>>>>>> 1.5.0
     #[cfg(target_os = "linux")]
     {
         if !crate::platform::linux::is_x11() {
@@ -2953,8 +2950,6 @@ pub fn is_direct_ip_access(peer: &str) -> bool {
     hbb_common::is_ip_str(peer) || hbb_common::is_domain_port_str(peer)
 }
 
-<<<<<<< HEAD
-=======
 // Align the maximum length of the peer id to the maximum length of the peer id in the server.
 const MAX_UNTRUSTED_PEER_ID_LEN: usize = 253;
 const UNTRUSTED_PEER_ID_FORBIDDEN_CHARS: &[char] = &['"', '<', '>', '/', '\\', '|', '?', '*'];
@@ -2969,7 +2964,6 @@ pub fn is_valid_untrusted_peer_id(id: &str) -> bool {
         })
 }
 
->>>>>>> 1.5.0
 #[cfg(test)]
 mod tests {
     use super::*;

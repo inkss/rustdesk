@@ -24,13 +24,6 @@
       "name": "libsodium",
       "host": false,
       "platform": "windows & arm64"
-<<<<<<< HEAD
-    },
-    {
-      "name": "oboe",
-      "platform": "android"
-=======
->>>>>>> 1.5.0
     },
     {
       "name": "opus",

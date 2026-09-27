@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Koneksi Relay"),
         ("Secure Connection", "Koneksi aman"),
         ("Insecure Connection", "Koneksi Tidak Aman"),
-        ("Continue", ""),
         ("Scale original", "Skala asli"),
         ("Scale adaptive", "Skala adaptif"),
         ("General", "Umum"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Semua monitor"),
         ("#{} monitor", "Monitor {}"),
         ("conn-e2ee-unavailable-tip", "Tidak dapat memverifikasi enkripsi ujung ke ujung.\nPerangkat jarak jauh mungkin masih disiapkan. Coba lagi nanti.\nJika ini terus terjadi, server mungkin tidak tepercaya.\nTetap lanjutkan?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Daftar ID yang diizinkan"),
         ("Use ID whitelisting", "Gunakan daftar ID yang diizinkan"),
         ("id_whitelist_tip", "Hanya ID yang diizinkan dapat mengakses"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Jeda sebelum beralih ke relai dalam detik"),
         ("relay-fallback-delay-tip", "Berapa lama koneksi relai yang sudah terbentuk menunggu koneksi langsung WebRTC sebelum digunakan sebagai gantinya. Perbesar untuk memberi koneksi langsung yang lambat lebih banyak waktu; perkecil agar lebih cepat beralih ke relai pada jaringan yang tidak memungkinkan koneksi langsung. Biarkan kosong untuk nilai bawaan 2.5 detik."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

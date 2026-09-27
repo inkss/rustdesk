@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Posredna konekcija"),
         ("Secure Connection", "Bezbedna konekcija"),
         ("Insecure Connection", "Nebezbedna konekcija"),
-        ("Continue", ""),
         ("Scale original", "Skaliraj original"),
         ("Scale adaptive", "Adaptivno skaliranje"),
         ("General", "Uopšteno"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Svi monitori"),
         ("#{} monitor", "Monitor {}"),
         ("conn-e2ee-unavailable-tip", "Није могуће проверити енд-то-енд шифровање.\nУдаљени уређај се можда још подешава. Покушајте поново касније.\nАко се ово настави, сервер можда није поуздан.\nНаставити свеједно?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID pouzdana lista"),
         ("Use ID whitelisting", "Koristi listu pouzdanih ID"),
         ("id_whitelist_tip", "Samo dozvoljeni ID mi mogu pristupiti"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Кашњење пре преласка на релеј у секундама"),
         ("relay-fallback-delay-tip", "Колико дуго већ успостављена релејна веза чека на директну WebRTC везу пре него што се употреби уместо ње. Повећајте да бисте спорој директној вези дали више времена; смањите да бисте на мрежама где директна веза није могућа брже прешли на релеј. Оставите празно за подразумевану вредност од 2.5 секунде."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

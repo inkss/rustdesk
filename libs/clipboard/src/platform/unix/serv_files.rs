@@ -302,11 +302,7 @@ pub fn sync_files(files: &[String]) -> Result<(), CliprdrError> {
         return Ok(());
     }
     files_lock.sync_files(files, current)?;
-<<<<<<< HEAD
-    Ok(files_lock.build_file_list_pdu())
-=======
     files_lock.build_file_list_pdu()
->>>>>>> 1.5.0
 }
 
 pub fn get_file_list_pdu() -> Vec<u8> {

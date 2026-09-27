@@ -327,18 +327,10 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Scroll Style", "Estilo de rolagem"),
         ("Show Toolbar", "Mostrar barra de ferramentas"),
         ("Hide Toolbar", "Ocultar barra de ferramentas"),
-<<<<<<< HEAD
-        ("Direct Connection", "Conexão direta"),
-        ("Relay Connection", "Conexão de relé"),
-        ("Secure Connection", "Conexão segura"),
-        ("Insecure Connection", "Conexão insegura"),
-        ("Continue", ""),
-=======
         ("Direct Connection", "Ligação direta"),
         ("Relay Connection", "Ligação de relay"),
         ("Secure Connection", "Ligação segura"),
         ("Insecure Connection", "Ligação insegura"),
->>>>>>> 1.5.0
         ("Scale original", "Escala original"),
         ("Scale adaptive", "Escala adaptável"),
         ("General", "Geral"),
@@ -757,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Todos os monitores"),
         ("#{} monitor", "Monitor {}"),
         ("conn-e2ee-unavailable-tip", "Não foi possível verificar a encriptação de ponta a ponta.\nO dispositivo remoto ainda pode estar a ser configurado. Tente novamente mais tarde.\nSe isto continuar a acontecer, o servidor pode não ser fidedigno.\nContinuar mesmo assim?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Whitelist de ID"),
         ("Use ID whitelisting", "Usar whitelist de ID"),
         ("id_whitelist_tip", "Somente IDs na whitelist podem me acessar"),
@@ -791,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Atraso antes de recorrer ao retransmissor em segundos"),
         ("relay-fallback-delay-tip", "Quanto tempo uma ligação de retransmissão já estabelecida aguarda pela ligação direta WebRTC antes de ser usada em vez dela. Aumente para dar mais tempo a uma ligação direta lenta; diminua para recorrer mais cedo ao retransmissor em redes onde não é possível uma ligação direta. Deixe vazio para o valor predefinido de 2.5 segundos."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

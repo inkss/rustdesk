@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Релейна връзка"),
         ("Secure Connection", "Сигурна връзка"),
         ("Insecure Connection", "Несигурна връзка"),
-        ("Continue", ""),
         ("Scale original", "Оригинален мащаб"),
         ("Scale adaptive", "Приспособимо мащабиране"),
         ("General", "Основен"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Всички монитори"),
         ("#{} monitor", "Монитор {}"),
         ("conn-e2ee-unavailable-tip", "Шифроването от край до край не може да бъде проверено.\nОтдалеченото устройство може все още да се настройва. Опитайте отново по-късно.\nАко това продължи, сървърът може да не е надежден.\nДа се продължи ли въпреки това?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Позволени ID"),
         ("Use ID whitelisting", "Използване бял списък с ID"),
         ("id_whitelist_tip", "Само ID от белия списък имат достъп до мен"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Забавяне преди преминаване към препредаване в секунди"),
         ("relay-fallback-delay-tip", "Колко време вече установената връзка чрез препредаване изчаква директната WebRTC връзка, преди да бъде използвана вместо нея. Увеличете, за да дадете повече време на бавна директна връзка; намалете, за да се премине по-бързо към препредаване в мрежи, където директна връзка е невъзможна. Оставете празно за стойността по подразбиране 2.5 секунди."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

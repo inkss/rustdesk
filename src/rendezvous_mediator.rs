@@ -690,10 +690,7 @@ impl RendezvousMediator {
             rr.secure,
             false,
             Default::default(),
-<<<<<<< HEAD
-=======
             String::new(),
->>>>>>> 1.5.0
             meta,
         )
         .await
@@ -708,10 +705,7 @@ impl RendezvousMediator {
         secure: bool,
         initiate: bool,
         socket_addr_v6: bytes::Bytes,
-<<<<<<< HEAD
-=======
         webrtc_sdp_answer: String,
->>>>>>> 1.5.0
         meta: ConnectionMeta,
     ) -> ResultType<()> {
         let peer_addr = AddrMangle::decode(&socket_addr);
@@ -784,9 +778,6 @@ impl RendezvousMediator {
             fla.controlled_context.clone().into_option(),
         );
         if peer_addr_v6.port() > 0 && !relay {
-<<<<<<< HEAD
-            socket_addr_v6 = start_ipv6(peer_addr_v6, addr, server.clone(), meta.clone()).await;
-=======
             socket_addr_v6 = start_ipv6(
                 peer_addr_v6,
                 addr,
@@ -795,7 +786,6 @@ impl RendezvousMediator {
                 UDP_PUNCHES.take(),
             )
             .await;
->>>>>>> 1.5.0
         }
         if is_ipv4(&self.addr) && !relay && !config::is_disable_tcp_listen() {
             if let Err(err) = self
@@ -822,10 +812,7 @@ impl RendezvousMediator {
             true,
             true,
             socket_addr_v6,
-<<<<<<< HEAD
-=======
             String::new(),
->>>>>>> 1.5.0
             meta,
         )
         .await
@@ -869,11 +856,7 @@ impl RendezvousMediator {
         });
         let bytes = msg_out.write_to_bytes()?;
         socket.send_raw(bytes).await?;
-<<<<<<< HEAD
-        crate::accept_connection(server.clone(), socket, peer_addr, true, meta).await;
-=======
         crate::accept_connection(server.clone(), socket, peer_addr, true, meta, slot).await;
->>>>>>> 1.5.0
         Ok(())
     }
 
@@ -1080,14 +1063,6 @@ impl RendezvousMediator {
         let relay = local_proxy || ph.force_relay;
         let mut socket_addr_v6 = Default::default();
         let meta = connection_meta(
-<<<<<<< HEAD
-            ph.control_permissions.into_option(),
-            ph.controlled_context.into_option(),
-        );
-        if peer_addr_v6.port() > 0 && !relay {
-            socket_addr_v6 =
-                start_ipv6(peer_addr_v6, peer_addr, server.clone(), meta.clone()).await;
-=======
             ph.control_permissions.clone().into_option(),
             ph.controlled_context.clone().into_option(),
         );
@@ -1142,7 +1117,6 @@ impl RendezvousMediator {
                 slot_v6,
             )
             .await;
->>>>>>> 1.5.0
         }
         let relay_server = self.get_relay_server(ph.relay_server);
         // for ensure, websocket go relay directly
@@ -1162,10 +1136,7 @@ impl RendezvousMediator {
                     true,
                     true,
                     socket_addr_v6.clone(),
-<<<<<<< HEAD
-=======
                     webrtc_sdp_answer.clone(),
->>>>>>> 1.5.0
                     meta,
                 )
                 .await;
@@ -1184,11 +1155,7 @@ impl RendezvousMediator {
         };
         if ph.udp_port > 0 {
             peer_addr.set_port(ph.udp_port as u16);
-<<<<<<< HEAD
-            self.punch_udp_hole(peer_addr, server, msg_punch, meta)
-=======
             self.punch_udp_hole(peer_addr, server, msg_punch, meta, slot_udp)
->>>>>>> 1.5.0
                 .await?;
             return Ok(());
         }
@@ -1221,9 +1188,6 @@ impl RendezvousMediator {
         msg_out.set_punch_hole_sent(msg_punch);
         let bytes = msg_out.write_to_bytes()?;
         socket.send_raw(bytes).await?;
-<<<<<<< HEAD
-        crate::accept_connection(server.clone(), socket, peer_addr, true, meta).await;
-=======
         let local_addr = socket.local_addr();
         // The listener inside takes this address over, so the mediator's socket goes first.
         drop(socket);
@@ -1239,7 +1203,6 @@ impl RendezvousMediator {
             return Ok(());
         };
         punch_tcp_until_connected(server, peer_addr, local_addr, meta, slot).await;
->>>>>>> 1.5.0
         Ok(())
     }
 
@@ -1249,10 +1212,7 @@ impl RendezvousMediator {
         server: ServerPtr,
         msg_punch: PunchHoleSent,
         meta: ConnectionMeta,
-<<<<<<< HEAD
-=======
         slot: Option<PunchSlot>,
->>>>>>> 1.5.0
     ) -> ResultType<()> {
         let mut msg_out = Message::new();
         msg_out.set_punch_hole_sent(msg_punch);
@@ -1280,9 +1240,6 @@ impl RendezvousMediator {
                 socket.send_to(&data, addr).await.ok();
             }
         });
-<<<<<<< HEAD
-        udp_nat_listen(socket_cloned.clone(), peer_addr, peer_addr, server, meta).await?;
-=======
         udp_nat_listen(
             socket_cloned.clone(),
             peer_addr,
@@ -1292,7 +1249,6 @@ impl RendezvousMediator {
             slot,
         )
         .await?;
->>>>>>> 1.5.0
         Ok(())
     }
 
@@ -1482,10 +1438,7 @@ async fn start_ipv6(
     peer_addr_v4: SocketAddr,
     server: ServerPtr,
     meta: ConnectionMeta,
-<<<<<<< HEAD
-=======
     slot: Option<PunchSlot>,
->>>>>>> 1.5.0
 ) -> bytes::Bytes {
     // Declining leaves the v4 path to carry the connection, as it already does wherever this
     // machine has no public IPv6 address.
@@ -1503,9 +1456,6 @@ async fn start_ipv6(
         let server = server.clone();
         tokio::spawn(async move {
             allow_err!(
-<<<<<<< HEAD
-                udp_nat_listen(socket.clone(), peer_addr_v6, peer_addr_v4, server, meta).await
-=======
                 udp_nat_listen(
                     socket.clone(),
                     peer_addr_v6,
@@ -1515,7 +1465,6 @@ async fn start_ipv6(
                     slot
                 )
                 .await
->>>>>>> 1.5.0
             );
         });
         return local_addr_v6;
@@ -1529,10 +1478,7 @@ async fn udp_nat_listen(
     peer_addr_v4: SocketAddr,
     server: ServerPtr,
     meta: ConnectionMeta,
-<<<<<<< HEAD
-=======
     slot: PunchSlot,
->>>>>>> 1.5.0
 ) -> ResultType<()> {
     let tm = Instant::now();
     let socket_cloned = socket.clone();
@@ -1542,18 +1488,12 @@ async fn udp_nat_listen(
         let stream = crate::kcp_stream::KcpStream::accept(
             socket,
             Duration::from_millis(CONNECT_TIMEOUT as _),
-<<<<<<< HEAD
-            res,
-        )
-        .await?;
-=======
             init_packet,
         )
         .await?;
         // The KCP session is up: from here it is a connection like any other and the connection
         // layer's own limits apply to it, so the place goes back for the next punch.
         drop(slot);
->>>>>>> 1.5.0
         crate::server::create_tcp_connection(server, stream.1, peer_addr_v4, true, meta).await?;
         Ok(())
     };

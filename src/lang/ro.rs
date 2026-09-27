@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Conexiune prin retransmisie"),
         ("Secure Connection", "Conexiune securizată"),
         ("Insecure Connection", "Conexiune nesecurizată"),
-        ("Continue", ""),
         ("Scale original", "Dimensiune originală"),
         ("Scale adaptive", "Scalare automată"),
         ("General", "General"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Toate monitoarele"),
         ("#{} monitor", "Monitor {}"),
         ("conn-e2ee-unavailable-tip", "Criptarea end-to-end nu a putut fi verificată.\nDispozitivul la distanță poate fi încă în curs de configurare. Încercați din nou mai târziu.\nDacă acest lucru continuă, serverul poate să nu fie de încredere.\nContinuați oricum?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Listă de ID-uri autorizate"),
         ("Use ID whitelisting", "Folosește lista de ID-uri autorizate"),
         ("id_whitelist_tip", "Doar ID-urile autorizate pot accesa acest dispozitiv"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Întârziere înainte de trecerea la releu în secunde"),
         ("relay-fallback-delay-tip", "Cât timp așteaptă o conexiune prin releu deja stabilită conexiunea directă WebRTC înainte de a fi folosită în locul ei. Măriți valoarea pentru a acorda mai mult timp unei conexiuni directe lente; micșorați-o pentru a trece mai repede la releu în rețelele în care o conexiune directă nu este posibilă. Lăsați gol pentru valoarea implicită de 2.5 secunde."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

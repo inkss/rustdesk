@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "റിലേ കണക്ഷൻ"),
         ("Secure Connection", "സുരക്ഷിതമായ കണക്ഷൻ"),
         ("Insecure Connection", "സുരക്ഷിതമല്ലാത്ത കണക്ഷൻ"),
-        ("Continue", ""),
         ("Scale original", "ഒറിജിനൽ വലിപ്പം"),
         ("Scale adaptive", "അഡാപ്റ്റീവ് വലിപ്പം"),
         ("General", "പൊതുവായവ"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "എല്ലാ മോണിറ്ററുകളും"),
         ("#{} monitor", "മോണിറ്റർ {}"),
         ("conn-e2ee-unavailable-tip", "എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ പരിശോധിക്കാൻ കഴിഞ്ഞില്ല.\nദൂരസ്ഥ ഉപകരണം ഇനിയും സജ്ജീകരണത്തിലായിരിക്കാം. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.\nഇത് തുടർന്നാൽ സർവർ വിശ്വസനീയമല്ലായിരിക്കാം.\nഎങ്കിലും തുടരണമോ?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID വൈറ്റ്‌ലിസ്റ്റിംഗ്"),
         ("Use ID whitelisting", "ID വൈറ്റ്‌ലിസ്റ്റിംഗ് ഉപയോഗിക്കുക"),
         ("id_whitelist_tip", "വൈറ്റ്‌ലിസ്റ്റ് ചെയ്ത ID-കൾക്ക് മാത്രമേ എന്നെ ആക്‌സസ് ചെയ്യാൻ കഴിയൂ"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "റിലേയിലേക്ക് മാറുന്നതിനുള്ള കാലതാമസം സെക്കൻഡിൽ"),
         ("relay-fallback-delay-tip", "ഇതിനകം സ്ഥാപിതമായ റിലേ കണക്ഷൻ നേരിട്ടുള്ള WebRTC കണക്ഷനായി എത്ര നേരം കാത്തിരിക്കുന്നു, അതിനുശേഷം അതിനുപകരം ഉപയോഗിക്കുന്നു. മന്ദഗതിയിലുള്ള നേരിട്ടുള്ള കണക്ഷന് കൂടുതൽ സമയം നൽകാൻ വർദ്ധിപ്പിക്കുക; നേരിട്ടുള്ള കണക്ഷൻ സാധ്യമല്ലാത്ത നെറ്റ്‌വർക്കുകളിൽ വേഗത്തിൽ റിലേയിലേക്ക് മാറാൻ കുറയ്ക്കുക. സ്ഥിരസ്ഥിതിയായ 2.5 സെക്കൻഡിനായി ശൂന്യമാക്കിയിടുക."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

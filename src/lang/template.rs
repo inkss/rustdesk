@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", ""),
         ("Secure Connection", ""),
         ("Insecure Connection", ""),
-        ("Continue", ""),
         ("Scale original", ""),
         ("Scale adaptive", ""),
         ("General", ""),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", ""),
         ("#{} monitor", ""),
         ("conn-e2ee-unavailable-tip", ""),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", ""),
         ("Use ID whitelisting", ""),
         ("id_whitelist_tip", ""),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", ""),
         ("relay-fallback-delay-tip", ""),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

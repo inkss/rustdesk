@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Reléové pripojenie"),
         ("Secure Connection", "Zabezpečené pripojenie"),
         ("Insecure Connection", "Nezabezpečené pripojenie"),
-        ("Continue", ""),
         ("Scale original", "Pôvodná mierka"),
         ("Scale adaptive", "Prispôsobivá mierka"),
         ("General", "Všeobecné"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Všetky monitory"),
         ("#{} monitor", "Monitor {}"),
         ("conn-e2ee-unavailable-tip", "Nepodarilo sa overiť koncové šifrovanie.\nVzdialené zariadenie sa možno stále nastavuje. Skúste to znova neskôr.\nAk sa to bude opakovať, server nemusí byť dôveryhodný.\nNapriek tomu pokračovať?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Zoznam povolených ID"),
         ("Use ID whitelisting", "Použiť ID whitelisting"),
         ("id_whitelist_tip", "Len vymenované ID majú oprávnenie sa pripojiť k vzdialenej správe"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Oneskorenie pred prepnutím na prenos v sekundách"),
         ("relay-fallback-delay-tip", "Ako dlho už nadviazané spojenie cez prenos čaká na priame spojenie WebRTC, kým sa použije namiesto neho. Zvýšte, aby pomalé priame spojenie malo viac času; znížte, aby sa v sieťach, kde priame spojenie nie je možné, skôr prešlo na prenos. Nechajte prázdne pre predvolenú hodnotu 2.5 sekundy."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

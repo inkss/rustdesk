@@ -321,11 +321,7 @@ pub(super) fn construct_file_list(paths: &[PathBuf]) -> Result<Vec<LocalFile>, C
 #[cfg(test)]
 mod file_list_test {
     use std::{
-<<<<<<< HEAD
-        path::PathBuf,
-=======
         path::{Path, PathBuf},
->>>>>>> 1.5.0
         sync::atomic::{AtomicU64, Ordering},
     };
 

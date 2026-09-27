@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Välitetty yhteys"),
         ("Secure Connection", "Suojattu yhteys"),
         ("Insecure Connection", "Suojaamaton yhteys"),
-        ("Continue", ""),
         ("Scale original", "Skaalaa alkuperäinen"),
         ("Scale adaptive", "Mukautuva skaalaus"),
         ("General", "Yleiset"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Kaikki näytöt"),
         ("#{} monitor", "Näyttö {}"),
         ("conn-e2ee-unavailable-tip", "Päästä päähän -salausta ei voitu vahvistaa.\nEtälaite voi olla vielä määritettävänä. Yritä myöhemmin uudelleen.\nJos tämä jatkuu, palvelin ei ehkä ole luotettava.\nJatketaanko silti?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID sallintalista"),
         ("Use ID whitelisting", "Käytä ID sallintalistaa"),
         ("id_whitelist_tip", "Vain sallitut ID:t voivat muodostaa yhteyden"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Viive ennen välitykseen siirtymistä sekunteina"),
         ("relay-fallback-delay-tip", "Kuinka kauan jo muodostettu välitysyhteys odottaa suoraa WebRTC-yhteyttä ennen kuin sitä käytetään sen sijaan. Kasvata arvoa antaaksesi hitaalle suoralle yhteydelle enemmän aikaa; pienennä sitä siirtyäksesi nopeammin välitykseen verkoissa, joissa suoraa yhteyttä ei voi muodostaa. Jätä tyhjäksi käyttääksesi oletusarvoa 2.5 sekuntia."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

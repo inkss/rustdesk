@@ -325,22 +325,12 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Ratio", "Verhouding"),
         ("Image Quality", "Beeldkwaliteit"),
         ("Scroll Style", "Scroll Stijl"),
-<<<<<<< HEAD
-        ("Show Toolbar", "Werkbalk Weergeven"),
-        ("Hide Toolbar", "Verberg Werkbalk"),
-        ("Direct Connection", "Directe Verbinding"),
-        ("Relay Connection", "Relaisverbinding"),
-        ("Secure Connection", "Beveiligde Verbinding"),
-        ("Insecure Connection", "Onveilige Verbinding"),
-        ("Continue", ""),
-=======
         ("Show Toolbar", "Werkbalk weergeven"),
         ("Hide Toolbar", "Werkbalk verbergen"),
         ("Direct Connection", "Directe verbinding"),
         ("Relay Connection", "Relay-verbinding"),
         ("Secure Connection", "Beveiligde verbinding"),
         ("Insecure Connection", "Onveilige verbinding"),
->>>>>>> 1.5.0
         ("Scale original", "Oorspronkelijk formaat"),
         ("Scale adaptive", "Automatisch schalen"),
         ("General", "Algemeen"),
@@ -753,14 +743,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("wayland-keyboard-input-reset-choice-tip", "Keuze voor toetsenbordinvoer opnieuw instellen"),
         ("remember-wayland-keyboard-choice-tip", "Niet meer vragen voor deze externe computer"),
         ("Why this happens", "Waarom dit gebeurt"),
-<<<<<<< HEAD
-        ("Switch display", "Beeldscherm wisselen"),
-        ("Show monitor switch button on the main toolbar", "Knop voor monitorwisseling weergeven op de hoofdwerkbalk"),
-        ("Show on the minimized toolbar", "Weergeven op de geminimaliseerde werkbalk"),
-        ("All monitors", "Alle monitoren"),
-        ("#{} monitor", "Monitor {}"),
-        ("conn-e2ee-unavailable-tip", "End-to-endversleuteling kon niet worden geverifieerd.\nHet externe apparaat wordt mogelijk nog ingesteld. Probeer het later opnieuw.\nAls dit blijft gebeuren, is de server mogelijk niet vertrouwd.\nToch doorgaan?"),
-=======
         ("Switch display", "Scherm wisselen"),
         ("Show monitor switch button on the main toolbar", "Schakelknop van de monitor op de hoofdwerkbalk weergeven"),
         ("Show on the minimized toolbar", "Op de geminimaliseerde werkbalk weergeven"),
@@ -799,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Vertraging voordat relay wordt gebruikt in seconden"),
         ("relay-fallback-delay-tip", "Hoe lang een al tot stand gekomen relayverbinding wacht op de directe WebRTC-verbinding voordat deze in plaats daarvan wordt gebruikt. Verhoog de waarde om een trage directe verbinding meer tijd te geven; verlaag deze om op netwerken waar een directe verbinding niet mogelijk is sneller op de relay terug te vallen. Laat leeg voor de standaardwaarde van 2.5 seconden."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "Om een spraakgesprek te starten, schakel je \"Audio-opname\" in op de pagina \"Scherm delen\".")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

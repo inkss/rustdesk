@@ -363,8 +363,6 @@ mod test {
         assert_eq!(f("", "zh_TW", false), "zh-tw");
         assert_eq!(f("", "ja-JP", false), "ja");
     }
-<<<<<<< HEAD
-=======
 
     #[test]
     fn test_resolve_lang_detects_pt_pt_and_pt_br_from_locale() {
@@ -385,5 +383,4 @@ mod test {
         assert_eq!(f("pt-br", "pt-PT", false), "pt-br");
         assert_eq!(f("pt-pt", "pt-BR", false), "pt-pt");
     }
->>>>>>> 1.5.0
 }

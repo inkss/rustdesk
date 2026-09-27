@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Relajsa Konekto"),
         ("Secure Connection", "Sekura Konekto"),
         ("Insecure Connection", "Nesekura Konekto"),
-        ("Continue", ""),
         ("Scale original", "Skalo originalo"),
         ("Scale adaptive", "Skalo adapta"),
         ("General", "Ĝenerala"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Ĉiuj monitoroj"),
         ("#{} monitor", "Monitoro {}"),
         ("conn-e2ee-unavailable-tip", "Ne eblis kontroli la fin-al-finan ĉifradon.\nLa fora aparato eble ankoraŭ estas agordata. Provu denove poste.\nSe tio daŭre okazas, la servilo eble estas nefidinda.\nĈu daŭrigi tamen?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Listo de ID akceptataj"),
         ("Use ID whitelisting", "Uzi liston de ID akceptataj"),
         ("id_whitelist_tip", "Nur la ID en la blanka listo povas kontroli mian komputilon"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Prokrasto antaŭ retransmisio en sekundoj"),
         ("relay-fallback-delay-tip", "Kiom longe jam establita retransmisia konekto atendas la rektan WebRTC-konekton antaŭ ol esti uzata anstataŭe. Pligrandigu ĝin por doni al malrapida rekta konekto pli da tempo; malpligrandigu ĝin por pli frue uzi la retransmision en retoj kie rekta konekto ne eblas. Lasu malplena por la defaŭlta valoro de 2.5 sekundoj."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

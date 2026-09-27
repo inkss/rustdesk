@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Releja savienojums"),
         ("Secure Connection", "Drošs savienojums"),
         ("Insecure Connection", "Nedrošs savienojums"),
-        ("Continue", ""),
         ("Scale original", "Mērogs oriģināls"),
         ("Scale adaptive", "Mērogs adaptīvs"),
         ("General", "Vispārīgi"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Visi monitori"),
         ("#{} monitor", "Monitors {}"),
         ("conn-e2ee-unavailable-tip", "Neizdevās pārbaudīt pilnīgu šifrēšanu.\nAttālā ierīce, iespējams, vēl tiek iestatīta. Mēģiniet vēlreiz vēlāk.\nJa tas turpinās, serveris var nebūt uzticams.\nVai tomēr turpināt?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID baltais saraksts"),
         ("Use ID whitelisting", "Izmantot balto ID sarakstu"),
         ("id_whitelist_tip", "Man var piekļūt tikai baltajā sarakstā iekļautie ID"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Aizkave pirms pārslēgšanās uz retranslatoru sekundēs"),
         ("relay-fallback-delay-tip", "Cik ilgi jau izveidots retranslatora savienojums gaida tiešo WebRTC savienojumu, pirms tiek izmantots tā vietā. Palieliniet, lai lēnam tiešajam savienojumam dotu vairāk laika; samaziniet, lai tīklos, kur tiešais savienojums nav iespējams, ātrāk pārslēgtos uz retranslatoru. Atstājiet tukšu noklusējuma 2.5 sekunžu vērtībai."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

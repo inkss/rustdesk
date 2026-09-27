@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "中继连接"),
         ("Secure Connection", "安全连接"),
         ("Insecure Connection", "非安全连接"),
-        ("Continue", ""),
         ("Scale original", "原始尺寸"),
         ("Scale adaptive", "适应窗口"),
         ("General", "常规"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "所有显示器"),
         ("#{} monitor", "{}号显示器"),
         ("conn-e2ee-unavailable-tip", "无法验证端到端加密。\n远程设备可能仍在准备中，请稍后重试。\n如果此问题持续出现，服务器可能不受信任。\n仍要继续吗？"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID 白名单"),
         ("Use ID whitelisting", "只允许白名单上的 ID 访问"),
         ("id_whitelist_tip", "只有白名单里的 ID 才能访问本机"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "回落到中继前的等待时间（秒）"),
         ("relay-fallback-delay-tip", "已经建立的中继连接会等待直连的 WebRTC 多久，超过这个时间就改用中继。调大可以让较慢的直连有更多机会胜出；调小则在无法直连的网络上更快回落到中继。留空表示使用默认值 2.5 秒。"),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "开始语音通话前请在\"仅共享屏幕\"页面启用\"音频录制\"。")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

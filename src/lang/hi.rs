@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "रिले कनेक्शन"),
         ("Secure Connection", "सुरक्षित कनेक्शन"),
         ("Insecure Connection", "असुरक्षित कनेक्शन"),
-        ("Continue", ""),
         ("Scale original", "मूल पैमाना"),
         ("Scale adaptive", "अनुकूली पैमाना"),
         ("General", "सामान्य"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "सभी मॉनिटर"),
         ("#{} monitor", "मॉनिटर {}"),
         ("conn-e2ee-unavailable-tip", "एंड-टू-एंड एन्क्रिप्शन सत्यापित नहीं किया जा सका।\nदूरस्थ डिवाइस अभी भी सेट अप हो रहा हो सकता है। बाद में फिर प्रयास करें।\nयदि यह समस्या बनी रहती है, तो सर्वर अविश्वसनीय हो सकता है।\nफिर भी जारी रखें?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID श्वेतसूची (Whitelisting)"),
         ("Use ID whitelisting", "ID श्वेतसूची का उपयोग करें"),
         ("id_whitelist_tip", "केवल श्वेतसूचीबद्ध ID ही मुझ तक पहुंच सकते हैं"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "रिले पर लौटने में विलंब सेकंड में"),
         ("relay-fallback-delay-tip", "पहले से स्थापित रिले कनेक्शन सीधे WebRTC कनेक्शन की कितनी देर प्रतीक्षा करता है, उसके बाद उसके स्थान पर उपयोग किया जाता है। धीमे सीधे कनेक्शन को अधिक समय देने के लिए बढ़ाएँ; जिन नेटवर्क पर सीधा कनेक्शन संभव नहीं है वहाँ जल्दी रिले पर जाने के लिए घटाएँ। डिफ़ॉल्ट 2.5 सेकंड के लिए खाली छोड़ें।"),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

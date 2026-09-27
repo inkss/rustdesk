@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Relay ارتباط"),
         ("Secure Connection", "ارتباط امن"),
         ("Insecure Connection", "ارتباط غیر امن"),
-        ("Continue", ""),
         ("Scale original", "مقیاس اصلی"),
         ("Scale adaptive", "مقیاس تطبیقی"),
         ("General", "عمومی"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "همه نمایشگرها"),
         ("#{} monitor", "نمایشگر {}"),
         ("conn-e2ee-unavailable-tip", "رمزنگاری سرتاسری قابل تأیید نیست.\nدستگاه راه دور ممکن است هنوز در حال آماده‌سازی باشد. بعداً دوباره تلاش کنید.\nاگر این مشکل ادامه داشت، سرور ممکن است نامطمئن باشد.\nبا این حال ادامه می‌دهید؟"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "لیست شناسه های مجاز"),
         ("Use ID whitelisting", "استفاده از لیست شناسه های مجاز"),
         ("id_whitelist_tip", "فقط شناسه های مجاز می توانند به این دسکتاپ متصل شوند"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "تأخیر بازگشت به رله بر حسب ثانیه"),
         ("relay-fallback-delay-tip", "یک اتصال رله که از قبل برقرار شده چقدر منتظر اتصال مستقیم WebRTC می ماند پیش از آنکه به جای آن استفاده شود. آن را افزایش دهید تا به اتصال مستقیم کند فرصت بیشتری داده شود؛ کاهش دهید تا در شبکه هایی که اتصال مستقیم ممکن نیست، زودتر به رله بازگردد. برای مقدار پیش فرض 2.5 ثانیه خالی بگذارید."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

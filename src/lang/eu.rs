@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Konexio igorria"),
         ("Secure Connection", "Konexio segurua"),
         ("Insecure Connection", "Konexio ez-segurua"),
-        ("Continue", ""),
         ("Scale original", "Jatorrizko eskala"),
         ("Scale adaptive", "Eskala moldagarria"),
         ("General", "Orokorra"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Monitore guztiak"),
         ("#{} monitor", "{}. monitorea"),
         ("conn-e2ee-unavailable-tip", "Ezin izan da muturretik muturrerako enkriptatzea egiaztatu.\nUrruneko gailua oraindik konfiguratzen ari daiteke. Saiatu berriro geroago.\nHonek jarraitzen badu, zerbitzaria fidagaitza izan daiteke.\nHala ere jarraitu?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Onartutako IDak"),
         ("Use ID whitelisting", "Erabili ID onartuen zerrenda"),
         ("id_whitelist_tip", "Baimendutako IDak soilik konektatu daitezke mahaigain honetara"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Errelera itzultzeko atzerapena segundotan"),
         ("relay-fallback-delay-tip", "Dagoeneko ezarritako errele-konexio batek WebRTC konexio zuzenari zenbat denbora itxaroten dion, haren ordez erabili aurretik. Handitu konexio zuzen motel bati denbora gehiago emateko; txikitu konexio zuzena egin ezin den sareetan lehenago errelera itzultzeko. Utzi hutsik 2.5 segundoko balio lehenetsirako."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

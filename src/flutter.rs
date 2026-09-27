@@ -1415,10 +1415,7 @@ fn try_send_close_event(event_stream: &Option<StreamSink<EventToUI>>) {
 pub fn update_text_clipboard_required() {
     let is_required = sessions::get_sessions()
         .iter()
-<<<<<<< HEAD
-=======
         .filter(|s| s.connection_round_state.lock().unwrap().is_connected())
->>>>>>> 1.5.0
         .any(|s| s.is_default() && s.is_text_clipboard_required());
     #[cfg(target_os = "android")]
     let _ = scrap::android::ffi::call_clipboard_manager_enable_client_clipboard(is_required);
@@ -1429,10 +1426,7 @@ pub fn update_text_clipboard_required() {
 pub fn update_file_clipboard_required() {
     let is_required = sessions::get_sessions()
         .iter()
-<<<<<<< HEAD
-=======
         .filter(|s| s.connection_round_state.lock().unwrap().is_connected())
->>>>>>> 1.5.0
         .any(|s| s.is_default() && s.is_file_clipboard_required());
     Client::set_is_file_clipboard_required(is_required);
 }
@@ -1454,14 +1448,11 @@ fn send_clipboard_msg_impl(msg: Message, _is_file: bool, except_session_id: Opti
         if !s.is_default() {
             continue;
         }
-<<<<<<< HEAD
-=======
         if let Some(except_session_id) = except_session_id {
             if s.lc.read().unwrap().session_id == except_session_id {
                 continue;
             }
         }
->>>>>>> 1.5.0
         #[cfg(feature = "unix-file-copy-paste")]
         if _is_file {
             if crate::is_support_file_copy_paste_num(s.lc.read().unwrap().version)

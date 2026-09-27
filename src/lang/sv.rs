@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Relayanslutning"),
         ("Secure Connection", "Säker anslutning"),
         ("Insecure Connection", "Osäker anslutning"),
-        ("Continue", ""),
         ("Scale original", "Skala orginal"),
         ("Scale adaptive", "Skala adaptivt"),
         ("General", "Generellt"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Alla skärmar"),
         ("#{} monitor", "Skärm {}"),
         ("conn-e2ee-unavailable-tip", "End-to-end-kryptering kunde inte verifieras.\nFjärrenheten kan fortfarande konfigureras. Försök igen senare.\nOm detta fortsätter kan servern vara opålitlig.\nFortsätta ändå?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID-vitlistning"),
         ("Use ID whitelisting", "Använd ID-vitlistning"),
         ("id_whitelist_tip", "Bara vitlistade ID:n kan koppla upp till mig"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Fördröjning innan relä används i sekunder"),
         ("relay-fallback-delay-tip", "Hur länge en redan upprättad reläanslutning väntar på den direkta WebRTC-anslutningen innan den används i stället. Öka värdet för att ge en långsam direktanslutning mer tid; sänk det för att snabbare falla tillbaka på reläet i nätverk där direktanslutning inte är möjlig. Lämna tomt för standardvärdet 2.5 sekunder."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

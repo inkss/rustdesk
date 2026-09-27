@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "રિલે કનેક્શન"),
         ("Secure Connection", "સુરક્ષિત કનેક્શન"),
         ("Insecure Connection", "અસુરક્ષિત કનેક્શન"),
-        ("Continue", ""),
         ("Scale original", "મૂળ સ્કેલ"),
         ("Scale adaptive", "એડેપ્ટિવ સ્કેલ"),
         ("General", "સામાન્ય"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "બધા મોનિટર"),
         ("#{} monitor", "મોનિટર {}"),
         ("conn-e2ee-unavailable-tip", "એન્ડ-ટુ-એન્ડ એન્ક્રિપ્શન ચકાસી શકાયું નથી.\nરિમોટ ઉપકરણ હજી સેટ થઈ રહ્યું હોઈ શકે છે. પછીથી ફરી પ્રયાસ કરો.\nજો આ ચાલુ રહે, તો સર્વર અવિશ્વસનીય હોઈ શકે છે.\nશું તેમ છતાં ચાલુ રાખવું?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "ID વ્હાઇટલિસ્ટિંગ"),
         ("Use ID whitelisting", "ID વ્હાઇટલિસ્ટિંગનો ઉપયોગ કરો"),
         ("id_whitelist_tip", "માત્ર વ્હાઇટલિસ્ટ કરેલ ID જ મને એક્સેસ કરી શકે છે"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "રિલે પર પાછા ફરવામાં વિલંબ સેકન્ડમાં"),
         ("relay-fallback-delay-tip", "પહેલેથી સ્થાપિત રિલે કનેક્શન સીધા WebRTC કનેક્શનની કેટલો સમય રાહ જુએ છે, ત્યાર બાદ તેના બદલે વપરાય છે. ધીમા સીધા કનેક્શનને વધુ સમય આપવા માટે વધારો; જ્યાં સીધું કનેક્શન શક્ય નથી તેવા નેટવર્ક પર વહેલા રિલે પર જવા માટે ઘટાડો. મૂળભૂત 2.5 સેકન્ડ માટે ખાલી રાખો."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

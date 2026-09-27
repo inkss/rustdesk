@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Connexion via relais"),
         ("Secure Connection", "Connexion sécurisée"),
         ("Insecure Connection", "Connexion non sécurisée"),
-        ("Continue", ""),
         ("Scale original", "Échelle originale"),
         ("Scale adaptive", "Échelle adaptative"),
         ("General", "Général"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Tous les moniteurs"),
         ("#{} monitor", "Moniteur {}"),
         ("conn-e2ee-unavailable-tip", "Impossible de vérifier le chiffrement de bout en bout.\nL'appareil distant est peut-être encore en cours de configuration. Réessayez plus tard.\nSi le problème persiste, le serveur n'est peut-être pas fiable.\nContinuer quand même ?"),
-<<<<<<< HEAD
-=======
         ("ID whitelisting", "Liste blanche d’ID"),
         ("Use ID whitelisting", "Utiliser une liste blanche d’ID"),
         ("id_whitelist_tip", "Seuls les ID inclus dans la liste blanche pourront accéder à mon appareil"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Délai avant bascule vers le relais en secondes"),
         ("relay-fallback-delay-tip", "Durée pendant laquelle une connexion relais déjà établie attend la connexion directe WebRTC avant d'être utilisée à sa place. Augmentez-la pour laisser plus de temps à une connexion directe lente ; diminuez-la pour basculer plus tôt vers le relais sur les réseaux où une connexion directe est impossible. Laissez vide pour la valeur par défaut de 2.5 secondes."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

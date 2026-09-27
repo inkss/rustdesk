@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "中繼連線"),
         ("Secure Connection", "安全連線"),
         ("Insecure Connection", "非安全連線"),
-        ("Continue", ""),
         ("Scale original", "原始尺寸"),
         ("Scale adaptive", "適應視窗"),
         ("General", "一般"),
@@ -748,10 +747,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Show monitor switch button on the main toolbar", "在主工具列上顯示螢幕切換按鈕"),
         ("Show on the minimized toolbar", "在最小化工具列上顯示"),
         ("All monitors", "所有顯示器"),
-<<<<<<< HEAD
-        ("#{} monitor", "{}號顯示器"),
-        ("conn-e2ee-unavailable-tip", "無法驗證端對端加密。\n遠端裝置可能仍在準備中，請稍後重試。\n如果此問題持續發生，伺服器可能不受信任。\n仍要繼續嗎？"),
-=======
         ("#{} monitor", "{} 號顯示器"),
         ("conn-e2ee-unavailable-tip", "無法驗證端到端加密。\n遠端裝置可能仍在準備中，請稍後再試。\n如果此問題持續發生，伺服器可能不受信任。\n仍要繼續嗎？"),
         ("ID whitelisting", "ID 白名單"),
@@ -786,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "回退到中繼前的等待時間（秒）"),
         ("relay-fallback-delay-tip", "已經建立的中繼連線會等待直連的 WebRTC 多久，超過這個時間就改用中繼。調大可以讓較慢的直連有更多機會勝出；調小則在無法直連的網路上更快回退到中繼。留空表示使用預設值 2.5 秒。"),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "")
->>>>>>> 1.5.0
     ].iter().cloned().collect();
 }

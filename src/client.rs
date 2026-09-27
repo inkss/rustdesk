@@ -2997,14 +2997,10 @@ impl LoginConfigHandler {
         self.session_id = sid;
         self.supported_encoding = Default::default();
         self.clear_restarting_remote_device();
-<<<<<<< HEAD
-        self.force_relay =
-=======
         // Three scopes: what was decided about this PEER, what this CLIENT is set up as (proxy),
         // and what its TRANSPORT forces (ws). Only the first may be written back to the peer's
         // config — persisting the others would make a local setup a permanent peer property.
         self.peer_relay =
->>>>>>> 1.5.0
             config::option2bool("force-always-relay", &self.get_option("force-always-relay"))
                 || force_relay;
         self.policy_relay = self.peer_relay || Config::is_proxy();
