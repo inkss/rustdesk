@@ -57,35 +57,6 @@ _OidcProviderBranding _oidcProviderBranding(String op) {
   }
 }
 
-class _OidcProviderBranding {
-  final String label;
-  final String iconKey;
-
-  const _OidcProviderBranding({
-    required this.label,
-    required this.iconKey,
-  });
-}
-
-_OidcProviderBranding _oidcProviderBranding(String op) {
-  switch (op.toLowerCase()) {
-    case 'azure':
-      return _OidcProviderBranding(
-        label: 'Microsoft',
-        iconKey: 'microsoft',
-      );
-    default:
-      return _OidcProviderBranding(
-        label: {
-              'github': 'GitHub',
-              'gitlab': 'GitLab',
-            }[op.toLowerCase()] ??
-            toCapitalized(op),
-        iconKey: op.toLowerCase(),
-      );
-  }
-}
-
 class _IconOP extends StatelessWidget {
   final String op;
   final String? icon;

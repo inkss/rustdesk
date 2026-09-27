@@ -40,6 +40,7 @@ env:
   #  https://github.com/rustdesk/rustdesk/actions/runs/14414119794/job/40427970174
   # 2. Update the `VCPKG_COMMIT_ID` in `ci.yml` and `playground.yml`.
   VCPKG_COMMIT_ID: "9e593bb18ea69cc5095e012465dcd675a822ed0d"
+  VCPKG_CMAKE_VERSION: "4.3.0"
   VERSION: "${{ inputs.upload-tag || '1.4.7' }}"
   NDK_VERSION: "r28c"
   #signing keys env variable checks
@@ -735,6 +736,15 @@ jobs:
         run: |
           # only build cdylib
           sed -i  "s/\[\"cdylib\", \"staticlib\", \"rlib\"\]/\[\"cdylib\"\]/g" Cargo.toml
+
+      # vcpkg 2026.07.29 的 SPDX 脚本需要 CMake 4.3+，而 ARM64 运行环境自带的 CMake 版本过低
+      - name: Install CMake for vcpkg on Linux ARM64
+        if: ${{ matrix.job.arch == 'aarch64' }}
+        run: |
+          python3 -m pip install --user "cmake==${VCPKG_CMAKE_VERSION}"
+          user_base="$(python3 -m site --user-base)"
+          "${user_base}/bin/cmake" --version
+          echo "${user_base}/bin" >> "${GITHUB_PATH}"
 
       - name: Setup vcpkg with Github Actions binary cache
         # always build
