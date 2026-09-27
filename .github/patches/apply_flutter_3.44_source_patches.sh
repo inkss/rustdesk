@@ -17,8 +17,6 @@
 # therefore CRLF-safe.
 set -euo pipefail
 
-<<<<<<< HEAD
-=======
 readonly NO_MATCHES=0
 readonly SINGLE_MATCH=1
 readonly THEME_MATCHES=2
@@ -122,7 +120,6 @@ if ! is_unpatched_state; then
   exit 1
 fi
 
->>>>>>> 1.5.0
 # ThemeData API renames (Flutter 3.27+):
 sed -i 's/dialogTheme: DialogTheme(/dialogTheme: DialogThemeData(/g' flutter/lib/common.dart
 sed -i 's/tabBarTheme: const TabBarTheme(/tabBarTheme: const TabBarThemeData(/g' flutter/lib/common.dart
@@ -134,20 +131,10 @@ sed -i '/static ThemeData darkTheme = ThemeData(/,/scrollbarTheme: scrollbarThem
 sed -i 's/extended_text: 14.0.0/extended_text: 15.0.2/' flutter/pubspec.yaml
 sed -i 's/google_fonts: \^6.2.1/google_fonts: ^8.1.0/' flutter/pubspec.yaml
 
-<<<<<<< HEAD
-# Fail loudly if any expected string drifted, so we never silently build unpatched:
-grep -qF 'dialogTheme: DialogThemeData(' flutter/lib/common.dart
-grep -qF 'tabBarTheme: const TabBarThemeData(' flutter/lib/common.dart
-grep -qF 'backgroundColor: Colors.white,' flutter/lib/common.dart
-grep -qF 'backgroundColor: Color(0xFF18191E),' flutter/lib/common.dart
-grep -qF 'extended_text: 15.0.2' flutter/pubspec.yaml
-grep -qF 'google_fonts: ^8.1.0' flutter/pubspec.yaml
-=======
 # Fail loudly if any expected substitution did not produce the complete state.
 if ! is_complete_patch_state; then
   echo "Flutter 3.44 source patches did not produce the expected state." >&2
   exit 1
 fi
->>>>>>> 1.5.0
 
 git --no-pager diff -- flutter/lib/common.dart flutter/pubspec.yaml

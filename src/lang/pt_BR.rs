@@ -331,7 +331,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay Connection", "Conexão via Relay"),
         ("Secure Connection", "Conexão Segura"),
         ("Insecure Connection", "Conexão Insegura"),
-        ("Continue", ""),
         ("Scale original", "Escala original"),
         ("Scale adaptive", "Escala adaptada"),
         ("General", "Geral"),
@@ -750,8 +749,6 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("All monitors", "Todas as telas"),
         ("#{} monitor", "Tela {}"),
         ("conn-e2ee-unavailable-tip", "Não foi possível verificar a criptografia de ponta a ponta.\nO dispositivo remoto ainda pode estar sendo configurado. Tente novamente mais tarde.\nSe isso continuar acontecendo, o servidor pode não ser confiável.\nContinuar mesmo assim?"),
-<<<<<<< HEAD:src/lang/ptbr.rs
-=======
         ("ID whitelisting", "Lista de IDs permitidos"),
         ("Use ID whitelisting", "Utilizar lista de IDs permitidos"),
         ("id_whitelist_tip", "Somente IDs confiáveis podem me acessar"),
@@ -784,6 +781,5 @@ pub static ref T: std::collections::HashMap<&'static str, &'static str> =
         ("Relay fallback delay in seconds", "Atraso antes de recorrer ao retransmissor em segundos"),
         ("relay-fallback-delay-tip", "Tempo que a conexão de retransmissão aguarda pela conexão direta WebRTC. Aumente para dar mais tempo a conexões lentas; diminua para usar o retransmissor mais cedo. Deixe vazio para usar o padrão de 2,5 segundos."),
         ("To start a voice call, enable \"Audio capture\" on the \"Screen share\" page.", "Para iniciar uma chamada de voz, ative \"Captura de áudio\" na página \"Compartilhamento de tela\".")
->>>>>>> 1.5.0:src/lang/pt_BR.rs
     ].iter().cloned().collect();
 }
