@@ -10,10 +10,12 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
+  # 注意：permissions 中没有 workflows 键，GITHUB_TOKEN 无法获得推送 workflow 文件变更的权限
+  # （PAT 才有 workflow scope）。因此必须保证合并提交不携带 .github/workflows/ 变更，
+  # 或配置带 workflow scope 的 SYNC_PAT。
   contents: write
   pull-requests: write
   actions: write
-  workflows: write
 
 jobs:
   check-and-sync:
