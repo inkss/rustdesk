@@ -91,6 +91,35 @@ fetch upstream tags
 
 ---
 
+## 上游版本升级实操清单（v1.5.0 经验）
+
+按顺序执行，可覆盖一次完整升级：
+
+1. **求真实合并基点**
+   ```bash
+   gh api "repos/rustdesk/rustdesk/compare/<新tag>...inkss:custom-build" -q '.merge_base_commit.sha'
+   ```
+   不要拿"上次合并的 tag 提交"当基点（v1.5.0 的真实基点是 `0c86d461`，不是 1.4.9 的 `59e044ff`）。基点错了，三方合并会把几乎所有文件都报成冲突（曾得到 84/86 全冲突的假象）。
+2. **批量三方合并**：对每个冲突文件用 contents API 取 base / ours / theirs 三份，用 `git merge-file -p` 合并。单侧无改动直接采纳另一侧；两侧都有改动的按下面第 3 条逐条判定。先拿 1 个文件验证结果正确，再批量跑。
+3. **冲突判定原则**
+   | 对象 | 策略 |
+   | --- | --- |
+   | `src/common.rs` 编译期注入、Android 包名 `com.rustdesk.app` | 保留本地 |
+   | `README.md` / `CLAUDE.md` | 保留本地 |
+   | `src/lang/*.rs` | 采用上游译文（上游删掉的条目不复活） |
+   | `.gitignore` | 合并两侧 |
+   | `libs/hbb_common` 子模块 gitlink | 采用上游（前向更新） |
+   | `.github/workflows/` | **整体丢弃上游改动**，只保留本地备份集 |
+   | core 其余文件（`connection.rs`、`rendezvous_mediator.rs`、`server.rs`…） | 采用上游 |
+4. **合并后必查的"静默问题"**（git 不报冲突但会导致编译失败）
+   - 重复声明：合并结果与上游同版本文件逐段对比。v1.5.0 的 `login.dart` 因上游移动代码块，两份都被留下，报 `already declared in this scope`
+   - `vcpkg.json` 升版 → 必须同步 `flutter-build.yml` 的 `VCPKG_COMMIT_ID`（1.5.0 用上游的 2026.07.29 / `9e593bb1`）
+   - 新版 vcpkg 的 SPDX 脚本要求 CMake 4.3+ → Linux ARM64 需 pip 装 `cmake==4.3.0`（`VCPKG_CMAKE_VERSION`，与上游一致）
+   - 子模块指针更新后，本地也要 `git submodule sync --recursive && git submodule update --init --recursive`
+5. **验证闭环**：`gh run list -R inkss/rustdesk --workflow build.yml` 看各平台 job，逐个按失败日志修 → 重跑；最后确认私有仓库 Release 的 assets 齐全。
+
+---
+
 ## 维护记录
 
 | 日期 | 改动 |
@@ -112,9 +141,5 @@ fetch upstream tags
 | 2026-06-24 | 添加 .build-config.yml 中 windows_arm64 选项控制 Windows ARM64 编译（默认禁用） |
 | 2026-07-09 | 修复 sync-upstream：合并 v1.4.9 失败（commit 退出 128）。根因为 libs/hbb_common 子模块 gitlink 冲突——CI 未检出子模块导致无法自动解决，且兜底复合 `git add ... libs/ ...` 因该冲突中止、索引残留未合并项。新增子模块 gitlink 冲突自动处理（采用上游 gitlink，已确认是前向更新无内部分叉），内容冲突改为显式暂存并标记人工复核，并以「逐个暂存所有遗留未合并项」的兜底循环替换脆弱复合 git add，确保 commit 前索引干净 |
 | 2026-07-09 | 修复 v1.4.9 编译失败（actions run 28995435596）：`src/` 已升至上游 1.4.9，但 `libs/hbb_common` 子模块指针仍停在旧提交 `387603f4`，缺少 `ControlledContext`、`OPTION_ALLOW_SCOPE_VIOLATION_*`、proto `controlled_context` 等符号。将子模块前移到上游 1.4.9 配套的 `7e1c392c`（纯前向更新，无内部分叉），提交 `c4e271282` 并打 `1.4.9` tag 触发重编 |
-| 2026-09-27 | 修复 sync-upstream：合并 v1.5.0 连续 3 天失败（09-25/26/27 的 push 均被拒：`refusing to allow a GitHub App to create or update workflow .github/workflows/update-webpki-roots.yml without workflows permission`）。根因是上游新增的 workflow 文件不产生冲突，被 `git add .github/workflows/` 带入合并提交，而 `SYNC_PAT` 未配置、回退的 `GITHUB_TOKEN` 无 workflow 写权限（`permissions` 不存在 `workflows` 键，只有带 workflow scope 的 PAT 才有）。改为提交前 `git rm -r -f --cached .github/workflows/` 清空索引并只还原本地备份集，保证合并提交不携带 workflow 变更 |
-| 2026-09-27 | 合并上游 v1.5.0（PR #7，86 个冲突文件）：`src/lang/*` 采用上游 1.5.0 译文（上游删除的插件条目不再复活）；core 采用上游改动（PunchSlot 透传、ID 白名单、文件传输目录校验、peer id 校验等）；保留本地定制——`src/common.rs` 编译期注入（RENDEZVOUS_SERVER/RS_PUB_KEY/API_SERVER）、Android 包名 `com.rustdesk.app`、`README.md`/`CLAUDE.md` 本地版本、`.gitignore` 合并两侧；版本号统一升至 1.5.0 |
-| 2026-09-27 | 修复 v1.5.0 编译：①`flutter-build.yml` 的 `VCPKG_COMMIT_ID` 仍是 2025.08.27，而 1.5.0 的 `vcpkg.json` 需要 libjpeg-turbo 3.2.0 / pkgconf 3.0.3 / vcpkg-cmake-config 2026-07-21，旧版本库没有这些条目，三平台 `Install vcpkg dependencies` 失败——改用上游的 2026.07.29（`9e593bb1`）；②Linux ARM64 运行环境自带 CMake 3.31，新版 vcpkg 的 SPDX 脚本要求 CMake 4.3+（`string(JSON ... STRING_ENCODE)`），参照上游增加 pip 安装 `cmake==4.3.0` 的步骤（`VCPKG_CMAKE_VERSION`） |
-| 2026-09-27 | 修复 v1.5.0 编译：`flutter/lib/common/widgets/login.dart` 中 `_OidcProviderBranding` 被声明两次，三平台 Flutter 构建报 `already declared in this scope`。原因是上游 1.5.0 把该代码块移动了位置，而 fork 仍保留旧位置，git 三向合并把两份都留下（不报冲突）。删除重复块，与上游 1.5.0 一致 |
-| 2026-09-27 | v1.5.0 全平台编译成功（actions run 36325873327：Windows 48m / Linux x86_64 33m / Linux aarch64 31m / Android 31m），产物已发布到私有仓库 `inkss/rustdesk-releases` 的 `1.5.0` Release（10 个 assets） |
-| 2026-09-27 | 修复 sync-upstream 凭据问题：①`actions/github-script` 的入参名是 `github-token`，原 `token:` 被静默忽略，`REPO_TOKEN/SYNC_PAT` 从未生效；②`Trigger build` 未传凭据，而 `GITHUB_TOKEN` 发起的 `workflow_dispatch` 不会创建运行，无冲突合并后会"看似成功但不编译"。现改为显式传 `github-token`（建 PR 仍用 `GITHUB_TOKEN` 保证可用，触发编译优先 PAT），失败时 `core.warning` + job summary 明确告警而非静默。同时删除已合并的临时分支 `upstream-merge-1.5.0/1.4.9/1.4.8` |
+| 2026-09-27 | 升级到上游 v1.5.0（PR #7，86 个冲突文件）：按「保留本地定制 + 采用上游」逐条三方合并（`src/lang/*` 采用上游译文、`src/common.rs` 与 Android 包名 `com.rustdesk.app` 及 `README.md`/`CLAUDE.md` 保留本地、子模块 gitlink 采用上游、`.github/workflows/` 整体丢弃上游改动）。随后修复三处编译问题——`VCPKG_COMMIT_ID` 升到 2026.07.29（`vcpkg.json` 要求的端口版本在旧版本库中不存在）、Linux ARM64 补装 CMake 4.3（新版 vcpkg 的 SPDX 脚本要求）、删除 `login.dart` 中因上游移动代码块而重复声明的 `_OidcProviderBranding`。全平台编译成功（run 36325873327：Windows 48m / Linux x86_64 33m / Linux aarch64 31m / Android 31m），产物已发布到 `inkss/rustdesk-releases` 的 `1.5.0` Release（10 个 assets） |
+| 2026-09-27 | 修复 sync-upstream 两类故障并清理仓库：①上游新增的 workflow 文件不产生冲突，被 `git add .github/workflows/` 带入合并提交，而回退的 `GITHUB_TOKEN` 无 workflow 权限，导致 09-25/26/27 连续三天 push 被拒——改为提交前清空 `.github/workflows/` 的索引与工作树、只还原本地备份集；②`actions/github-script` 的入参名是 `github-token`（原 `token:` 被静默忽略，PAT 从未生效），且 `Trigger build` 未传凭据，而 `GITHUB_TOKEN` 发起的 `workflow_dispatch` 不会创建运行——改为显式传 PAT，失败时 `core.warning` + job summary 告警。另删除已合并的临时分支 `upstream-merge-1.5.0/1.4.9/1.4.8` |
