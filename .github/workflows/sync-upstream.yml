@@ -189,7 +189,10 @@ jobs:
           VERSION: ${{ steps.merge.outputs.version }}
           BRANCH: ${{ steps.merge.outputs.branch }}
         with:
-          token: ${{ secrets.REPO_TOKEN || secrets.GITHUB_TOKEN }}
+          # github-script 的输入名是 github-token；写成 token: 会被静默忽略，
+          # 导致 REPO_TOKEN/SYNC_PAT 实际从未生效（一直用默认的 GITHUB_TOKEN）。
+          # 建 PR 用 GITHUB_TOKEN 已足够（pull-requests: write），仅在配置了 SYNC_PAT 时使用它。
+          github-token: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const version = process.env.VERSION;
@@ -229,11 +232,25 @@ jobs:
         if: steps.merge.outputs.merged == 'true'
         uses: actions/github-script@v7
         with:
+          # 必须显式传 github-token：GITHUB_TOKEN 发起的 workflow_dispatch 不会创建新的运行，
+          # 无冲突自动合并后会"看似成功但没有编译"，因此这里用 PAT 并在失败时明确告警。
+          github-token: ${{ secrets.SYNC_PAT || secrets.REPO_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'build.yml',
-              ref: 'custom-build'
-            });
-            console.log('✅ Triggered build.yml');
+            try {
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'build.yml',
+                ref: 'custom-build'
+              });
+              console.log('✅ Triggered build.yml');
+            } catch (error) {
+              core.warning('触发 build.yml 失败：' + error.message);
+              core.warning('若凭据为 GITHUB_TOKEN，workflow_dispatch 不会生效；请配置带 workflow scope 的 SYNC_PAT。');
+              await core.summary
+                .addHeading('⚠️ 未自动触发编译')
+                .addRaw('合并已成功，但未能自动触发 build.yml。')
+                .addCodeBlock(error.message)
+                .addRaw('请在仓库 Secrets 配置 SYNC_PAT（Classic PAT，勾选 repo + workflow），或手动运行 Build RustDesk。')
+                .write();
+            }
