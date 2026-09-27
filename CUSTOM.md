@@ -83,7 +83,9 @@ fetch upstream tags
 1. `src/common.rs` 的改动在函数内部，上游重构时可能需要手动合并
 2. `.github/workflows/` 完全重写，上游 CI 变更不影响本 fork
 3. `.gitignore` 中 `rustdesk` 已改为 `/rustdesk`，注意新增文件是否被误忽略
-4. Kotlin 版本需与 AGP 兼容（当前 AGP 7.3.1 + Kotlin 1.9.10）
+4. Kotlin 版本需与 AGP 兼容（跟随上游配套版本，1.5.0 为 AGP 8.10.1 + Kotlin 2.1.21）
+5. **上游 release tag 位于与 master 分叉的发布分支**（1.4.9 与 1.5.0 都是 master 的祖先，但 1.5.0 并不包含 1.4.9 之后的 master 提交）。因此合并 tag 时，git 可能把「上游移动过的代码块」与「fork 仍保留的旧位置副本」同时留下却不报冲突（v1.5.0 的 `login.dart` 就因此重复声明）。合并后需留意这类静默重复：以「与上游 1.x 文件对比」为准，重复块直接删掉
+6. 上游升级 vcpkg 版本后，需同步 `flutter-build.yml` 的 `VCPKG_COMMIT_ID`，否则 `vcpkg.json` 里的端口版本在旧版本库中找不到
 
 ---
 
@@ -110,3 +112,6 @@ fetch upstream tags
 | 2026-07-09 | 修复 v1.4.9 编译失败（actions run 28995435596）：`src/` 已升至上游 1.4.9，但 `libs/hbb_common` 子模块指针仍停在旧提交 `387603f4`，缺少 `ControlledContext`、`OPTION_ALLOW_SCOPE_VIOLATION_*`、proto `controlled_context` 等符号。将子模块前移到上游 1.4.9 配套的 `7e1c392c`（纯前向更新，无内部分叉），提交 `c4e271282` 并打 `1.4.9` tag 触发重编 |
 | 2026-09-27 | 修复 sync-upstream：合并 v1.5.0 连续 3 天失败（09-25/26/27 的 push 均被拒：`refusing to allow a GitHub App to create or update workflow .github/workflows/update-webpki-roots.yml without workflows permission`）。根因是上游新增的 workflow 文件不产生冲突，被 `git add .github/workflows/` 带入合并提交，而 `SYNC_PAT` 未配置、回退的 `GITHUB_TOKEN` 无 workflow 写权限（`permissions` 不存在 `workflows` 键，只有带 workflow scope 的 PAT 才有）。改为提交前 `git rm -r -f --cached .github/workflows/` 清空索引并只还原本地备份集，保证合并提交不携带 workflow 变更 |
 | 2026-09-27 | 合并上游 v1.5.0（PR #7，86 个冲突文件）：`src/lang/*` 采用上游 1.5.0 译文（上游删除的插件条目不再复活）；core 采用上游改动（PunchSlot 透传、ID 白名单、文件传输目录校验、peer id 校验等）；保留本地定制——`src/common.rs` 编译期注入（RENDEZVOUS_SERVER/RS_PUB_KEY/API_SERVER）、Android 包名 `com.rustdesk.app`、`README.md`/`CLAUDE.md` 本地版本、`.gitignore` 合并两侧；版本号统一升至 1.5.0 |
+| 2026-09-27 | 修复 v1.5.0 编译：①`flutter-build.yml` 的 `VCPKG_COMMIT_ID` 仍是 2025.08.27，而 1.5.0 的 `vcpkg.json` 需要 libjpeg-turbo 3.2.0 / pkgconf 3.0.3 / vcpkg-cmake-config 2026-07-21，旧版本库没有这些条目，三平台 `Install vcpkg dependencies` 失败——改用上游的 2026.07.29（`9e593bb1`）；②Linux ARM64 运行环境自带 CMake 3.31，新版 vcpkg 的 SPDX 脚本要求 CMake 4.3+（`string(JSON ... STRING_ENCODE)`），参照上游增加 pip 安装 `cmake==4.3.0` 的步骤（`VCPKG_CMAKE_VERSION`） |
+| 2026-09-27 | 修复 v1.5.0 编译：`flutter/lib/common/widgets/login.dart` 中 `_OidcProviderBranding` 被声明两次，三平台 Flutter 构建报 `already declared in this scope`。原因是上游 1.5.0 把该代码块移动了位置，而 fork 仍保留旧位置，git 三向合并把两份都留下（不报冲突）。删除重复块，与上游 1.5.0 一致 |
+| 2026-09-27 | v1.5.0 全平台编译成功（actions run 36325873327：Windows 48m / Linux x86_64 33m / Linux aarch64 31m / Android 31m），产物已发布到私有仓库 `inkss/rustdesk-releases` 的 `1.5.0` Release（10 个 assets） |
