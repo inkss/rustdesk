@@ -86,6 +86,8 @@ fetch upstream tags
 4. Kotlin 版本需与 AGP 兼容（跟随上游配套版本，1.5.0 为 AGP 8.10.1 + Kotlin 2.1.21）
 5. **上游 release tag 位于与 master 分叉的发布分支**（1.4.9 与 1.5.0 都是 master 的祖先，但 1.5.0 并不包含 1.4.9 之后的 master 提交）。因此合并 tag 时，git 可能把「上游移动过的代码块」与「fork 仍保留的旧位置副本」同时留下却不报冲突（v1.5.0 的 `login.dart` 就因此重复声明）。合并后需留意这类静默重复：以「与上游 1.x 文件对比」为准，重复块直接删掉
 6. 上游升级 vcpkg 版本后，需同步 `flutter-build.yml` 的 `VCPKG_COMMIT_ID`，否则 `vcpkg.json` 里的端口版本在旧版本库中找不到
+7. **`GITHUB_TOKEN`（GitHub App 令牌）有三条限制**：① 无 `workflows` 权限（`permissions` 里不存在该键）→ 推送含 workflow 文件变更的 ref 会被拒绝，靠 sync 流程"提交前清空 `.github/workflows/` 并只还原本地备份"规避；② 由它发起的 API 调用不会创建新的 workflow run → `workflow_dispatch` 触发编译不会生效；③ 由它推送的 commit 不触发 push 事件的工作流。**需要在仓库 Secrets 配置 `SYNC_PAT`（Classic PAT，勾选 `repo` + `workflow`）**，才能让"无冲突自动合并 → 自动编译"真正闭环；未配置时 sync 仍可完成合并与建 PR，但自动触发编译会失败并输出告警（不会静默）
+8. `actions/github-script` 的输入名是 `github-token`，写成 `token:` 会被静默忽略（不报错），导致 PAT 实际未生效
 
 ---
 
@@ -115,3 +117,4 @@ fetch upstream tags
 | 2026-09-27 | 修复 v1.5.0 编译：①`flutter-build.yml` 的 `VCPKG_COMMIT_ID` 仍是 2025.08.27，而 1.5.0 的 `vcpkg.json` 需要 libjpeg-turbo 3.2.0 / pkgconf 3.0.3 / vcpkg-cmake-config 2026-07-21，旧版本库没有这些条目，三平台 `Install vcpkg dependencies` 失败——改用上游的 2026.07.29（`9e593bb1`）；②Linux ARM64 运行环境自带 CMake 3.31，新版 vcpkg 的 SPDX 脚本要求 CMake 4.3+（`string(JSON ... STRING_ENCODE)`），参照上游增加 pip 安装 `cmake==4.3.0` 的步骤（`VCPKG_CMAKE_VERSION`） |
 | 2026-09-27 | 修复 v1.5.0 编译：`flutter/lib/common/widgets/login.dart` 中 `_OidcProviderBranding` 被声明两次，三平台 Flutter 构建报 `already declared in this scope`。原因是上游 1.5.0 把该代码块移动了位置，而 fork 仍保留旧位置，git 三向合并把两份都留下（不报冲突）。删除重复块，与上游 1.5.0 一致 |
 | 2026-09-27 | v1.5.0 全平台编译成功（actions run 36325873327：Windows 48m / Linux x86_64 33m / Linux aarch64 31m / Android 31m），产物已发布到私有仓库 `inkss/rustdesk-releases` 的 `1.5.0` Release（10 个 assets） |
+| 2026-09-27 | 修复 sync-upstream 凭据问题：①`actions/github-script` 的入参名是 `github-token`，原 `token:` 被静默忽略，`REPO_TOKEN/SYNC_PAT` 从未生效；②`Trigger build` 未传凭据，而 `GITHUB_TOKEN` 发起的 `workflow_dispatch` 不会创建运行，无冲突合并后会"看似成功但不编译"。现改为显式传 `github-token`（建 PR 仍用 `GITHUB_TOKEN` 保证可用，触发编译优先 PAT），失败时 `core.warning` + job summary 明确告警而非静默。同时删除已合并的临时分支 `upstream-merge-1.5.0/1.4.9/1.4.8` |
