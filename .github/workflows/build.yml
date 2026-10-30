@@ -9,9 +9,19 @@ on:
     types: [closed]
     branches: [custom-build]
   workflow_dispatch:
+    inputs:
+      platforms:
+        description: 只编译指定平台（all = 按 .build-config.yml 的开关）
+        type: choice
+        options:
+          - all
+          - windows
+          - linux
+          - android
+        default: all
 
 concurrency:
-  group: build-${{ github.ref }}
+  group: build-${{ github.ref }}-${{ github.event_name }}-${{ inputs.platforms || 'auto' }}
   cancel-in-progress: false
 
 permissions:
@@ -78,8 +88,9 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📌 Resolved version: $VERSION"
 
+      # 只在全平台编译时清理 Release；补跑单个平台时必须保留其他平台已发布的资产
       - name: Clean existing release
-        if: steps.should_build.outputs.skip != 'true' && github.event_name == 'workflow_dispatch'
+        if: steps.should_build.outputs.skip != 'true' && github.event_name == 'workflow_dispatch' && (inputs.platforms == 'all' || inputs.platforms == '')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -100,3 +111,4 @@ jobs:
     with:
       publish-release: true
       upload-tag: ${{ needs.prepare.outputs.version }}
+      platforms: ${{ inputs.platforms || 'all' }}

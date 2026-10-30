@@ -9,6 +9,10 @@ on:
       upload-tag:
         type: string
         default: "nightly"
+      platforms:
+        description: 只编译指定平台（all = 按 .build-config.yml 的开关）
+        type: string
+        default: "all"
 
 permissions:
   contents: write
@@ -74,6 +78,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Read build config
         id: config
+        env:
+          ONLY_PLATFORMS: ${{ inputs.platforms }}
         run: |
           if [ -f .build-config.yml ]; then
             python3 -c "
@@ -82,6 +88,11 @@ jobs:
           with open('.build-config.yml') as f:
               cfg = yaml.safe_load(f)
           p = cfg.get('platforms', {})
+          p_raw = dict(p)
+          # 手动触发时可只编译一个平台（用于补跑失败的平台），避免全量重编
+          only = os.environ.get('ONLY_PLATFORMS', 'all').strip() or 'all'
+          if only != 'all':
+              p = {k: (k == only) for k in p}
           with open(out, 'a') as f:
               for k, v in p.items():
                   f.write(f'{k}={str(v).lower()}\n')
@@ -96,7 +107,7 @@ jobs:
                   'vcpkg-triplet': 'x64-windows-static',
                   'build-args': '--vram',
               }]
-              if str(p.get('windows_arm64', False)).lower() == 'true':
+              if str(p_raw.get('windows_arm64', False)).lower() == 'true':
                   topmost_jobs.append({'target': 'windows-11-arm', 'platform': 'ARM64'})
                   flutter_jobs.append({
                       'target': 'aarch64-pc-windows-msvc',
@@ -736,6 +747,15 @@ jobs:
         run: |
           # only build cdylib
           sed -i  "s/\[\"cdylib\", \"staticlib\", \"rlib\"\]/\[\"cdylib\"\]/g" Cargo.toml
+
+      # 必须放在上面的 sed 之后：rust-cache 的 key 会 hash Cargo.toml，
+      # main(restore) 与 post(save) 必须在同一文件状态下计算，否则缓存永不命中
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          prefix-key: ${{ matrix.job.on }}
+          key: ${{ matrix.job.target }}
+          # 只在默认分支写入缓存，避免临时分支污染
+          save-if: ${{ github.ref == 'refs/heads/custom-build' }}
 
       # vcpkg 2026.07.29 的 SPDX 脚本需要 CMake 4.3+，而 ARM64 运行环境自带的 CMake 版本过低
       - name: Install CMake for vcpkg on Linux ARM64
