@@ -67,8 +67,28 @@ fetch upstream tags
 
 **build.yml 流程**：
 
-- `workflow_dispatch`：fetch upstream tags → 获取版本号 → 清理旧 Release → 编译
+- `workflow_dispatch`：fetch upstream tags → 获取版本号 → Preflight 检查 → 清理旧 Release → 编译
 - tag push：从 tag 名解析版本号 → 编译
+
+**只编译指定平台（补跑用）**
+
+`workflow_dispatch` 提供 `platforms` 入参（`all` / `windows` / `linux` / `android`，默认 `all`），
+透传给 `flutter-build.yml` 后在 `read-config` 中覆盖 `.build-config.yml` 的平台开关。
+非 `all` 时会**跳过「清理旧 Release」**，避免补跑时删掉其他平台已发布的资产：
+
+```bash
+gh workflow run build.yml -R inkss/rustdesk --ref custom-build -f platforms=android
+```
+
+若只是某支偶发失败、代码未变，优先用 `gh run rerun <run-id> -R inkss/rustdesk --failed`
+（成功 job 的状态与产物保留，只重跑失败的那支）。
+
+**Preflight 检查**
+
+`prepare` job 中扫描 `flutter/android/` 下所有 `.kt` 文件的 `package` 声明，
+命中 `carriez` / `flutter_hbb` 即失败并给出 file/line 注解，1 分钟内暴露必然失败的情况。
+只检查 package 声明、不要求 package 与目录一致 —— 上游存在 `package hbb` 这类历史
+遗留（Kotlin 不强制 package 匹配目录），它们能正常编译，不应被误报为错误。
 
 **私有 Release 仓库**：公开仓库享受免费 Actions 额度，产物推送到私有仓库。配置 `RELEASE_REPO` + `RELEASE_PAT` 即可。
 
@@ -145,3 +165,4 @@ fetch upstream tags
 | 2026-09-27 | 修复 sync-upstream 两类故障并清理仓库：①上游新增的 workflow 文件不产生冲突，被 `git add .github/workflows/` 带入合并提交，而回退的 `GITHUB_TOKEN` 无 workflow 权限，导致 09-25/26/27 连续三天 push 被拒——改为提交前清空 `.github/workflows/` 的索引与工作树、只还原本地备份集；②`actions/github-script` 的入参名是 `github-token`（原 `token:` 被静默忽略，PAT 从未生效），且 `Trigger build` 未传凭据，而 `GITHUB_TOKEN` 发起的 `workflow_dispatch` 不会创建运行——改为显式传 PAT，失败时 `core.warning` + job summary 告警。另删除已合并的临时分支 `upstream-merge-1.5.0/1.4.9/1.4.8` |
 | 2026-10-30 | 升级到上游 v1.5.1（PR #8，163 个冲突文件 / 640 个冲突块）：沿用「本地定制保留 + 其余采用上游」三方合并。冲突文件分两类——「本地定制」（`src/common.rs` 的 5 处编译期注入、Android 包名 `com.rustdesk.app`（`build.gradle`/`AndroidManifest.xml`/`AudioRecordHandle.kt`）、`README.md`/`CLAUDE.md`/`AGENTS.md`、CJK 字体与防诈骗弹窗）逐个保留；「本地旧版残留」（`src/server/*`、`src/ipc.rs`、`src/ipc/drm.rs`、`libs/clipboard/*`、`libs/scrap/*`、`flutter/windows/runner/flutter_window.cpp`、`flutter/lib/models/model.dart` 等）整文件取上游。`.gitignore` 合并两侧（新增 `.worktrees/`），`build.py` 的 `LIBDRMTAP_SHA` 随上游升到 libdrmtap v0.5.12。合并后删除三处静默重复（详见注意事项第 5 条）；子模块随上游前移到 `fae47e02`，`vcpkg.json` 与 `VCPKG_COMMIT_ID` 均无需变更。run 40979522865 中 Windows / Linux x86_64 / Linux aarch64 编译成功，Android 失败（见下一条） |
 | 2026-10-30 | 修复 v1.5.1 Android 编译失败：上游在 `com/carriez/flutter_hbb/` 下新增的 `DocumentDescriptors.kt` / `DocumentLogs.kt` / `DocumentPicker.kt` / `DocumentStorage.kt` / `DocumentTree.kt` 随 fork 的目录重命名落到 `com/rustdesk/app/`，但文件内 `package` 仍是 `com.carriez.flutter_hbb`，Kotlin 报 `Unresolved reference 'MainApplication' / 'DocumentStorage'`。将这 5 个文件的包名统一改为 `com.rustdesk.app` 后重编成功（run 40991656750：Windows / Linux x86_64 / Linux aarch64 / Android 全部成功，产物已发布到 `inkss/rustdesk-releases` 的 `1.5.1` Release，10 个 assets）。**上游新增 Kotlin 文件必须检查包名是否已随 fork 改写** |
+| 2026-10-30 | 缩短编译反馈周期：① `workflow_dispatch` 新增 `platforms` 入参（all/windows/linux/android，默认 all）并透传给 `flutter-build.yml`，在 `read-config` 中覆盖 `.build-config.yml` 的平台开关，只补跑失败的平台；② 收紧 `Clean existing release` 为仅 `platforms == all` 时执行（旧逻辑每次 dispatch 都 `gh release delete`，会把其他平台已发布资产一起删掉）；③ `concurrency.group` 细化为含 `github.event_name` 与 `inputs.platforms`（旧分组会让补跑 run 排队后被取消）；④ Linux job 补 `Swatinem/rust-cache`（`key: ${{ matrix.job.target }}` + `save-if` 仅默认分支，且必须置于 `Disable rust bridge build` 的 sed 之后，否则 restore/save 的 key 不一致导致永不命中）；⑤ `prepare` 中新增 Preflight 检查 `.github/scripts/check_android_package.py`，扫描 Kotlin 文件 `package` 残留并在 1 分钟内失败。验证：dispatch `platforms=android` 后 Android job 正常启动、其余平台 skipped、清理步骤 skipped，Release 资产保持 10 个 |

@@ -88,6 +88,14 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📌 Resolved version: $VERSION"
 
+      # 上游新增的 Kotlin 文件常漏改包名：目录已随 fork 重命名为 com/rustdesk/app，
+      # package 声明仍是 com.carriez.flutter_hbb，要到 Rust 交叉编译约 40 分钟后
+      # 才在 gradle 阶段报错。这里提前扫描，把失败暴露时间压到 1 分钟内。
+      # 必须放在「Clean existing release」之前，避免检查失败时先删掉已发布资产。
+      - name: Preflight 检查（Android 包名残留）
+        if: steps.should_build.outputs.skip != 'true'
+        run: python3 .github/scripts/check_android_package.py
+
       # 只在全平台编译时清理 Release；补跑单个平台时必须保留其他平台已发布的资产
       - name: Clean existing release
         if: steps.should_build.outputs.skip != 'true' && github.event_name == 'workflow_dispatch' && (inputs.platforms == 'all' || inputs.platforms == '')
