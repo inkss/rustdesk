@@ -1,4 +1,8 @@
+<<<<<<< HEAD:flutter/android/app/src/main/kotlin/com/rustdesk/app/DocumentStorage.kt
 package com.rustdesk.app
+=======
+package com.carriez.flutter_hbb
+>>>>>>> 1.5.3:flutter/android/app/src/main/kotlin/com/carriez/flutter_hbb/DocumentStorage.kt
 
 import android.content.Context
 import android.content.Intent

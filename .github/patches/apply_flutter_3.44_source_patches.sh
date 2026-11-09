@@ -2,6 +2,7 @@
 # Applies the Flutter 3.44-only source/pubspec changes on the fly, in CI only.
 #
 # Windows arm64 needs Flutter >= 3.44 (the first stable release shipping an arm64 Dart SDK +
+<<<<<<< HEAD
 # engine), which renamed DialogTheme/TabBarTheme -> *Data and needs newer extended_text/
 # google_fonts. Every other platform is still on Flutter 3.24.5, where the old names/versions
 # are required, so these changes are kept OUT of the committed sources and applied here instead.
@@ -9,12 +10,28 @@
 # Used by BOTH the Windows arm64 build (flutter-build.yml) and its dedicated bridge artifact
 # (bridge.yml) so they share an identical 3.44 source state -- the generated *.freezed.dart must
 # compile against the same Flutter/freezed version the arm64 build resolves.
+=======
+# engine), and macOS arm64 builds with 3.44 for its NSTextInputContext crash fix
+# (https://github.com/rustdesk/rustdesk/issues/16817). 3.44 renamed DialogTheme/TabBarTheme ->
+# *Data and needs newer extended_text/google_fonts. Every other platform is still on Flutter
+# 3.24.5, where the old names/versions are required, so these changes are kept OUT of the
+# committed sources and applied here instead.
+#
+# Used by BOTH arm64 builds (flutter-build.yml) and their shared bridge artifact (bridge.yml) so
+# they share an identical 3.44 source state -- the generated *.freezed.dart must compile against
+# the same Flutter/freezed version the arm64 builds resolve.
+>>>>>>> 1.5.3
 #
 # Remove this script (and commit the changes) once upstream bumps Flutter across the board.
 #
 # Run from the repository root. sed is used (not a git-apply patch) because the checked-out
 # sources are CRLF on the windows-11-arm runner; the substitutions below are anchor-free and
+<<<<<<< HEAD
 # therefore CRLF-safe.
+=======
+# therefore CRLF-safe. The calls are GNU sed (`sed -i` without a suffix); the macOS arm64 job
+# puts GNU sed first on PATH because BSD sed rejects them.
+>>>>>>> 1.5.3
 set -euo pipefail
 
 readonly NO_MATCHES=0

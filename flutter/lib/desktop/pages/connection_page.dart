@@ -338,6 +338,42 @@ class _ConnectionPageState extends State<ConnectionPage>
         isViewCamera: isViewCamera,
         isTerminal: isTerminal,
         isTcpTunneling: isTcpTunneling);
+<<<<<<< HEAD
+=======
+  }
+
+  MenuEntrySubMenu<String> _requestApprovalMenu(BuildContext context) {
+    MenuEntryButton<String> action(String title,
+            {bool isFileTransfer = false,
+            bool isViewCamera = false,
+            bool isTerminal = false,
+            bool isTcpTunneling = false}) =>
+        MenuEntryButton<String>(
+          childBuilder: (style) => Text(translate(title), style: style),
+          proc: () => connect(context, _idController.id,
+              loginMethod: 'request-approval',
+              isFileTransfer: isFileTransfer,
+              isViewCamera: isViewCamera,
+              isTerminal: isTerminal,
+              isTcpTunneling: isTcpTunneling),
+          padding: EdgeInsets.symmetric(horizontal: kDesktopMenuPadding.left),
+          dismissOnClicked: true,
+        );
+
+    return MenuEntrySubMenu<String>(
+      text: translate('Request approval'),
+      dismissParentOnCanceled: true,
+      padding: EdgeInsets.symmetric(horizontal: kDesktopMenuPadding.left),
+      arrowScale: MenuConfig.iconScale,
+      entries: [
+        action('Connect'),
+        action('Transfer file', isFileTransfer: true),
+        action('View camera', isViewCamera: true),
+        action('${translate('Terminal')} (beta)', isTerminal: true),
+        if (isDesktop) action('TCP tunneling', isTcpTunneling: true),
+      ],
+    );
+>>>>>>> 1.5.3
   }
 
   /// UI for the remote ID TextField.
@@ -579,7 +615,8 @@ class _ConnectionPageState extends State<ConnectionPage>
                                         () => onConnect(isTcpTunneling: true)
                                       ),
                                   ]
-                                      .map((e) => MenuEntryButton<String>(
+                                      .map<MenuEntryBase<String>>(
+                                          (e) => MenuEntryButton<String>(
                                             childBuilder: (TextStyle? style) =>
                                                 Text(
                                               translate(e.$1),
@@ -591,6 +628,10 @@ class _ConnectionPageState extends State<ConnectionPage>
                                                     kDesktopMenuPadding.left),
                                             dismissOnClicked: true,
                                           ))
+                                      .followedBy([
+                                        MenuEntryDivider<String>(),
+                                        _requestApprovalMenu(context),
+                                      ])
                                       .map((e) => e.build(
                                           context,
                                           const MenuConfig(

@@ -40,7 +40,7 @@ prepare_flutter() {
 
 	# Patch flutter
 
-	if dpkg --compare-versions "${VERSION}" ge "3.24.4"; then
+	if dpkg --compare-versions "${VERSION}" ge "3.24.4" && dpkg --compare-versions "${VERSION}" lt "3.44.0"; then
 		git apply "${ROOTDIR}/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff"
 	fi
 
@@ -324,11 +324,15 @@ prebuild)
 
 	# Install Flutter bridge version
 
+<<<<<<< HEAD
 	# Unbraced on purpose: F-Droid recipes rewrite the braced form with sed to
 	# pin a version, but the bridge generator only works with the Flutter
 	# version bridge.yml uses
 
 	prepare_flutter "$FLUTTER_BRIDGE_VERSION" "${HOME}/flutter"
+=======
+	prepare_flutter "${FLUTTER_BRIDGE_VERSION}" "${HOME}/flutter"
+>>>>>>> 1.5.3
 
 	# Save changes
 
@@ -346,7 +350,11 @@ prebuild)
 	pushd flutter
 
 	flutter clean
+<<<<<<< HEAD
 	flutter packages pub get --enforce-lockfile
+=======
+	flutter packages pub get
+>>>>>>> 1.5.3
 
 	popd # flutter
 

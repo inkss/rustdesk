@@ -82,7 +82,11 @@ protobuf {
 }
 
 android {
+<<<<<<< HEAD
     namespace "com.rustdesk.app"
+=======
+    namespace "com.carriez.flutter_hbb"
+>>>>>>> 1.5.3
     compileSdkVersion 36
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

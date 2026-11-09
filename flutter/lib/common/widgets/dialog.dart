@@ -937,13 +937,22 @@ void enterPasswordDialog(
 }
 
 void enterUserLoginDialog(SessionID sessionId,
+<<<<<<< HEAD
     OverlayDialogManager dialogManager, String osAccountDescTip) async {
+=======
+    OverlayDialogManager dialogManager, String osAccountDescTip,
+    {bool waitForAccept = false}) async {
+>>>>>>> 1.5.3
   await _connectDialog(
     sessionId,
     dialogManager,
     osUsernameController: TextEditingController(),
     osPasswordController: TextEditingController(),
     osAccountDescTip: osAccountDescTip,
+<<<<<<< HEAD
+=======
+    waitForAccept: waitForAccept,
+>>>>>>> 1.5.3
   );
 }
 
@@ -966,6 +975,10 @@ _connectDialog(
   TextEditingController? osPasswordController,
   TextEditingController? passwordController,
   String? osAccountDescTip,
+<<<<<<< HEAD
+=======
+  bool waitForAccept = false,
+>>>>>>> 1.5.3
 }) async {
   final errUsername = ''.obs;
   var rememberPassword = false;
@@ -1008,8 +1021,17 @@ _connectDialog(
         rememberPassword,
       );
       close();
-      dialogManager.showLoading(translate('Logging in...'),
-          onCancel: closeConnection);
+      if (waitForAccept) {
+        showWaitAcceptDialog(
+            sessionId,
+            'wait-remote-accept-nook',
+            'Prompt',
+            'Please wait for the remote side to accept your session request...',
+            dialogManager);
+      } else {
+        dialogManager.showLoading(translate('Logging in...'),
+            onCancel: closeConnection);
+      }
     }
 
     descWidget(String text) {
@@ -2886,7 +2908,11 @@ Widget trustedDeviceExpiration({
           height: dropdownHeight,
           child: ComboBox(
             keys: periods,
+<<<<<<< HEAD
             values: ['1', '7', '30', '90', translate('Never')],
+=======
+            values: ['1', '7', '30', '90', translate('Forever')],
+>>>>>>> 1.5.3
             initialKey: periods.contains(period) ? period : '90',
             enabled: enabled && !isOptionFixed(kOptionTrustedDeviceExpiration),
             onChanged: (value) async {
@@ -2924,7 +2950,11 @@ class TrustedDevice {
   }
 
   String daysRemaining() {
+<<<<<<< HEAD
     if (expiresAt == 0) return translate('Never');
+=======
+    if (expiresAt == 0) return translate('Forever');
+>>>>>>> 1.5.3
     final remaining = expiresAt - DateTime.now().millisecondsSinceEpoch;
     if (remaining < 0) {
       return '0';

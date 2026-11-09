@@ -165,12 +165,46 @@ Before considering any implementation complete, perform a minimization pass over
 * Before finalizing, explicitly report the regression surface: list the existing files and existing runtime paths whose behavior changed, and explain why each change is unavoidable.
 * During review, treat an unnecessarily modified legacy path as a review finding even if tests pass and the rewritten behavior appears equivalent.
 
+<<<<<<< HEAD
+=======
+### Corner cases raised in review
+
+A refactor added to cover a corner case rarely converges. Each new counter, timestamp, cache or eviction/expiry rule interacts with state that existing code relies on, and the next review round finds the problems it introduced.
+
+* A corner case is still worth fixing when the fix is easy and low-risk: a local change of a few lines that adds no state and changes no existing lookup, such as moving a check or refusing bad input earlier.
+* When the only fix needs new state, a new lifecycle rule or a restructure, and the code already fails cleanly there or behaves as master does, document it as a known limit in the PR instead. Anything beyond the easy fix needs the maintainer's explicit go-ahead first.
+* Before adding state that reorders, expires or reuses existing data, list every lookup that reads that data and check each one still holds.
+* Prefer a clean failure, where the operation reports an error, over machinery that tries to make a rare case succeed.
+* A severity label from any reviewer (P1, Critical, Major) is not a triage result. Apply the next rule by consequence, not by label.
+* A corner case whose fix needs new state is fixed only when it crashes, loses data, weakens security, or a user has reported it. A rare cosmetic or layout glitch (e.g. rotation during an active drag, a feature that is off by default) is a known limit: reply once, list it under "Known limits" in the PR body, and leave the code alone.
+* When a finding is about behavior an earlier commit of this same PR introduced, fix it by removing or simplifying that commit, not by adding a layer on top.
+* Judge growth across all rounds, not per round. If review follow-ups have grown the non-test diff by more than half of the first fix, or added a new kind of state (handles into another component, cross-component references, deferred / post-frame callbacks, timers, caches, flags), stop and ask the maintainer before pushing.
+* When keeping the user's preferred state is hard in a rare case, fall back to a deterministic default computed from the current inputs. Do not coordinate mutable state across components or frames to preserve the preference.
+
+## Tests
+
+* A fix gets regression tests for the reported behavior only: they fail on master and pass with the fix. One to three tests is normal.
+* Assert what the user sees or what the API returns. Do not test private state, the order an algorithm runs its steps in, or each corner case raised in review.
+* Do not add test infrastructure (browser runners, golden/screenshot harnesses, new mock layers, test-only hooks in production code) for a bug fix unless the maintainer asks.
+* If the test diff is more than twice the fix, cut it back to the tests that pin the reported behavior. A state that needs long setup to reach is usually too rare to fix.
+* When the number of tests needed to describe the behavior keeps growing, the implementation is too complex: simplify it instead of adding tests.
+* Dart tests go in `flutter/test/*_test.dart`, nowhere else: CI runs `flutter test` over that directory and nothing outside it. It runs on the VM, so a `@TestOn('browser')` suite runs in no CI job.
+* Rust unit tests go in a `#[cfg(test)]` module beside the code. CI runs `cargo test --workspace` with the default features on x86_64 Linux, `cargo test --lib` on the root package with the release feature set on macOS and Windows plus `-p clipboard` there, and on Linux the `drm` test modules by name plus the `clipboard` package with `unix-file-copy-paste`. On macOS and Windows, a platform-gated test in another workspace crate runs only if that platform's job names the crate with `-p`. Gate a test module on a feature or `target_os` only when the code under test is gated; a pure helper that only a gated path calls gets `#[cfg(any(feature = "...", test))]`, so its tests run everywhere.
+* A test behind a feature that no CI build enables needs a `cargo test` line in `.github/workflows/flutter-build.yml` that names it. In the Linux drm job, wrap it in `run_drm_tests` so a filter that matches nothing fails instead of passing.
+* Web core tests are `flutter/web/js/src/*.test.ts`, run by jest in that repository's own CI.
+
+>>>>>>> 1.5.3
 ## Reviewing a PR
 
 * Review only what the diff introduces. Verify ownership with `gh pr diff` before reporting a finding — if the offending lines are untouched context, it is a pre-existing problem, not this PR's.
 * List pre-existing problems in a separate section at the end, or leave out the ones that are not fatal. Never mix them into the findings the author has to fix.
 * Before re-reviewing, read the author's reply comments. Do not re-raise items they declined on scope grounds.
 * State a finding's consequence exactly: distinguish "the value is lost" from "the shortcut is inert but the value still saves".
+<<<<<<< HEAD
+=======
+* Do not report a rare corner case as blocking when fixing it needs new state; mark it as a known limit the author may leave unfixed.
+* Treat growth across review rounds as a finding: if the latest commits add more state than the original fix, say so instead of asking for more handling.
+>>>>>>> 1.5.3
 
 ## Localization (`src/lang/*.rs`)
 

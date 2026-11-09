@@ -29,8 +29,11 @@ import 'mobile/pages/home_page.dart';
 import 'mobile/pages/server_page.dart';
 import 'mobile/widgets/deploy_dialog.dart';
 import 'models/platform_model.dart';
+<<<<<<< HEAD
 import 'native/font_manager.dart'
     if (dart.library.html) 'web/font_manager.dart';
+=======
+>>>>>>> 1.5.3
 
 /// Basic window and launch properties.
 int? kWindowId;

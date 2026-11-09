@@ -232,6 +232,7 @@ void main() {
         isTrue,
       );
     });
+<<<<<<< HEAD
   });
 
   group('shouldApplyTerminalInputModifiers', () {
@@ -623,6 +624,8 @@ void main() {
         isFalse,
       );
     });
+=======
+>>>>>>> 1.5.3
   });
 
   group('shouldClearTerminalModifiersWhenRow3Collapses', () {
