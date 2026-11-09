@@ -121,6 +121,7 @@ impl Drop for SimpleCallOnReturn {
 }
 
 pub fn global_init() -> bool {
+<<<<<<< HEAD
     // 编译时内置自定义服务器配置
     // PROD_RENDEZVOUS_SERVER 优先级低于用户配置，用户可在设置中覆盖
     if let Some(server) = option_env!("RENDEZVOUS_SERVER") {
@@ -128,6 +129,8 @@ pub fn global_init() -> bool {
             *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = server.to_owned();
         }
     }
+=======
+>>>>>>> 1.5.3
     #[cfg(all(target_os = "linux", feature = "drm"))]
     crate::platform::linux::dispatch_wayland_display_probe();
     #[cfg(target_os = "linux")]
@@ -977,7 +980,7 @@ pub fn get_sysinfo() -> serde_json::Value {
     let cpu_name = cpus.first().map(|x| x.brand()).unwrap_or_default();
     let cpu_name = cpu_name.trim_end();
     let cpu_freq = cpus.first().map(|x| x.frequency()).unwrap_or_default();
-    let cpu_freq = (cpu_freq as f64 / 1024. * 100.).round() / 100.;
+    let cpu_freq = (cpu_freq as f64 / 1000. * 100.).round() / 100.;
     let cpu = if cpu_freq > 0. {
         format!("{}, {}GHz, ", cpu_name, cpu_freq)
     } else {
@@ -1020,6 +1023,20 @@ pub fn check_port<T: std::string::ToString>(host: T, port: i32) -> String {
 #[inline]
 pub fn increase_port<T: std::string::ToString>(host: T, offset: i32) -> String {
     hbb_common::socket_client::increase_port(host, offset)
+}
+
+/// A relay uuid arrives from the network and is sent on to the relay address, so bound what it
+/// may carry; it is an opaque pairing key, so do not pin today's UUID format.
+pub fn check_relay_uuid(uuid: &str) -> ResultType<()> {
+    if uuid.is_empty()
+        || uuid.len() > 128
+        || !uuid
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
+    {
+        bail!("invalid relay uuid (length {})", uuid.len());
+    }
+    Ok(())
 }
 
 pub const POSTFIX_SERVICE: &'static str = "_service";
@@ -1163,6 +1180,159 @@ fn process_software_update_check_response(bytes: Bytes) -> ResultType<()> {
         clear_software_update_url();
     }
     Ok(())
+}
+
+<<<<<<< HEAD
+// No need to check `danger_accept_invalid_cert` for now.
+// Because the url is always `https://api.rustdesk.com/version/latest`.
+#[tokio::main(flavor = "current_thread")]
+pub async fn do_check_software_update() -> hbb_common::ResultType<()> {
+    let (request, url) =
+        hbb_common::version_check_request(hbb_common::VER_TYPE_RUSTDESK_CLIENT.to_string());
+    let proxy_conf = Config::get_socks();
+    let tls_url = get_url_for_tls(&url, &proxy_conf);
+    let tls_type = get_cached_tls_type(tls_url);
+    let is_tls_not_cached = tls_type.is_none();
+    let tls_type = tls_type.unwrap_or(TlsType::Rustls);
+    let client = create_http_client_async(tls_type, false);
+    let latest_release_response: ResultType<_> = match client.post(&url).json(&request).send().await
+    {
+        Ok(resp) => Ok((tls_type, resp)),
+        Err(err) => {
+            if is_tls_not_cached && err.is_request() {
+                let tls_type = TlsType::NativeTls;
+                let client = create_http_client_async(tls_type, false);
+                match client.post(&url).json(&request).send().await {
+                    Ok(resp) => Ok((tls_type, resp)),
+                    Err(err) => Err(err.into()),
+                }
+            } else {
+                Err(err.into())
+            }
+        }
+    };
+    let response_bytes = match latest_release_response {
+        Ok((used_tls_type, response)) => {
+            upsert_tls_cache(tls_url, used_tls_type, false);
+            let status = response.status();
+            if !status.is_success() {
+                Err(anyhow!(
+                    "Software update check failed with HTTP status: {status}"
+                ))
+            } else {
+                response.bytes().await.map_err(|err| err.into())
+            }
+        }
+        Err(err) => Err(err),
+    };
+    let result = response_bytes.and_then(process_software_update_check_response);
+    if result.is_err() {
+=======
+pub(crate) fn release_id_from_update_url(update_url: &str) -> ResultType<String> {
+    let url = url::Url::parse(update_url)?;
+    if url.scheme() != "https" || url.host_str() != Some("github.com") {
+        bail!(
+            "Update URL is not a GitHub HTTPS release URL: {}",
+            update_url
+        );
+    }
+    if url_has_explicit_port(update_url)
+        || url.port().is_some()
+        || !url.username().is_empty()
+        || url.password().is_some()
+    {
+        bail!(
+            "Update URL must not contain credentials or an explicit port: {}",
+            update_url
+        );
+    }
+    if url.query().is_some() || url.fragment().is_some() {
+        bail!(
+            "Update URL must not contain query or fragment: {}",
+            update_url
+        );
+    }
+
+    let Some(segments) = url.path_segments() else {
+        bail!("Update URL has no path: {}", update_url);
+    };
+    let segments = segments.collect::<Vec<_>>();
+    let release_id = match segments.as_slice() {
+        ["rustdesk", "rustdesk", "releases", "tag", release_id] => *release_id,
+        ["rustdesk", "rustdesk", "releases", "tag", release_id, ""] => *release_id,
+        _ => bail!(
+            "Update URL is not a RustDesk release tag URL: {}",
+            update_url
+        ),
+    };
+    if release_id.is_empty()
+        || release_id == "."
+        || release_id == ".."
+        || release_id.contains([' ', '/', '\\', '?', '#'])
+        || release_id.contains('%')
+    {
+        bail!("Update URL has no release id: {}", update_url);
+    }
+    Ok(release_id.to_owned())
+}
+
+pub(crate) fn url_has_explicit_port(raw_url: &str) -> bool {
+    let Some((_, rest)) = raw_url.split_once("://") else {
+        return false;
+    };
+    let authority = rest
+        .split(|c| matches!(c, '/' | '?' | '#'))
+        .next()
+        .unwrap_or_default();
+    let host_port = authority.rsplit('@').next().unwrap_or(authority);
+    host_port.rsplit_once(':').is_some()
+}
+
+pub(crate) fn display_version_from_release_id(release_id: &str) -> ResultType<String> {
+    let display_version = release_id.strip_prefix('v').unwrap_or(release_id);
+    let segments = display_version.split('.').collect::<Vec<_>>();
+    if segments.len() != 3
+        || segments.iter().any(|segment| {
+            segment.is_empty()
+                || !segment.chars().all(|c| c.is_ascii_digit())
+                || segment.parse::<u16>().is_err()
+        })
+    {
+        bail!("Release id is not a stable display version: {}", release_id);
+    }
+    if get_version_number(display_version) <= 0 {
+        bail!("Release id has invalid display version: {}", release_id);
+    }
+    Ok(display_version.to_owned())
+}
+
+fn clear_software_update_url() {
+    let mut update_url = SOFTWARE_UPDATE_URL.lock().unwrap();
+    *update_url = String::new();
+}
+
+fn process_software_update_check_response(bytes: Bytes) -> ResultType<()> {
+    let resp: hbb_common::VersionCheckResponse = serde_json::from_slice(&bytes)?;
+    let response_url = resp.url;
+    let release_id = release_id_from_update_url(&response_url)?;
+    let latest_release_version = display_version_from_release_id(&release_id)?;
+
+    if get_version_number(&latest_release_version) > get_version_number(crate::VERSION) {
+        #[cfg(feature = "flutter")]
+        {
+            let mut m = HashMap::new();
+            m.insert("name", "check_software_update_finish");
+            m.insert("url", &response_url);
+            if let Ok(data) = serde_json::to_string(&m) {
+                let _ = crate::flutter::push_global_event(crate::flutter::APP_TYPE_MAIN, data);
+            }
+        }
+        *SOFTWARE_UPDATE_URL.lock().unwrap() = response_url;
+    } else {
+>>>>>>> 1.5.3
+        clear_software_update_url();
+    }
+    result
 }
 
 // No need to check `danger_accept_invalid_cert` for now.
@@ -3106,9 +3276,27 @@ mod tests {
         self,
         time::{interval, interval_at, sleep, Duration, Instant, Interval},
     };
-    use std::collections::HashSet;
 
     #[test]
+<<<<<<< HEAD
+=======
+    fn relay_uuid_rejects_control_bytes_but_not_other_id_formats() {
+        for uuid in [
+            "e4c181d0-41c7-4ae6-8ef0-36581b6b2b12",
+            "E4C181D0-41C7-4AE6-8EF0-36581B6B2B12",
+            "01890a5d-ac96-774b-bcce-b302099a8057",
+            "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+        ] {
+            assert!(check_relay_uuid(uuid).is_ok(), "rejected {uuid:?}");
+        }
+        let too_long = "a".repeat(129);
+        for uuid in ["", "\r\nPING\r\n", "a b", "a\0", too_long.as_str()] {
+            assert!(check_relay_uuid(uuid).is_err(), "accepted {uuid:?}");
+        }
+    }
+
+    #[test]
+>>>>>>> 1.5.3
     fn parses_stable_rustdesk_release_url() {
         let update_url = "https://github.com/rustdesk/rustdesk/releases/tag/v1.4.6";
 
@@ -3152,6 +3340,7 @@ mod tests {
                 assert!(cursor_content_id(32, 32, hotx, 0, colors) <= MAX_SAFE_INTEGER);
             }
         }
+<<<<<<< HEAD
     }
 
     #[inline]
@@ -3162,6 +3351,8 @@ mod tests {
             .as_millis()
             + 500)
             / 1000
+=======
+>>>>>>> 1.5.3
     }
 
     fn interval_maker() -> Interval {
@@ -3205,6 +3396,7 @@ mod tests {
             elapsed < Duration::from_secs(6),
             "the punch ran for {elapsed:?}; its deadline did not hold"
         );
+<<<<<<< HEAD
     }
 
     #[test]
@@ -3231,8 +3423,37 @@ mod tests {
     }
 
     // ThrottledInterval tick less times than tokio interval, if there're sleeps
+=======
+    }
+
+    #[test]
+    fn untrusted_peer_id_validation() {
+        let cases = [
+            ("123456789", true),
+            ("m\u{00FC}nchen-pc", true),
+            ("192.168.1.10:21118", true),
+            ("9123456234@public", true),
+            (
+                r#"1" & oWS.Run("cmd.exe /k whoami /priv",1,False) & ""#,
+                false,
+            ),
+            ("", false),
+            ("peer id", false),
+            ("peer\nid", false),
+            ("peer/id", false),
+            ("peer?id", false),
+        ];
+
+        for (id, expected) in cases {
+            assert_eq!(is_valid_untrusted_peer_id(id), expected, "{id:?}");
+        }
+    }
+
+    // ThrottledInterval tick less times than tokio interval, if there're sleeps.
+    // The clock is paused, so a stalled runner cannot make two ticks look close together.
+>>>>>>> 1.5.3
     #[allow(non_snake_case)]
-    #[tokio::test]
+    #[tokio::test(start_paused = true)]
     async fn test_RustDesk_interval_sleep() {
         let base_intervals = [interval_maker, interval_at_maker];
         for (i, maker) in base_intervals.into_iter().enumerate() {
@@ -3242,17 +3463,31 @@ mod tests {
             loop {
                 tokio::select! {
                     _ = timer.tick() => {
-                        times.push(get_timestamp_secs());
+                        times.push(Instant::now());
                         if times.len() == 5 {
                             break;
                         }
                     }
                 }
             }
+<<<<<<< HEAD
             // No multiple ticks in the `interval` time.
             // Values in "times" are unique and are less than normal tokio interval.
             let times2: HashSet<u128> = HashSet::from_iter(times.clone());
             assert_eq!(times.len(), times2.len(), "test: {}", i);
+=======
+            // No multiple ticks in the `interval` time: tokio's interval bursts the missed ticks
+            // with no gap, ThrottledInterval keeps them at least 0.9 * period apart.
+            for pair in times.windows(2) {
+                let gap = pair[1] - pair[0];
+                assert!(
+                    gap >= Duration::from_millis(900),
+                    "test: {}, gap: {:?}",
+                    i,
+                    gap
+                );
+            }
+>>>>>>> 1.5.3
         }
     }
 

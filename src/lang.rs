@@ -177,6 +177,15 @@ fn resolve_lang(saved_lang: &str, locale: &str, cjk_fallback: bool) -> String {
         } else if lang == "ka" {
             lang = "ge".to_owned();
         }
+<<<<<<< HEAD
+=======
+        // Android 14 and older report Hebrew and Indonesian with their legacy codes (iw_IL, in_ID).
+        if lang == "iw" {
+            lang = "he".to_owned();
+        } else if lang == "in" {
+            lang = "id".to_owned();
+        }
+>>>>>>> 1.5.3
     }
     if cjk_fallback && is_cjk_lang(&lang) {
         "en".to_owned()
@@ -387,6 +396,19 @@ mod test {
     }
 
     #[test]
+<<<<<<< HEAD
+=======
+    fn test_resolve_lang_detects_hebrew_and_indonesian_from_legacy_android_codes() {
+        use super::resolve_lang as f;
+
+        assert_eq!(f("", "iw_IL", false), "he");
+        assert_eq!(f("", "in_ID", false), "id");
+        assert_eq!(f("", "he-IL", false), "he");
+        assert_eq!(f("", "id-ID", false), "id");
+    }
+
+    #[test]
+>>>>>>> 1.5.3
     fn test_resolve_lang_detects_traditional_chinese_for_hong_kong_and_macao() {
         use super::resolve_lang as f;
 

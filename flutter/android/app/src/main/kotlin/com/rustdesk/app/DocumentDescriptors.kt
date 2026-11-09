@@ -1,4 +1,8 @@
+<<<<<<< HEAD:flutter/android/app/src/main/kotlin/com/rustdesk/app/DocumentDescriptors.kt
 package com.rustdesk.app
+=======
+package com.carriez.flutter_hbb
+>>>>>>> 1.5.3:flutter/android/app/src/main/kotlin/com/carriez/flutter_hbb/DocumentDescriptors.kt
 
 import android.os.ParcelFileDescriptor
 import org.json.JSONObject

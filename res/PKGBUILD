@@ -1,5 +1,9 @@
 pkgname=rustdesk
+<<<<<<< HEAD
 pkgver=1.5.1
+=======
+pkgver=1.5.3
+>>>>>>> 1.5.3
 pkgrel=0
 epoch=
 pkgdesc=""

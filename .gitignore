@@ -56,9 +56,12 @@ vcpkg_installed
 flutter/lib/generated_plugin_registrant.dart
 libsciter.dylib
 flutter/web/
+<<<<<<< HEAD
 # ===
 # CodeBuddy IDE 内部工作记忆（AI 会话用，非项目源码，本地保留）
 .codebuddy/
+=======
+>>>>>>> 1.5.3
 # libdrmtap is cloned at build time by build.py (not a submodule)
 /third_party/libdrmtap/
 # Local git worktrees

@@ -1,5 +1,8 @@
 pub(super) mod directory;
+<<<<<<< HEAD
 mod gate;
+=======
+>>>>>>> 1.5.3
 
 use super::{
     installer_files::ProtectedInstallFile,
@@ -10,7 +13,10 @@ use super::{
     },
     validate_install_app_name, ResultType,
 };
+<<<<<<< HEAD
 use gate::InstallGate;
+=======
+>>>>>>> 1.5.3
 use hbb_common::{bail, log};
 use std::{fs, io, path::Path};
 
@@ -56,6 +62,20 @@ fn prepare_install_commands(cmds: &InstallCommands) -> ResultType<String> {
         .map(|file| path_for_cmd_environment(file.path()).map(|path| format!("\"{path}\"")))
         .collect::<ResultType<Vec<_>>>()?
         .join(" ");
+<<<<<<< HEAD
+=======
+    // While the owner is alive, guards defer directory removal to Rust's Drop.
+    // CMD removes them if uninstall has already terminated the owner.
+    let directories = cmds
+        .files
+        .iter()
+        .map(|file| {
+            path_for_cmd_environment(file.directory())
+                .map(|path| format!(" & rd \"{path}\" > nul 2>&1"))
+        })
+        .collect::<ResultType<Vec<_>>>()?
+        .join("");
+>>>>>>> 1.5.3
     // Call a fixed label so early EXIT /B still reaches cleanup, without reparsing a path.
     // Exit the dedicated cmd after self-deletion; EXIT /B would reopen the missing BAT.
     Ok(format!(
@@ -64,7 +84,11 @@ fn prepare_install_commands(cmds: &InstallCommands) -> ResultType<String> {
          call :rustdesk_install\r\n\
          set \"RUSTDESK_INSTALL_EXIT_CODE=%ERRORLEVEL%\"\r\n\
          rd /s /q \"%~f0.dir\" > nul 2>&1\r\n\
+<<<<<<< HEAD
          (del /q \"%~f0\" {files} > nul 2>&1 & exit %RUSTDESK_INSTALL_EXIT_CODE%)\r\n\
+=======
+         (del /q \"%~f0\" {files} > nul 2>&1{directories} & rd \"%~dp0\" > nul 2>&1 & exit %RUSTDESK_INSTALL_EXIT_CODE%)\r\n\
+>>>>>>> 1.5.3
          :rustdesk_install\r\n\
          \"{chcp}\" {UTF8_CODE_PAGE} > nul || exit /b \
          {BATCH_CODE_PAGE_FAILURE_EXIT_CODE}\r\n\
@@ -82,6 +106,7 @@ fn write_install_script(cmds: InstallCommands, path: &Path) -> ResultType<Instal
     })
 }
 
+<<<<<<< HEAD
 fn protected_install_parameters(
     script: &InstallCommandScript,
     gate: &InstallGate,
@@ -90,6 +115,11 @@ fn protected_install_parameters(
     let pipe = gate.name();
     let parameters =
         format!("/D /E:ON /V:OFF /C \"set /p RUSTDESK_HANDOFF=<\"{pipe}\" >nul && \"{path}\"\"");
+=======
+fn protected_install_parameters(script: &InstallCommandScript) -> ResultType<String> {
+    let path = path_for_cmd_environment(script.file.path())?;
+    let parameters = format!("/D /E:ON /V:OFF /C \"\"{path}\"\"");
+>>>>>>> 1.5.3
     let length = parameters.encode_utf16().count();
     if length >= WIN7_SHELL_EXECUTE_MAX_PARAMETER_CHARS {
         bail!("Elevated command is too long: {length} UTF-16 characters");
@@ -100,12 +130,27 @@ fn protected_install_parameters(
 pub(super) fn run_cmds(cmds: impl Into<InstallCommands>, show: bool, tip: &str) -> ResultType<()> {
     validate_install_app_name(&crate::get_app_name())?;
     let path = directory::path()?.with_extension("bat");
+<<<<<<< HEAD
     let directory = path.with_extension("bat.dir");
     let mut script = write_install_script(cmds.into(), &path)?;
     let cmd_path = get_system_executable(CMD_RELATIVE_PATH)?;
     let gate = InstallGate::new()?;
     let parameters = protected_install_parameters(&script, &gate)?;
     directory::create(&directory)?;
+=======
+    let mut script = write_install_script(cmds.into(), &path)?;
+    let directory = script.file.path().with_extension("bat.dir");
+    let cmd_path = get_system_executable(CMD_RELATIVE_PATH)?;
+    let parameters = protected_install_parameters(&script)?;
+    directory::create(&directory)?;
+    // Close file DELETE handles before cmd opens the BAT or copies its inputs.
+    // Waiting on a named pipe failed under F-Secure (#16840, #16842).
+    // Directory guards protect paths only while their handles remain open.
+    // They survive this release, but cannot protect against an attacker who can
+    // control or terminate this process.
+    // A cancelled UAC prompt can leave the protected inputs behind.
+    script.release_files();
+>>>>>>> 1.5.3
     let process = launch_elevated(&cmd_path, &parameters, show).map_err(|err| {
         log::debug!("Failed to launch elevated installer: {err:#}");
         err.context(format!(
@@ -113,11 +158,14 @@ pub(super) fn run_cmds(cmds: impl Into<InstallCommands>, show: bool, tip: &str) 
             directory.display()
         ))
     })?;
+<<<<<<< HEAD
     gate.wait_for_client(process.handle())?;
     // Keep DELETE-capable handles through UAC cancellation, but close them before
     // cmd opens the BAT or copies its inputs. The protected DACL stays unchanged.
     script.release_files();
     gate.release(process.handle())?;
+=======
+>>>>>>> 1.5.3
     let exit_code = process.wait()?;
     // Cleanup must not change the result of an installation that already ran.
     match fs::symlink_metadata(&directory) {
@@ -152,11 +200,15 @@ fn elevated_install_failure_reason(exit_code: u32) -> &'static str {
 mod tests {
     use super::super::installer_shell::shortcut_bytes;
     use super::*;
+<<<<<<< HEAD
     use std::{
         os::windows::{io::AsRawHandle, process::CommandExt},
         process::Stdio,
     };
     use windows::Win32::Foundation::HANDLE;
+=======
+    use std::{os::windows::process::CommandExt, process::Stdio};
+>>>>>>> 1.5.3
 
     #[test]
     fn protected_handoff_preserves_shortcuts_failures_and_cleanup() {
@@ -164,9 +216,14 @@ mod tests {
         for exit_code in [0, COMMAND_FAILURE] {
             let root =
                 std::env::temp_dir().join(format!("rustdesk-handoff-{}", uuid::Uuid::new_v4()));
+<<<<<<< HEAD
             let source = root.join("source !&^@().bat");
             let runner = source.with_extension("bat.dir");
             fs::create_dir_all(&runner).unwrap();
+=======
+            let source = root.join("source 中文 !&^@().bat");
+            fs::create_dir(&root).unwrap();
+>>>>>>> 1.5.3
             let bytes = shortcut_bytes(r"C:\RustDesk.exe", Some("--tray"), None).unwrap();
             let shortcut =
                 ProtectedInstallFile::new(&root.join("shortcut !&^@().tmp"), &bytes).unwrap();
@@ -180,14 +237,28 @@ mod tests {
                 files: vec![shortcut],
             };
             let mut script = write_install_script(commands, &source).unwrap();
+<<<<<<< HEAD
             if !super::super::is_elevated(None).unwrap() {
                 assert!(fs::write(script.file.path(), "exit /b 0\r\n").is_err());
             }
             let output = run_script(&mut script, true);
+=======
+            let runner = script.file.path().with_extension("bat.dir");
+            fs::create_dir(&runner).unwrap();
+            for file in std::iter::once(&mut script.file).chain(&mut script._files) {
+                super::super::installer_files::tests::release_copy_fixture(file);
+            }
+            let output = run_script(&mut script);
+>>>>>>> 1.5.3
             let copied = fs::read(&marker).unwrap();
             let cleaned = !runner.exists()
                 && !script.file.path().exists()
                 && script._files.iter().all(|file| !file.path().exists());
+<<<<<<< HEAD
+=======
+            drop(script);
+            let directories_cleaned = fs::read_dir(&root).unwrap().count() == 1;
+>>>>>>> 1.5.3
             fs::remove_dir_all(&root).unwrap();
             assert_eq!(
                 output.status.code().map(|code| code as u32),
@@ -195,6 +266,7 @@ mod tests {
                 "{output:?}"
             );
             assert_eq!(copied, bytes);
+<<<<<<< HEAD
             assert!(cleaned, "The runner and protected inputs must be removed");
         }
     }
@@ -248,5 +320,25 @@ mod tests {
             drop(gate);
         }
         child.wait_with_output().unwrap()
+=======
+            assert!(
+                cleaned && directories_cleaned,
+                "The staged inputs must be removed"
+            );
+        }
+    }
+
+    // Mirrors run_cmds without UAC: the files are released before cmd starts and nothing
+    // reaches cmd's stdin.
+    fn run_script(script: &mut InstallCommandScript) -> std::process::Output {
+        let parameters = protected_install_parameters(script).unwrap();
+        script.release_files();
+        std::process::Command::new(get_system_executable(CMD_RELATIVE_PATH).unwrap())
+            .raw_arg(parameters)
+            .creation_flags(::windows::Win32::System::Threading::CREATE_NO_WINDOW.0)
+            .stdin(Stdio::null())
+            .output()
+            .unwrap()
+>>>>>>> 1.5.3
     }
 }

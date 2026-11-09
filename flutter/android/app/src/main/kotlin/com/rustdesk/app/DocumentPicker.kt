@@ -1,4 +1,8 @@
+<<<<<<< HEAD:flutter/android/app/src/main/kotlin/com/rustdesk/app/DocumentPicker.kt
 package com.rustdesk.app
+=======
+package com.carriez.flutter_hbb
+>>>>>>> 1.5.3:flutter/android/app/src/main/kotlin/com/carriez/flutter_hbb/DocumentPicker.kt
 
 import android.app.Activity
 import android.content.Intent
